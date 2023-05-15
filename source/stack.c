@@ -1,33 +1,47 @@
-#include "../include/linked_tree.h"
+#include "../include/main.h"
 
-bool isEmpty(Stack *stack) {
-    if (stack->top == NULL) return -1;
+boolean IsEmpty(Stack* stack) {
+    if(stack->TopNode == NULL){
+        return -1;
+    }
     return 0;
 }
 
-Stack *createStack() {
-    Stack *newStack = (Stack *)malloc(sizeof(Stack));
-    if (!newStack) return NULL;
-    newStack->top = NULL;
-    return newStack;
+Stack *InitializeStack() {
+	Stack *returnStack = (Stack *)malloc(sizeof(Stack));
+
+	if (!returnStack) {
+        printf("error occurred, returnStack.\n");
+        return NULL;
+	}
+    returnStack->TopNode = NULL;
+	return returnStack;
 }
 
-int push(Stack *stack, char *data) {
-    LinkedStack *newNode = (LinkedStack *)malloc(sizeof(LinkedStack));
+int Push(Stack *dirStack, char *dirName) {
+	StackNode *dirNode = (StackNode *)malloc(sizeof(StackNode));
 
-    if (!stack || !newNode) return -1;
-    strncpy(newNode->name, data, MAX_NAME);
-    stack->top = newNode;
-
+	if (!dirStack || !dirNode) {
+        printf("error occurred, dirStack.\n");
+        return -1;
+	}
+	strncpy(dirNode->name, dirName, MAX_NAME);
+	dirNode->LinkNode = dirStack->TopNode;
+    dirStack->TopNode = dirNode;
     return 0;
 }
 
-char *pop(Stack *stack) {
-    LinkedStack *tmpNode = NULL;
-    if (!stack) return NULL;
-    if (isEmpty(stack) == -1) return NULL;
-
-    tmpNode = stack->top;
-    stack->top = tmpNode->next;
-    return tmpNode->name;
+char *Pop(Stack *dirStack) {
+	StackNode *returnNode = NULL;
+	if (!dirStack) {
+        printf("error occurred, dirStack.\n");
+        return NULL;
+	}
+	if (IsEmpty(dirStack) == -1) {
+        printf("Stack Empty.\n");
+        return NULL;
+	}
+	returnNode = dirStack->TopNode;
+	dirStack->TopNode = returnNode->LinkNode;
+	return returnNode->name;
 }

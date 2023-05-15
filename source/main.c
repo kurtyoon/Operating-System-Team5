@@ -1,22 +1,21 @@
 #include "../include/main.h"
 
 int main() {
-
-    char cmd[50];
+    char command[50];
 
     Linux = LoadDir();
     usrList = LoadUserList();
-    stack = createStack();
+    dStack = InitializeStack();
 
     Login(usrList, Linux);
-    printStart();
+    PrintStart();
     SaveUserList(usrList);
 
     while (TRUE) {
-        PrintHead(Linux, stack);
-        fgets(cmd, sizeof(cmd), stdin);
-        cmd[strlen(cmd) - 1] = '\0';
-        Instruction(Linux, cmd);
+        PrintHead(Linux, dStack);
+        fgets(command, sizeof(command), stdin);
+        command[strlen(command) - 1] = '\0';
+        Instruction(Linux, command);
     }
     return 0;
 }
