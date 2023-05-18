@@ -17,6 +17,6 @@ int ft_cp(DirectoryTree* dirTree, char* SourceName, char* ObjectName) {
     new = open(ObjectName, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
     nread = read(original, buf, sizeof(buf));
     write(new, buf, nread);
-    MakeDir(dirTree, ObjectName, 'f');
+    makeDir(dirTree, ObjectName, 'f');
     return SUCCESS;
 }

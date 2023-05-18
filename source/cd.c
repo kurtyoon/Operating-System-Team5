@@ -82,7 +82,7 @@ int ft_cd(DirectoryTree *dirTree, char *command) {
     } else {
         tmpNode = dirExistence(dirTree, command, 'd');
         if (tmpNode) {
-            if (checkPermission(tmpNode, 'r')) {
+            if (checkPermission(tmpNode, 'x')) {
                 printf("-bash: cd: '%s': Permission denied\n", command);
                 return FAIL;
             }

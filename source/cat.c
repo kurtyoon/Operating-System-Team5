@@ -61,7 +61,7 @@ int concatenate(DirectoryTree* dirTree, char* fileName, int type) {
             tmpNode->date.day = today->tm_mday;
             tmpNode->date.hour = today->tm_hour;
             tmpNode->date.minute = today->tm_min;
-        } else MakeDir(dirTree, fileName, 'f');
+        } else makeDir(dirTree, fileName, 'f');
         tmpNode = dirExistence(dirTree, fileName, 'f');
         tmpNode->SIZE = tmpSIZE;
     }
@@ -190,62 +190,6 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                     dirTree->current = currentNode;
                     return FAIL;
                 } else concatenate(dirTree, tmp3, 2);
-                dirTree->current = currentNode;
-            }
-        } else if(!strcmp(command, "-b")) {
-            str = strtok(NULL, " ");
-            strncpy(tmp, str, MAX_DIR);
-            if (!strstr(str, "/")) {
-                if (checkPermission(dirTree->current, 'w')) {
-                    printf("cat: Can not create file '%s': Permission denied\n", dirTree->current->name);
-                    return FAIL;
-                }
-                tmpNode = dirExistence(dirTree, str, 'd');
-                tmpNode2 = dirExistence(dirTree, str, 'f');
-                if(!tmpNode && !tmpNode2) {
-                    printf("cat: '%s': No such file or directory.\n", str);
-                    return FAIL;
-                }
-                else if (tmpNode && !tmpNode2) {
-                    printf("cat: '%s': Is a directory.\n", str);
-                    return FAIL;
-                }
-                else if (tmpNode2 && checkPermission(tmpNode2, 'r')) {
-                    printf("cat: Can not open file '%s': Permission denied\n", tmpNode2->name);
-                    return FAIL;
-                }
-                else concatenate(dirTree, str, 3);
-                
-            } else {
-                strncpy(tmp2, getDir(str), MAX_DIR);
-                value = movePath(dirTree, tmp2);
-                if (value) {
-                    printf("cat: '%s': No such file or directory.\n", tmp2);
-                    return FAIL;
-                }
-                str = strtok(tmp, "/");
-                while (str) {
-                    strncpy(tmp3, str, MAX_NAME);
-                    str = strtok(NULL, "/");
-                }
-                tmpNode = dirExistence(dirTree, tmp3, 'd');
-                tmpNode2 = dirExistence(dirTree, tmp3, 'f');
-                if (!tmpNode && !tmpNode2) {
-                    printf("cat: '%s': No such file or directory.\n", tmp3);
-                    dirTree->current = currentNode;
-                    return FAIL;
-                }
-                else if (tmpNode && !tmpNode2){
-                    printf("cat: '%s': Is a direcotry\n", tmp3);
-                    dirTree->current = currentNode;
-                    return FAIL;
-                }
-                else if (tmpNode2 && checkPermission(tmpNode2, 'r')) {
-                    printf("cat: Can not open file '%s': Permission denied\n", tmpNode2->name);
-                    dirTree->current = currentNode;
-                    return FAIL;
-                }
-                else concatenate(dirTree, tmp3, 3);
                 dirTree->current = currentNode;
             }
         } else if(strcmp(command, "--help") == 0) {

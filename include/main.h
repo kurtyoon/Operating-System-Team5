@@ -167,7 +167,7 @@ int listDir(DirectoryTree *dirTree, int a, int l);
 int ft_ls(DirectoryTree *dirTree, char *cmd);
 
 // mkdir.c
-int MakeDir(DirectoryTree *dirTree, char *dirName, char type);
+int makeDir(DirectoryTree *dirTree, char *dirName, char type);
 int ft_mkdir(DirectoryTree *dirTree, char *cmd);
 
 // pwd.c
