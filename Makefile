@@ -2,17 +2,24 @@ CC = gcc
 RM = rm -rf
 NAME = MINILINUX
 
+SRC_DIR = source
+OBJ_DIR = object
 INCS = include
-SRCS = source/directory.c source/instruction.c source/main.c source/stack.c source/time.c source/user.c source/cat.c source/cd.c source/chmod.c source/chown.c source/system.c source/find.c source/mkdir.c source/rm.c source/pwd.c source/ls.c source/cp.c source/permission.c source/grep.c
-OBJS = $(SRCS:.c=.o)
 
-.c.o: $(SRCS)
-	$(CC) -c -o $@ $<
+SRCS = directory.c instruction.c main.c \
+		stack.c time.c user.c cat.c cd.c \
+		chmod.c chown.c system.c find.c mkdir.c \
+		rm.c pwd.c ls.c cp.c permission.c grep.c userlist.c
+OBJS = $(addprefix $(OBJ_DIR)/, $(SRCS:.c=.o))
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
 	$(CC) -o $(NAME) $(OBJS) -o $@ -I$(INCS) -lpthread
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+	@mkdir -p $(OBJ_DIR)
+	$(CC) -c $< -o $@ -I$(INCS)
 
 clean:
 	$(RM) $(OBJS)

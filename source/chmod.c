@@ -39,18 +39,18 @@ void changeModeAll(DirectoryNode *dirNode, int mode) {
     modeToPermission(dirNode);
 }
 
-int ft_chmod(DirectoryTree* dirTree, char* cmd) {
+int ft_chmod(DirectoryTree* dirTree, char* command) {
     DirectoryNode* tmpNode = NULL;
     char* str;
     int tmp;
 
-    if (!cmd) {
+    if (!command) {
         printf("chmod: Invalid option\n");
         printf("Try 'chmod --help' for more information.\n");
         return FAIL;
     }
-    if(cmd[0] == '-') {
-        if (!strcmp(cmd, "-R")) {
+    if(command[0] == '-') {
+        if (!strcmp(command, "-R")) {
             str = strtok(NULL, " ");
             if(!str) {
                 printf("chmod: Invalid option\n");
@@ -81,7 +81,7 @@ int ft_chmod(DirectoryTree* dirTree, char* cmd) {
                 printf("Try 'chmod --help' for more information.\n");
                 return FAIL;
             }
-        } else if (!strcmp(cmd, "--help")) {
+        } else if (!strcmp(command, "--help")) {
             printf("Usage: chmod [OPTION]... OCTAL-MODE FILE...\n");
             printf("Change the mode of each FILE to MODE.\n\n");
             printf("  Options:\n");
@@ -89,7 +89,7 @@ int ft_chmod(DirectoryTree* dirTree, char* cmd) {
             printf("      --help\t Display this help and exit\n");
             return FAIL;
         } else {
-            str = strtok(cmd, "-");
+            str = strtok(command, "-");
             if (!str) {
                 printf("chmod: Invalid option\n");
                 printf("Try 'chmod --help' for more information.\n");
@@ -101,8 +101,8 @@ int ft_chmod(DirectoryTree* dirTree, char* cmd) {
             }
         }
     } else {
-        if (cmd[0] - '0' < 8 && cmd[1] - '0' < 8 && cmd[2] - '0' <8  && strlen(cmd) == 3) {
-            tmp = atoi(cmd);
+        if (command[0] - '0' < 8 && command[1] - '0' < 8 && command[2] - '0' <8  && strlen(command) == 3) {
+            tmp = atoi(command);
             str = strtok(NULL, " ");
             if (!str) {
                 printf("chmod: Invalid option\n");
@@ -111,7 +111,7 @@ int ft_chmod(DirectoryTree* dirTree, char* cmd) {
             }
             changeMode(dirTree, tmp, str);
         } else {
-            printf("chmod: Invalid Mode: '%s'\n", cmd);
+            printf("chmod: Invalid Mode: '%s'\n", command);
             printf("Try 'chmod --help' for more information.\n");
             return FAIL;
         }

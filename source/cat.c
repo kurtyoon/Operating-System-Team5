@@ -1,6 +1,6 @@
 #include "../include/main.h"
 
-int Concatenate(DirectoryTree* dirTree, char* fName, int type) {
+int concatenate(DirectoryTree* dirTree, char* fileName, int type) {
 
     UserNode* tmpUser = NULL;
     DirectoryNode* tmpNode = NULL;
@@ -20,11 +20,11 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int type) {
             }
             return 0;
         }
-        tmpNode = IsExistDir(dirTree,fName, 'f');
+        tmpNode = IsExistDir(dirTree, fileName, 'f');
 
         if(!tmpNode) return FAIL;
 
-        fp = fopen(fName, "r");
+        fp = fopen(fileName, "r");
         while (!feof(fp)) {
             fgets(buf, sizeof(buf), fp);
             if(feof(fp)) break;
@@ -43,7 +43,7 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int type) {
         }
         fclose(fp);
     } else {
-        fp = fopen(fName, "w");
+        fp = fopen(fileName, "w");
 
 	    while (fgets(buf, sizeof(buf), stdin)) {
             fputs(buf, fp);
@@ -52,7 +52,7 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int type) {
         rewind(stdin);
         fclose(fp);
 
-        tmpNode = IsExistDir(dirTree, fName, 'f');
+        tmpNode = IsExistDir(dirTree, fileName, 'f');
         if (tmpNode) {
             time(&ltime);
             today = localtime(&ltime);
@@ -61,8 +61,8 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int type) {
             tmpNode->date.day = today->tm_mday;
             tmpNode->date.hour = today->tm_hour;
             tmpNode->date.minute = today->tm_min;
-        } else MakeDir(dirTree, fName, 'f');
-        tmpNode = IsExistDir(dirTree, fName, 'f');
+        } else MakeDir(dirTree, fileName, 'f');
+        tmpNode = IsExistDir(dirTree, fileName, 'f');
         tmpNode->SIZE = tmpSIZE;
     }
     return SUCCESS;
@@ -111,7 +111,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                 printf("cat: '%s': Is a directory\n", str);
                 return FAIL;
             }
-            else Concatenate(dirTree, str, 0);
+            else concatenate(dirTree, str, 0);
         } else {
             strncpy(tmp2, getDir(str), MAX_DIR);
             value = MovePath(dirTree, tmp2);
@@ -134,7 +134,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                 printf("cat: '%s': Is a directory\n", tmp3);
                 dirTree->current = currentNode;
                 return FAIL;
-            } else Concatenate(dirTree, tmp3, 0);
+            } else concatenate(dirTree, tmp3, 0);
             dirTree->current = currentNode;
         }
         return 0;
@@ -159,7 +159,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                 } else if (tmpNode2 && checkPermission(tmpNode2, 'r')){
                     printf("cat: Can not open file '%s': Permission denied\n", tmpNode2->name);
                     return FAIL;
-                } else Concatenate(dirTree, str, 2);
+                } else concatenate(dirTree, str, 2);
             } else {
                 strncpy(tmp2, getDir(str), MAX_DIR);
                 value = MovePath(dirTree, tmp2);
@@ -189,7 +189,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                     printf("cat: Can not open file '%s': Permission denied\n", tmpNode2->name);
                     dirTree->current = currentNode;
                     return FAIL;
-                } else Concatenate(dirTree, tmp3, 2);
+                } else concatenate(dirTree, tmp3, 2);
                 dirTree->current = currentNode;
             }
         } else if(!strcmp(command, "-b")) {
@@ -214,7 +214,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                     printf("cat: Can not open file '%s': Permission denied\n", tmpNode2->name);
                     return FAIL;
                 }
-                else Concatenate(dirTree, str, 3);
+                else concatenate(dirTree, str, 3);
                 
             } else {
                 strncpy(tmp2, getDir(str), MAX_DIR);
@@ -245,7 +245,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                     dirTree->current = currentNode;
                     return FAIL;
                 }
-                else Concatenate(dirTree, tmp3, 3);
+                else concatenate(dirTree, tmp3, 3);
                 dirTree->current = currentNode;
             }
         } else if(strcmp(command, "--help") == 0) {
@@ -270,7 +270,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
         }
     } else {
         if (!strcmp(command, "/etc/passwd")) {
-            Concatenate(dirTree, command, 4);
+            concatenate(dirTree, command, 4);
             return SUCCESS;
         }
         strncpy(tmp, command, MAX_DIR);
@@ -290,7 +290,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
             } else if (tmpNode2 && checkPermission(tmpNode2, 'r')) {
                 printf("cat: Can not open file '%s': Permission denied\n", tmpNode2->name);
                 return FAIL;
-            } else Concatenate(dirTree, command, 1);
+            } else concatenate(dirTree, command, 1);
         } else {
             strncpy(tmp2, getDir(command), MAX_DIR);
             value = MovePath(dirTree, tmp2);
@@ -317,7 +317,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                 printf("cat:  Can not open file '%s': Permission denied\n", tmpNode2->name);
                 dirTree->current = currentNode;
                 return FALSE;
-            } else Concatenate(dirTree, tmp3, 1);
+            } else concatenate(dirTree, tmp3, 1);
             dirTree->current = currentNode;
         }
     }

@@ -3,8 +3,8 @@
 int main() {
     char command[50];
 
-    Linux = LoadDir();
-    usrList = LoadUserList();
+    Linux = loadDirectoryTree();
+    usrList = loadUserList();
     dStack = initStack();
 
     login(usrList, Linux);

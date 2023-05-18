@@ -109,33 +109,34 @@ time_t ltime;
 struct tm *today;
 
 // user.c
-UserList *initUser();
 void writeUser(UserList *userList, UserNode *userNode);
-void SaveUserList(UserList *userList);
 int ReadUser(UserList *userList, char *tmp);
-UserList *LoadUserList();
 UserNode *IsExistUser(UserList *userList, char *userName);
 char *GetUID(DirectoryNode *dirNode);
 char *GetGID(DirectoryNode *dirNode);
 
+// userlist.c
+UserList *loadUserList();
+void SaveUserList(UserList *userList);
+UserList *initUserList();
 
 // directory.c
 char *getDir(char *dirPath);
 void getPath(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack);
-void WriteNode(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack);
-void SaveDir(DirectoryTree *dirTree, Stack *dirStack);
-int ReadNode(DirectoryTree *dirTree, char *tmp);
-DirectoryTree *LoadDir();
-DirectoryTree *InitializeTree();
+void writeDirNode(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack);
+void saveDir(DirectoryTree *dirTree, Stack *dirStack);
+int readDirNode(DirectoryTree *dirTree, char *tmp);
+DirectoryTree *loadDirectoryTree();
+DirectoryTree *initDirectoryTree();
 DirectoryNode *IsExistDir(DirectoryTree *dirTree, char *dirName, char type);
 
 // cat.c
-int Concatenate(DirectoryTree* dirTree, char* fName, int type);
+int concatenate(DirectoryTree* dirTree, char* fName, int type);
 int ft_cat(DirectoryTree* dirTree, char* cmd);
 
 // cd.c
-int MovePath(DirectoryTree* dirTree, char* dirPath);
-int Movecurrent(DirectoryTree* dirTree, char* dirPath);
+int movePath(DirectoryTree* dirTree, char* dirPath);
+int moveCurrent(DirectoryTree* dirTree, char* dirPath);
 int ft_cd(DirectoryTree* dirTree, char* cmd);
 
 // chmod.c

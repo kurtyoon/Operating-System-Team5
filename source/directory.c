@@ -49,7 +49,7 @@ void getPath(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack) {
 }
 
 
-void WriteNode(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack) {
+void writeDirNode(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack) {
     fprintf(Dir, "%s %c %d ", dirNode->name, dirNode->type, dirNode->permission.mode);
     fprintf(Dir, "%d %d %d %d %d %d %d", dirNode->SIZE, dirNode->id.UID, dirNode->id.GID, dirNode->date.month, dirNode->date.day, dirNode->date.hour, dirNode->date.minute);
 
@@ -59,20 +59,20 @@ void WriteNode(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack) 
         getPath(dirTree, dirNode, dirStack);
     }
     if (dirNode->nextSibling) {
-        WriteNode(dirTree, dirNode->nextSibling, dirStack);
+        writeDirNode(dirTree, dirNode->nextSibling, dirStack);
     }
     if (dirNode->firstChild) {
-        WriteNode(dirTree, dirNode->firstChild, dirStack);
+        writeDirNode(dirTree, dirNode->firstChild, dirStack);
     }
 }
 
-void SaveDir(DirectoryTree *dirTree, Stack *dirStack) {
+void saveDir(DirectoryTree *dirTree, Stack *dirStack) {
     Dir = fopen("file/Directory.txt", "w");
-    WriteNode(dirTree, dirTree->root, dirStack);
+    writeDirNode(dirTree, dirTree->root, dirStack);
     fclose(Dir);
 }
 
-int ReadNode(DirectoryTree *dirTree, char *tmp) {
+int readDirNode(DirectoryTree *dirTree, char *tmp) {
     DirectoryNode *NewNode = (DirectoryNode *)malloc(sizeof(DirectoryNode));
     DirectoryNode *tmpNode = NULL;
     char *str;
@@ -124,20 +124,20 @@ int ReadNode(DirectoryTree *dirTree, char *tmp) {
     return 0;
 }
 
-DirectoryTree *LoadDir() {
+DirectoryTree *loadDirectoryTree() {
     DirectoryTree *dirTree = (DirectoryTree *)malloc(sizeof(DirectoryTree));
     char tmp[MAX_LENGTH];
 
     Dir = fopen("file/Directory.txt", "r");
     while (fgets(tmp, MAX_LENGTH, Dir)) {
-        ReadNode(dirTree, tmp);
+        readDirNode(dirTree, tmp);
     }
     fclose(Dir);
     dirTree->current = dirTree->root;
     return dirTree;
 }
 
-DirectoryTree *InitializeTree() {
+DirectoryTree *initDirectoryTree() {
     DirectoryTree *dirTree = (DirectoryTree *)malloc(sizeof(DirectoryTree));
     DirectoryNode *NewNode = (DirectoryNode *)malloc(sizeof(DirectoryNode));
 

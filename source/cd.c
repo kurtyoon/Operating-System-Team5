@@ -1,6 +1,6 @@
 #include "../include/main.h"
 
-int Movecurrent(DirectoryTree* dirTree, char* dirPath) {
+int moveCurrent(DirectoryTree* dirTree, char* dirPath) {
     DirectoryNode* tmpNode = NULL;
 
     if (!strcmp(dirPath,".")) {
@@ -14,7 +14,7 @@ int Movecurrent(DirectoryTree* dirTree, char* dirPath) {
     return SUCCESS;
 }
 
-int MovePath(DirectoryTree* dirTree, char* dirPath) {
+int movePath(DirectoryTree* dirTree, char* dirPath) {
     DirectoryNode* tmpNode = NULL;
     char tmpPath[MAX_DIR];
     char* str = NULL;
@@ -31,7 +31,7 @@ int MovePath(DirectoryTree* dirTree, char* dirPath) {
         }
         str = strtok(tmpPath, "/");
         while (str) {
-            val = Movecurrent(dirTree, str);
+            val = moveCurrent(dirTree, str);
             if (val) {
                 dirTree->current = tmpNode;
                 return -1;
@@ -42,17 +42,17 @@ int MovePath(DirectoryTree* dirTree, char* dirPath) {
     return SUCCESS;
 }
 
-int ft_cd(DirectoryTree* dirTree, char* cmd) {
-    DirectoryNode* tmpNode = NULL;
-    char* str = NULL;
+int ft_cd(DirectoryTree *dirTree, char *command) {
+    DirectoryNode *tmpNode = NULL;
+    char *str = NULL;
     char tmp[MAX_DIR];
-    int val;
+    int value;
 
-    if (!cmd) {
+    if (!command) {
         strcpy(tmp, usrList->current->dir);
-        MovePath(dirTree, tmp);
-    } else if(cmd[0] == '-') {
-        if (!strcmp(cmd, "--help")) {
+        movePath(dirTree, tmp);
+    } else if(command[0] == '-') {
+        if (!strcmp(command, "--help")) {
             printf("cd: cd [dir]\n");
             printf("    Change the shell working directory.\n\n");
             printf("    Change the current directory to DIR.  The default DIR is the value of the\n");
@@ -68,7 +68,7 @@ int ft_cd(DirectoryTree* dirTree, char* cmd) {
             printf("      --help     display this help and exit\n");
             return -1;
         } else {
-            str = strtok(cmd, "-");
+            str = strtok(command, "-");
             if (!str) {
                 printf("cd: Invalid option\n");
                 printf("Try 'cd --help' for more information.\n");
@@ -80,20 +80,20 @@ int ft_cd(DirectoryTree* dirTree, char* cmd) {
             }
         }
     } else {
-        tmpNode = IsExistDir(dirTree, cmd, 'd');
+        tmpNode = IsExistDir(dirTree, command, 'd');
         if (tmpNode) {
             if (checkPermission(tmpNode, 'r')) {
-                printf("-bash: cd: '%s': Permission denied\n", cmd);
+                printf("-bash: cd: '%s': Permission denied\n", command);
                 return FAIL;
             }
         }
-        tmpNode = IsExistDir(dirTree, cmd,  'f');
+        tmpNode = IsExistDir(dirTree, command, 'f');
         if (tmpNode) {
-            printf("-bash: cd: '%s': Not a directory\n", cmd);
+            printf("-bash: cd: '%s': Not a directory\n", command);
             return FAIL;
         }
-        val = MovePath(dirTree, cmd);
-        if (val) printf("-bash: cd: No such file or directory '%s'\n", cmd);
+        value = movePath(dirTree, command);
+        if (value) printf("-bash: cd: No such file or directory '%s'\n", command);
     }
     return SUCCESS;
 }

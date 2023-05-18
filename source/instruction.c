@@ -12,16 +12,16 @@ void Instruction(DirectoryTree *dirTree, char *command) {
     else if (!strcmp(str, "mkdir")) {
         str = strtok(NULL, " ");
         value = ft_mkdir(dirTree, str);
-        if (!value) SaveDir(dirTree, dStack);
+        if (!value) saveDir(dirTree, dStack);
     } else if (!strcmp(str, "cp")) {
         str = strtok(NULL, " ");
         str1 = strtok(NULL, " ");
         value = ft_cp(dirTree, str, str1);
-        if (!value) SaveDir(dirTree, dStack);
+        if (!value) saveDir(dirTree, dStack);
     } else if (!strcmp(str, "rm")) {
         str = strtok(NULL, " ");
         value = ft_rm(dirTree, str);
-        if (!value) SaveDir(dirTree, dStack);
+        if (!value) saveDir(dirTree, dStack);
     } else if (!strcmp(str, "cd")) {
         str = strtok(NULL, " ");
         ft_cd(dirTree, str);
@@ -34,15 +34,15 @@ void Instruction(DirectoryTree *dirTree, char *command) {
     } else if (!strcmp(str, "cat")) {
         str = strtok(NULL, " ");
         value = ft_cat(dirTree, str);
-        if (!value) SaveDir(dirTree, dStack);
+        if (!value) saveDir(dirTree, dStack);
     } else if(!strcmp(str, "chmod")) {
         str = strtok(NULL, " ");
         value = ft_chmod(dirTree, str);
-        if (!value) SaveDir(dirTree, dStack);
+        if (!value) saveDir(dirTree, dStack);
     } else if(!strcmp(str, "chown")) {
         str = strtok(NULL, " ");
         value = ft_chown(dirTree, str);
-        if (!value) SaveDir(dirTree, dStack);
+        if (!value) saveDir(dirTree, dStack);
     } else if (!strcmp(str, "find")) {
         str = strtok(NULL, " ");
         ft_find(dirTree, str);

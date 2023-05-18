@@ -92,7 +92,7 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
                 }
             } else {
                 strncpy(tmp2, getDir(str), MAX_DIR);
-                val = MovePath(dirTree, tmp2);
+                val = movePath(dirTree, tmp2);
                 if (val) {
                     printf("rm: '%s': No such file or directory.\n", tmp2);
                     return FAIL;
@@ -140,7 +140,7 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
                 }
             } else {
                 strncpy(tmp2, getDir(str), MAX_DIR);
-                val = MovePath(dirTree, tmp2);
+                val = movePath(dirTree, tmp2);
                 if (val) {
                     return FAIL;
                 }
@@ -186,7 +186,7 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
                 }
             } else {
                 strncpy(tmp2, getDir(str), MAX_DIR);
-                val = MovePath(dirTree, tmp2);
+                val = movePath(dirTree, tmp2);
                 if (val) {
                     return FAIL;
                 }
@@ -250,7 +250,7 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
             }
         } else {
             strncpy(tmp2, getDir(command), MAX_DIR);
-            val = MovePath(dirTree, tmp2);
+            val = movePath(dirTree, tmp2);
             if (val) {
                 printf("rm: Can not remove '%s': No such file or directory.\n", tmp2);
                 return FAIL;
