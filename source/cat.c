@@ -1,7 +1,6 @@
 #include "../include/main.h"
 
 int concatenate(DirectoryTree* dirTree, char* fileName, int type) {
-
     UserNode* tmpUser = NULL;
     DirectoryNode* tmpNode = NULL;
     FILE* fp;
