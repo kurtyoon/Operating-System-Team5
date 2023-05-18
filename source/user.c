@@ -12,7 +12,10 @@ void writeUser(UserList *userList, UserNode *userNode) {
     userList->current->date.minute = today->tm_min;
     userList->current->date.second =today->tm_sec;
 
-    fprintf(User, "%s %d %d %d %d %d %d %d %d %d %s\n", userNode->name, userNode->id.UID, userNode->id.GID, userNode->date.year, userNode->date.month, userNode->date.weekday, userNode->date.day, userNode->date.hour, userNode->date.minute, userNode->date.second, userNode->dir);
+    fprintf(User, "%s %d %d %d %d %d %d %d %d %d %s\n", \
+    userNode->name, userNode->id.UID, userNode->id.GID, userNode->date.year, \
+    userNode->date.month, userNode->date.weekday, userNode->date.day, userNode->date.hour, \
+    userNode->date.minute, userNode->date.second, userNode->dir);
 
     if (userNode->nextNode) writeUser(userList, userNode->nextNode);
 }
@@ -22,7 +25,6 @@ int readUser(UserList *userList, char *tmp) {
     char *str;
 
     NewNode->nextNode = NULL;
-
     str = strtok(tmp, " ");
     strncpy(NewNode->name, str, MAX_NAME);
     str = strtok(NULL, " ");
@@ -47,14 +49,14 @@ int readUser(UserList *userList, char *tmp) {
     str[strlen(str)-1] = '\0';
     strncpy(NewNode->dir, str, MAX_DIR);
 
-    if (strcmp(NewNode->name, "root") == 0) {
+    if (!strcmp(NewNode->name, "root")) {
         userList->head = NewNode;
         userList->tail = NewNode;
     } else {
         userList->tail->nextNode = NewNode;
         userList->tail = NewNode;
     }
-    return 0;
+    return SUCCESS;
 }
 
 UserNode *userExistence(UserList *userList, char *userName) {

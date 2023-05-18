@@ -11,9 +11,9 @@ int concatenate(DirectoryTree* dirTree, char* fileName, int type) {
     int cnt = 1;
 
     if (type) {
-        if(type == 4){
+        if(type == 4) {
             tmpUser = usrList->head;
-            while (tmpUser){
+            while (tmpUser) {
                 printf("%s:x:%d:%d:%s:%s\n", tmpUser->name, tmpUser->id.UID, tmpUser->id.GID, tmpUser->name, tmpUser->dir);
                 tmpUser = tmpUser->nextNode;
             }
@@ -77,8 +77,8 @@ int ft_cat(DirectoryTree* dirTree, char* command)
     int value;
 
     if (!command) {
-        long			size;
-	    unsigned char	c;
+        long size;
+	    unsigned char c;
         size = read(0, &c, 1);
 	    while (size)
 	    {

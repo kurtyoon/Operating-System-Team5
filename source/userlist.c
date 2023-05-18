@@ -11,8 +11,8 @@ UserList *initUserList() {
     strncpy(newNode->dir, "/", MAX_NAME);
     newNode->id.UID = 0;
     newNode->id.GID = 0;
-    newNode->date.year = today->tm_year+1900;
-    newNode->date.month = today->tm_mon+1;
+    newNode->date.year = today->tm_year + 1900;
+    newNode->date.month = today->tm_mon + 1;
     newNode->date.weekday = today->tm_wday;
     newNode->date.day = today->tm_mday;
     newNode->date.hour = today->tm_hour;

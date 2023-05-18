@@ -77,11 +77,11 @@ int listDir(DirectoryTree *dirTree, int optionA, int optionL) {
                 tmpNode2 = dirTree->current->parent->firstChild;
                 if (!tmpNode2) cnt = 2;
                 else {
-                    if(tmpNode2->type == 'd') cnt = 3;
+                    if (tmpNode2->type == 'd') cnt = 3;
                     else cnt = 2;
                     while (tmpNode2->nextSibling) {
                         tmpNode2 = tmpNode2->nextSibling;
-                        if(tmpNode2->type == 'd') cnt += 1;
+                        if (tmpNode2->type == 'd') cnt += 1;
                     }
                 }
                 printf("%c", dirTree->current->parent->type);
@@ -113,7 +113,7 @@ int listDir(DirectoryTree *dirTree, int optionA, int optionL) {
                 else cnt = 2;
                 while (tmpNode2->nextSibling) {
                     tmpNode2 = tmpNode2->nextSibling;
-                    if(tmpNode2->type == 'd') cnt += 1;
+                    if (tmpNode2->type == 'd') cnt += 1;
                 }
             }
             if (tmpNode->type == 'd') type = 'd';

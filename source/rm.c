@@ -206,7 +206,7 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
                 dirTree->current = currentNode;
             }
         } else if (!strcmp(command, "--help")) {
-            printf("Manual: rm [Option]... [<File>]...\n");
+            printf("Manual: rm [Option]... [File]...\n");
             printf("  Remove the FILE(s).\n\n");
             printf("  Options:\n");
             printf("    -f, --force    \t ignore nonexistent files and arguments, never prompt\n");
@@ -232,7 +232,7 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
             tmpNode2 = dirExistence(dirTree, command, 'd');
 
             if (tmpNode2) {
-                printf("rm:Can not remove '%s': Is a directory.\n", command);
+                printf("rm: Can not remove '%s': Is a directory.\n", command);
                 return FAIL;
             }
             if (!tmpNode) {

@@ -4,7 +4,6 @@ int printPath(DirectoryTree *dirTree, Stack *dirStack) {
     DirectoryNode *tmpNode = NULL;
 
     tmpNode = dirTree->current;
-
     if (tmpNode == dirTree->root) printf("/");
     else {
         while (tmpNode->parent) {

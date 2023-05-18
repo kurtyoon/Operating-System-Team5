@@ -4,7 +4,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <pthread.h>
-#include <semaphore.h>
+#include <fcntl.h>
 #ifndef MAIN_H_
 #define MAIN_H_
 #define DEFAULT printf("%c[%dm", 0x1B, 0)
@@ -213,6 +213,5 @@ Stack* dStack;
 UserList* usrList;
 FILE* Dir;
 FILE* User;
-sem_t semp;
 
 #endif 

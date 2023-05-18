@@ -57,19 +57,19 @@ void changeOwnerAll(DirectoryNode *dirNode, char *userName) {
     dirNode->id.GID = tmpUser->id.GID;
 }
 
-int ft_chown(DirectoryTree* dirTree, char* cmd) {
+int ft_chown(DirectoryTree* dirTree, char* command) {
     DirectoryNode* tmpNode = NULL;
     UserNode* tmpUser = NULL;
     char* str;
     char tmp[MAX_NAME];
 
-    if (!cmd) {
+    if (!command) {
         printf("chown: Invalid option\n");
         printf("Try 'chown --help' for more information.\n");
         return -1;
     }
-    if (cmd[0] == '-') {
-        if(!strcmp(cmd, "--help")) {
+    if (command[0] == '-') {
+        if(!strcmp(command, "--help")) {
             printf("Usage: chown [OPTION]... [OWNER] FILE...\n");
             printf("Change the owner of each FILE to OWNER.\n\n");
             printf("  Options:\n");
@@ -77,7 +77,7 @@ int ft_chown(DirectoryTree* dirTree, char* cmd) {
             printf("      --help     display this help and exit\n");
             return FAIL;
         } else {
-            str = strtok(cmd, "-");
+            str = strtok(command, "-");
             if (!str) {
                 printf("chown: Invalid option\n");
                 printf("Try 'chown --help' for more information.\n");
@@ -89,7 +89,7 @@ int ft_chown(DirectoryTree* dirTree, char* cmd) {
             }
         }
     } else {
-        strncpy(tmp, cmd, MAX_NAME);
+        strncpy(tmp, command, MAX_NAME);
         str = strtok(NULL, " ");
         if (!str) {
             printf("chown: Invalid option\n");

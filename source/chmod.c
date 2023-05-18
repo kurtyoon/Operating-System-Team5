@@ -1,26 +1,26 @@
 #include "../include/main.h"
 
 int changeMode(DirectoryTree *dirTree, int mode, char *dirName) {
-    DirectoryNode *tmpNode = NULL;
-    DirectoryNode *tmpNode2 = NULL;
+    DirectoryNode *fileNode = NULL;
+    DirectoryNode *dirNode = NULL;
 
-    tmpNode = dirExistence(dirTree, dirName, 'd');
-    tmpNode2 = dirExistence(dirTree, dirName, 'f');
+    fileNode = dirExistence(dirTree, dirName, 'd');
+    dirNode = dirExistence(dirTree, dirName, 'f');
 
-    if (tmpNode) {
-        if (checkPermission(tmpNode, 'w')) {
+    if (fileNode) {
+        if (checkPermission(fileNode, 'w')) {
             printf("chmod: Can not modify file '%s': Permission denied\n", dirName);
             return FAIL;
         }
-        tmpNode->permission.mode = mode;
-        modeToPermission(tmpNode);
-    } else if (tmpNode2) {
-        if (checkPermission(tmpNode2, 'w')) {
+        fileNode->permission.mode = mode;
+        modeToPermission(fileNode);
+    } else if (dirNode) {
+        if (checkPermission(dirNode, 'w')) {
             printf("chmod: Can not modify file '%s': Permission denied\n", dirName);
             return FAIL;
         }
-        tmpNode2->permission.mode = mode;
-        modeToPermission(tmpNode2);
+        dirNode->permission.mode = mode;
+        modeToPermission(dirNode);
     } else {
         printf("chmod: Can not access to '%s: There is no such file or directory\n", dirName);
         return FAIL;

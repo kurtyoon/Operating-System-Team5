@@ -21,7 +21,7 @@ char *getDir(char *dirPath) {
     str = strtok(dirPath, "/");
     while (str) {
         strncpy(tmp2, str, MAX_DIR);
-        str  = strtok(NULL, "/");
+        str = strtok(NULL, "/");
     }
     strncpy(tmpPath, tmp, strlen(tmp) - strlen(tmp2) - 1);
     tmpPath[strlen(tmp) - strlen(tmp2) - 1] = '\0';
@@ -58,49 +58,49 @@ void writeDirNode(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStac
 }
 
 int readDirNode(DirectoryTree *dirTree, char *tmp) {
-    DirectoryNode *NewNode = (DirectoryNode *)malloc(sizeof(DirectoryNode));
+    DirectoryNode *newNode = (DirectoryNode *)malloc(sizeof(DirectoryNode));
     DirectoryNode *tmpNode = NULL;
     char *str;
 
-    NewNode->firstChild = NULL;
-    NewNode->nextSibling = NULL;
-    NewNode->parent = NULL;
+    newNode->firstChild = NULL;
+    newNode->nextSibling = NULL;
+    newNode->parent = NULL;
 
     str = strtok(tmp, " ");
-    strncpy(NewNode->name, str, MAX_NAME);
+    strncpy(newNode->name, str, MAX_NAME);
     str = strtok(NULL, " ");
-    NewNode->type = str[0];
+    newNode->type = str[0];
     str = strtok(NULL, " ");
-    NewNode->permission.mode = atoi(str);
-    modeToPermission(NewNode);
+    newNode->permission.mode = atoi(str);
+    modeToPermission(newNode);
     str = strtok(NULL, " ");
-    NewNode->SIZE = atoi(str);
+    newNode->SIZE = atoi(str);
     str = strtok(NULL, " ");
-    NewNode->id.UID = atoi(str);
+    newNode->id.UID = atoi(str);
     str = strtok(NULL, " ");
-    NewNode->id.GID = atoi(str);
+    newNode->id.GID = atoi(str);
     str = strtok(NULL, " ");
-    NewNode->date.month = atoi(str);
+    newNode->date.month = atoi(str);
     str = strtok(NULL, " ");
-    NewNode->date.day = atoi(str);
+    newNode->date.day = atoi(str);
     str = strtok(NULL, " ");
-    NewNode->date.hour = atoi(str);
+    newNode->date.hour = atoi(str);
     str = strtok(NULL, " ");
-    NewNode->date.minute = atoi(str);
+    newNode->date.minute = atoi(str);
 
     str = strtok(NULL, " ");
     if (str) {
         str[strlen(str) - 1] = '\0';
         movePath(dirTree, str);
-        NewNode->parent = dirTree->current;
-        if (!dirTree->current->firstChild) dirTree->current->firstChild = NewNode;
+        newNode->parent = dirTree->current;
+        if (!dirTree->current->firstChild) dirTree->current->firstChild = newNode;
         else {
             tmpNode = dirTree->current->firstChild;
             while (tmpNode->nextSibling) tmpNode = tmpNode->nextSibling;
-            tmpNode->nextSibling = NewNode;
+            tmpNode->nextSibling = newNode;
         }
     } else {
-        dirTree->root = NewNode;
+        dirTree->root = newNode;
         dirTree->current = dirTree->root;
     }
     return 0;
