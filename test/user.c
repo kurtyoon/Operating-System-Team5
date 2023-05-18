@@ -1,4 +1,4 @@
-#include "../include/main.h"
+#include "main.h"
 
 UserList *initUser() {
     UserList *returnList = (UserList *)malloc(sizeof(UserList));

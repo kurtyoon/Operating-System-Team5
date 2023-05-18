@@ -1,4 +1,4 @@
-#include "../include/main.h"
+#include "main.h"
 
 int Concatenate(DirectoryTree* dirTree, char* fName, int type) {
 

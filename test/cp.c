@@ -1,4 +1,4 @@
-#include "../include/main.h"
+#include "main.h"
 
 int ft_cp(DirectoryTree* dirTree, char* SourceName, char* ObjectName) {
     char buf[1024];

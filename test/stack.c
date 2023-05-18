@@ -1,4 +1,4 @@
-#include "../include/main.h"
+#include "main.h"
 
 boolean isEmpty(Stack* stack) {
     if(stack->topNode == NULL){
