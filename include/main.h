@@ -101,7 +101,7 @@ typedef struct threadTree {
     DirectoryTree *fileName;
     char *command;
     char *copyPath;
-    char *additionalValue;
+    int option;
 } ThreadTree;
 
 //time
@@ -193,6 +193,9 @@ void login(UserList *userList, DirectoryTree *dirTree);
 int modeToPermission(DirectoryNode *dirNode);
 void printPermission(DirectoryNode *dirNode);
 int checkPermission(DirectoryNode *dirNode, char o);
+
+// thread.c
+void *thread_routine_make_directory(void *arg);
 
 // stack.c
 boolean isEmpty(Stack *stack);

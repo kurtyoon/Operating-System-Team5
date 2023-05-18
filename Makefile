@@ -7,8 +7,8 @@ OBJ_DIR = object
 INCS = include
 
 SRCS = directory.c instruction.c main.c \
-		stack.c time.c user.c cat.c cd.c \
-		chmod.c chown.c system.c find.c mkdir.c directorytree.c\
+		stack.c time.c user.c cat.c cd.c thread.c \
+		chmod.c chown.c system.c find.c mkdir.c directorytree.c \
 		rm.c pwd.c ls.c cp.c permission.c grep.c userlist.c
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRCS:.c=.o))
 
