@@ -12,7 +12,7 @@ OBJS = $(SRCS:.c=.o)
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) -o $(NAME) $(OBJS) -o $@ -I$(INCS)
+	$(CC) -o $(NAME) $(OBJS) -o $@ -I$(INCS) -lpthread
 
 clean:
 	$(RM) $(OBJS)

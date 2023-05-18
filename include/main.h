@@ -3,6 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <pthread.h>
 #include <semaphore.h>
 #ifndef MAIN_H_
 #define MAIN_H_
@@ -16,6 +17,7 @@
 #define MAX_LENGTH 200
 #define MAX_DIR 50
 #define MAX_NAME 20
+#define MAX_THREAD 50
 #define TRUE 1
 #define FALSE 0
 #define SUCCESS 0
@@ -52,7 +54,7 @@ typedef struct userNode {
     char dir[MAX_DIR];
     ID id;
     Date date;
-    struct userNode *LinkNode;
+    struct userNode *nextNode;
 } UserNode;
 
 // UserList
@@ -85,34 +87,39 @@ typedef struct directoryTree {
 // StackNode
 typedef struct stackNode {
 	char name[MAX_NAME];
-	struct stackNode *LinkNode;
+	struct stackNode *nextNode;
 } StackNode;
 
 // Stack
 typedef struct stack {
-	StackNode* TopNode;
+	StackNode* topNode;
 	int cnt;
 } Stack;
 
+typedef struct threadTree {
+    DirectoryTree *threadTree;
+    DirectoryTree *fileName;
+    char *command;
+    char *copyPath;
+    char *additionalValue;
+} ThreadTree;
 
 //time
 time_t ltime;
 struct tm *today;
 
 // user.c
-UserList *InitializeUser();
-void WriteUser(UserList *userList, UserNode *userNode);
+UserList *initUser();
+void writeUser(UserList *userList, UserNode *userNode);
 void SaveUserList(UserList *userList);
 int ReadUser(UserList *userList, char *tmp);
 UserList *LoadUserList();
 UserNode *IsExistUser(UserList *userList, char *userName);
 char *GetUID(DirectoryNode *dirNode);
 char *GetGID(DirectoryNode *dirNode);
-int HasPermission(DirectoryNode *dirNode, char o);
+
 
 // directory.c
-void DestroyNode(DirectoryNode *dirNode);
-void DestroyDir(DirectoryNode *dirNode);
 char *getDir(char *dirPath);
 void getPath(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack);
 void WriteNode(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack);
@@ -120,16 +127,6 @@ void SaveDir(DirectoryTree *dirTree, Stack *dirStack);
 int ReadNode(DirectoryTree *dirTree, char *tmp);
 DirectoryTree *LoadDir();
 DirectoryTree *InitializeTree();
-int MakeDir(DirectoryTree *dirTree, char *dirName, char type);
-int RemoveDir(DirectoryTree *dirTree, char *dirName);
-int PrintPath(DirectoryTree *dirTree, Stack *dirStack);
-int ListDir(DirectoryTree *dirTree, int a, int l);
-int ChangeMode(DirectoryTree *dirTree, int mode, char *dirName);
-void ChangeModeAll(DirectoryNode *dirNode, int mode);
-int ChangeOwner(DirectoryTree *dirTree, char *userName, char *dirName);
-void ChangeOwnerAll(DirectoryNode *dirNode, char *userName);
-int ReadDir(DirectoryTree *dirTree, char *tmp, char *dirName, int o);
-void FindDir(DirectoryTree *dirTree, char *dirName, int o);
 DirectoryNode *IsExistDir(DirectoryTree *dirTree, char *dirName, char type);
 
 // cat.c
@@ -137,61 +134,72 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int type);
 int ft_cat(DirectoryTree* dirTree, char* cmd);
 
 // cd.c
-int cd(DirectoryTree* dirTree, char* cmd);
 int MovePath(DirectoryTree* dirTree, char* dirPath);
 int Movecurrent(DirectoryTree* dirTree, char* dirPath);
+int ft_cd(DirectoryTree* dirTree, char* cmd);
 
 // chmod.c
-int chmod(DirectoryTree* dirTree, char* cmd);
+int changeMode(DirectoryTree *dirTree, int mode, char *dirName);
+void changeModeAll(DirectoryNode *dirNode, int mode);
+int ft_chmod(DirectoryTree* dirTree, char* cmd);
 
 // chown.c
-int chown_(DirectoryTree* dirTree, char* cmd);
+int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName);
+void changeOwnerAll(DirectoryNode *dirNode, char *userName);
+int ft_chown(DirectoryTree* dirTree, char* cmd);
 
 // cp.c
-int cp(DirectoryTree* dirTree, char* SourceName, char* ObjectName);
+int ft_cp(DirectoryTree* dirTree, char* SourceName, char* ObjectName);
 
 // find.c
-int find_(DirectoryTree *dirTree, char *cmd);
+int readDir(DirectoryTree *dirTree, char *tmp, char *dirName, int o);
+void findDir(DirectoryTree *dirTree, char *dirName, int o);
+int ft_find(DirectoryTree *dirTree, char *cmd);
 
 // grep.c
-void grep(char *search, char *fName);
-void grep_a(char *searching_word, char *f_name);
+void ft_grep(char *search, char *fname, int Option);
 
 // ls.c
-int ls(DirectoryTree *dirTree, char *cmd);
+int listDir(DirectoryTree *dirTree, int a, int l);
+int ft_ls(DirectoryTree *dirTree, char *cmd);
 
 // mkdir.c
-int mkdir(DirectoryTree *dirTree, char *cmd);
+int MakeDir(DirectoryTree *dirTree, char *dirName, char type);
+int ft_mkdir(DirectoryTree *dirTree, char *cmd);
 
 // pwd.c
-int pwd(DirectoryTree *dirTree, Stack *dirStack, char *cmd);
+int PrintPath(DirectoryTree *dirTree, Stack *dirStack);
+int ft_pwd(DirectoryTree *dirTree, Stack *dirStack, char *cmd);
 
 // rm.c
-int rm(DirectoryTree *dirTree, char *cmd);
+void destroyNode(DirectoryNode *dirNode);
+void destroyDir(DirectoryNode *dirNode);
+int removeDir(DirectoryTree *dirTree, char *dirName);
+int ft_rm(DirectoryTree *dirTree, char *cmd);
 
 // instruction.c
 void Instruction(DirectoryTree* dirTree, char* cmd);
-void PrintStart();
-void PrintHead(DirectoryTree* dirTree, Stack* dirStack);
 
 // system.c
-void PrintStart();
-void PrintHead(DirectoryTree *dirTree, Stack *dirStack);
-void Login(UserList *userList, DirectoryTree *dirTree);
+void getToday(Date *date);
+void printStart();
+void printPrompt(DirectoryTree *dirTree, Stack *dirStack);
+void login(UserList *userList, DirectoryTree *dirTree);
 
 // permission.c
-int Mode2Permission(DirectoryNode *dirNode);
-void PrintPermission(DirectoryNode *dirNode);
+int modeToPermission(DirectoryNode *dirNode);
+void printPermission(DirectoryNode *dirNode);
+int checkPermission(DirectoryNode *dirNode, char o);
 
 // stack.c
-boolean IsEmpty(Stack *stack);
-Stack* InitializeStack();
-int Push(Stack* dirStack, char* dirName);
-char *Pop(Stack* dirStack);
+boolean isEmpty(Stack *stack);
+Stack* initStack();
+int pushStack(Stack* dirStack, char* dirName);
+char *popStack(Stack* dirStack);
 
 // time.c
-void GetMonth(int i);
-void GetWeekday(int i);
+void getMonth(int type);
+void getWeekday(int type);
 
 //global variable
 DirectoryTree* Linux;

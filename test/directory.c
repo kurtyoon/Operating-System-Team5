@@ -1,21 +1,5 @@
 #include "main.h"
 
-void DestroyNode(DirectoryNode *dirNode) {
-    free(dirNode);
-}
-
-void DestroyDir(DirectoryNode *dirNode) {
-    if (dirNode->nextSibling) {
-        DestroyDir(dirNode->nextSibling);
-    }
-    if (dirNode->firstChild) {
-        DestroyDir(dirNode->firstChild);
-    }
-    dirNode->firstChild = NULL;
-    dirNode->nextSibling = NULL;
-    DestroyNode(dirNode);
-}
-
 DirectoryNode *IsExistDir(DirectoryTree *dirTree, char *dirName, char type) {
     DirectoryNode *returnNode = NULL;
 
@@ -179,47 +163,4 @@ DirectoryTree *InitializeTree() {
     dirTree->current = dirTree->root;
 
     return dirTree;
-}
-
-
-
-int ReadDir(DirectoryTree *dirTree, char *tmp, char *dirName, int o) {
-    char *str;
-    char str2[MAX_NAME];
-    if (o == 0) {
-        str = strtok(tmp, " ");
-        strcpy(str2, str);
-        for (int i = 0; i < 10; i++) {
-            str = strtok(NULL, " ");
-        }
-        if (str) {
-            if (strstr(str2, dirName)) {
-                str[strlen(str) - 1] = '\0';
-                if (!strcmp(str, "/")) {
-                    printf("/%s\n", str2);
-                }
-                else {
-                    printf("%s/%s\n", str, str2);
-                }
-            }
-        }
-    } else {
-        str = strtok(tmp, " ");
-        strcpy(str2, str);
-        for (int i = 0; i < 10; i++) {
-            str = strtok(NULL, " ");
-        }
-        if (str) {
-            if (strstr(str, dirName)) {
-                str[strlen(str) - 1] = '\0';
-                if (!strcmp(str, "/")) {
-                    printf("/%s\n", str2);
-                }   
-                else {
-                    printf("%s/%s\n", str, str2);
-                }
-            }
-        }
-    }
-    return 0;
 }

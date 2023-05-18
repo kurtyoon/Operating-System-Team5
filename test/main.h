@@ -109,8 +109,8 @@ time_t ltime;
 struct tm *today;
 
 // user.c
-UserList *InitializeUser();
-void WriteUser(UserList *userList, UserNode *userNode);
+UserList *initUser();
+void writeUser(UserList *userList, UserNode *userNode);
 void SaveUserList(UserList *userList);
 int ReadUser(UserList *userList, char *tmp);
 UserList *LoadUserList();
@@ -120,8 +120,6 @@ char *GetGID(DirectoryNode *dirNode);
 
 
 // directory.c
-void DestroyNode(DirectoryNode *dirNode);
-void DestroyDir(DirectoryNode *dirNode);
 char *getDir(char *dirPath);
 void getPath(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack);
 void WriteNode(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack);
@@ -129,7 +127,6 @@ void SaveDir(DirectoryTree *dirTree, Stack *dirStack);
 int ReadNode(DirectoryTree *dirTree, char *tmp);
 DirectoryTree *LoadDir();
 DirectoryTree *InitializeTree();
-int ReadDir(DirectoryTree *dirTree, char *tmp, char *dirName, int o);
 DirectoryNode *IsExistDir(DirectoryTree *dirTree, char *dirName, char type);
 
 // cat.c
@@ -155,14 +152,15 @@ int ft_chown(DirectoryTree* dirTree, char* cmd);
 int ft_cp(DirectoryTree* dirTree, char* SourceName, char* ObjectName);
 
 // find.c
-void FindDir(DirectoryTree *dirTree, char *dirName, int o);
+int readDir(DirectoryTree *dirTree, char *tmp, char *dirName, int o);
+void findDir(DirectoryTree *dirTree, char *dirName, int o);
 int ft_find(DirectoryTree *dirTree, char *cmd);
 
 // grep.c
 void ft_grep(char *search, char *fname, int Option);
 
 // ls.c
-int ListDir(DirectoryTree *dirTree, int a, int l);
+int listDir(DirectoryTree *dirTree, int a, int l);
 int ft_ls(DirectoryTree *dirTree, char *cmd);
 
 // mkdir.c
@@ -174,18 +172,19 @@ int PrintPath(DirectoryTree *dirTree, Stack *dirStack);
 int ft_pwd(DirectoryTree *dirTree, Stack *dirStack, char *cmd);
 
 // rm.c
-int RemoveDir(DirectoryTree *dirTree, char *dirName);
+void destroyNode(DirectoryNode *dirNode);
+void destroyDir(DirectoryNode *dirNode);
+int removeDir(DirectoryTree *dirTree, char *dirName);
 int ft_rm(DirectoryTree *dirTree, char *cmd);
 
 // instruction.c
 void Instruction(DirectoryTree* dirTree, char* cmd);
-void PrintStart();
-void PrintHead(DirectoryTree* dirTree, Stack* dirStack);
 
 // system.c
-void PrintStart();
-void PrintHead(DirectoryTree *dirTree, Stack *dirStack);
-void Login(UserList *userList, DirectoryTree *dirTree);
+void getToday(Date *date);
+void printStart();
+void printPrompt(DirectoryTree *dirTree, Stack *dirStack);
+void login(UserList *userList, DirectoryTree *dirTree);
 
 // permission.c
 int modeToPermission(DirectoryNode *dirNode);
@@ -199,8 +198,8 @@ int pushStack(Stack* dirStack, char* dirName);
 char *popStack(Stack* dirStack);
 
 // time.c
-void GetMonth(int i);
-void GetWeekday(int i);
+void getMonth(int type);
+void getWeekday(int type);
 
 //global variable
 DirectoryTree* Linux;

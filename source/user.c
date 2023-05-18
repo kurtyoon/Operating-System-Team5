@@ -1,35 +1,35 @@
 #include "../include/main.h"
 
-UserList *InitializeUser() {
+UserList *initUser() {
     UserList *returnList = (UserList *)malloc(sizeof(UserList));
-    UserNode *NewNode = (UserNode *)malloc(sizeof(UserNode));
+    UserNode *newNode = (UserNode *)malloc(sizeof(UserNode));
 
     time(&ltime);
     today = localtime(&ltime);
 
-    strncpy(NewNode->name, "root", MAX_NAME);
-    strncpy(NewNode->dir, "/", MAX_NAME);
-    NewNode->id.UID = 0;
-    NewNode->id.GID = 0;
-    NewNode->date.year = today->tm_year+1900;
-    NewNode->date.month = today->tm_mon+1;
-    NewNode->date.weekday = today->tm_wday;
-    NewNode->date.day = today->tm_mday;
-    NewNode->date.hour = today->tm_hour;
-    NewNode->date.minute = today->tm_min;
-    NewNode->date.second = today->tm_sec;
-    NewNode->LinkNode = NULL;
+    strncpy(newNode->name, "root", MAX_NAME);
+    strncpy(newNode->dir, "/", MAX_NAME);
+    newNode->id.UID = 0;
+    newNode->id.GID = 0;
+    newNode->date.year = today->tm_year+1900;
+    newNode->date.month = today->tm_mon+1;
+    newNode->date.weekday = today->tm_wday;
+    newNode->date.day = today->tm_mday;
+    newNode->date.hour = today->tm_hour;
+    newNode->date.minute = today->tm_min;
+    newNode->date.second = today->tm_sec;
+    newNode->nextNode = NULL;
 
-    returnList->head = NewNode;
-    returnList->tail = NewNode;
-    returnList->current = NewNode;
+    returnList->head = newNode;
+    returnList->tail = newNode;
+    returnList->current = newNode;
     returnList->topId.UID = 0;
     returnList->topId.GID = 0;
 
     return returnList;
 }
 
-void WriteUser(UserList *userList, UserNode *userNode) {
+void writeUser(UserList *userList, UserNode *userNode) {
     time(&ltime);
     today = localtime(&ltime);
 
@@ -43,15 +43,15 @@ void WriteUser(UserList *userList, UserNode *userNode) {
 
     fprintf(User, "%s %d %d %d %d %d %d %d %d %d %s\n", userNode->name, userNode->id.UID, userNode->id.GID, userNode->date.year, userNode->date.month, userNode->date.weekday, userNode->date.day, userNode->date.hour, userNode->date.minute, userNode->date.second, userNode->dir);
 
-    if (userNode->LinkNode) {
-        WriteUser(userList, userNode->LinkNode);
+    if (userNode->nextNode) {
+        writeUser(userList, userNode->nextNode);
     }
 
 }
 
 void SaveUserList(UserList *userList) {
     User = fopen("file/User.txt", "w");
-    WriteUser(userList, userList->head);
+    writeUser(userList, userList->head);
     fclose(Dir);
 }
 
@@ -59,7 +59,7 @@ int ReadUser(UserList *userList, char *tmp) {
     UserNode *NewNode = (UserNode *)malloc(sizeof(UserNode));
     char *str;
 
-    NewNode->LinkNode = NULL;
+    NewNode->nextNode = NULL;
 
     str = strtok(tmp, " ");
     strncpy(NewNode->name, str, MAX_NAME);
@@ -89,7 +89,7 @@ int ReadUser(UserList *userList, char *tmp) {
         userList->head = NewNode;
         userList->tail = NewNode;
     } else {
-        userList->tail->LinkNode = NewNode;
+        userList->tail->nextNode = NewNode;
         userList->tail = NewNode;
     }
     return 0;
@@ -113,10 +113,8 @@ UserNode *IsExistUser(UserList *userList, char *userName) {
 
     returnUser = userList->head;
     while (returnUser) {
-        if (!strcmp(returnUser->name, userName)) {
-            break;
-        }
-        returnUser = returnUser->LinkNode;
+        if (!strcmp(returnUser->name, userName)) break;
+        returnUser = returnUser->nextNode;
     }
     return returnUser;
 }
@@ -126,10 +124,8 @@ char *GetUID(DirectoryNode *dirNode) {
 
     tmpNode = usrList->head;
     while (tmpNode) {
-        if (tmpNode->id.UID == dirNode->id.UID) {
-            break;
-        }
-        tmpNode = tmpNode->LinkNode;
+        if (tmpNode->id.UID == dirNode->id.UID) break;
+        tmpNode = tmpNode->nextNode;
     }
     return tmpNode->name;
 }
@@ -139,94 +135,8 @@ char *GetGID(DirectoryNode *dirNode) {
 
     tmpNode = usrList->head;
     while (tmpNode) {
-        if(tmpNode->id.GID == dirNode->id.GID) {
-            break;
-        }
-        tmpNode = tmpNode->LinkNode;
+        if(tmpNode->id.GID == dirNode->id.GID) break;
+        tmpNode = tmpNode->nextNode;
     }
     return tmpNode->name;
-}
-
-int HasPermission(DirectoryNode *dirNode, char o) {
-    if (usrList->current->id.UID == 0) {
-        return 0;
-    }
-    if (usrList->current->id.UID == dirNode->id.UID) {
-        if (o == 'r') {
-            if(dirNode->permission.permission[0] == 0) {
-                return -1;
-            }
-            else {
-                return 0;
-            }
-        }
-        if (o == 'w') {
-            if(dirNode->permission.permission[1] == 0) {
-                return -1;
-            }
-            else {
-                return 0;
-            }
-        }
-        if (o == 'x') {
-            if (dirNode->permission.permission[2] == 0) {
-                return -1;
-            }
-            else {
-                return 0;
-            }
-        }
-    } else if (usrList->current->id.GID == dirNode->id.GID) {
-        if (o == 'r') {
-            if(dirNode->permission.permission[3] == 0) {
-                return -1;
-            }
-            else {
-                return 0;
-            }
-        }
-        if(o == 'w'){
-            if(dirNode->permission.permission[4] == 0) {
-                return -1;
-            }
-            else {
-                return 0;
-            }
-        }
-        if(o == 'x'){
-            if(dirNode->permission.permission[5] == 0) {
-                return -1;
-            }
-            else {
-                return 0;
-            }
-        }
-    }
-    else{
-        if(o == 'r'){
-            if(dirNode->permission.permission[6] == 0) {
-                return -1;
-            }
-            else {
-                return 0;
-            }
-        }
-        if(o == 'w'){
-            if(dirNode->permission.permission[7] == 0) {
-                return -1;
-            }
-            else {
-                return 0;
-            }
-        }
-        if(o == 'x'){
-            if(dirNode->permission.permission[8] == 0) {
-                return -1;
-            }
-            else {
-                return 0;
-            }
-        }
-    }
-    return -1;
 }

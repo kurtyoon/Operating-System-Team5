@@ -5,20 +5,20 @@ int MakeDir(DirectoryTree *dirTree, char *dirName, char type) {
     DirectoryNode *tmpNode = NULL;
 
     if (checkPermission(dirTree->current, 'w')) {
-        printf("mkdir: '%s' 디렉터리를 만들 수 없습니다: 허가 거부\n", dirName);
+        printf("mkdir: '%s' Can not create directory: Permission denied.\n", dirName);
         free(NewNode);
-        return -1;
+        return FAIL;
     }
     if (!strcmp(dirName, ".") || !strcmp(dirName, "..")) {
-        printf("mkdir: '%s' 디렉터리를 만들 수 없습니다\n", dirName);
+        printf("mkdir: '%s' Can not create directory.\n", dirName);
         free(NewNode);
-        return -1;
+        return FAIL;
     }
     tmpNode = IsExistDir(dirTree, dirName, type);
     if (tmpNode && tmpNode->type == 'd'){
-        printf("mkdir: '%s' 디렉터리를 만들 수 없습니다: 파일이 존재합니다\n", dirName);
+        printf("mkdir: : '%s' Can not create directory: File exists.\n", dirName);
         free(NewNode);
-        return -1;
+        return FAIL;
     }
     time(&ltime);
     today = localtime(&ltime);
@@ -53,9 +53,7 @@ int MakeDir(DirectoryTree *dirTree, char *dirName, char type) {
 	if (!dirTree->current->firstChild) dirTree->current->firstChild = NewNode;
 	else {
         tmpNode = dirTree->current->firstChild;
-        while (tmpNode->nextSibling) {
-            tmpNode = tmpNode->nextSibling;
-        }
+        while (tmpNode->nextSibling) tmpNode = tmpNode->nextSibling;
         tmpNode->nextSibling = NewNode;
 	}
     return 0;
@@ -70,18 +68,18 @@ int ft_mkdir(DirectoryTree *dirTree, char *cmd) {
     int val;
     int tmpMode;
     if (!cmd) {
-        printf("mkdir: 잘못된 연산자\n");
+        printf("mkdir: Invalid option\n");
         printf("Try 'mkdir --help' for more information.\n");
-        return -1;
+        return FAIL;
     }
     tmpNode = dirTree->current;
     if (cmd[0] == '-') {
         if (!strcmp(cmd, "-p")) {
             str = strtok(NULL, " ");
             if (!str) {
-                printf("mkdir: 잘못된 연산자\n");
+                printf("mkdir: Invalid option\n");
                 printf("Try 'mkdir --help' for more information.\n");
-                return -1;
+                return FAIL;
             }
             if (!strncmp(str, "/", 1)) dirTree->current = dirTree->root;
             str = strtok(str, "/");
@@ -97,17 +95,17 @@ int ft_mkdir(DirectoryTree *dirTree, char *cmd) {
         } else if (!strcmp(cmd, "-m")) {
             str = strtok(NULL, " ");
             if (!str) {
-                printf("mkdir: 잘못된 연산자\n");
+                printf("mkdir: Invalid option\n");
                 printf("Try 'mkdir --help' for more information.\n");
-                return -1;
+                return FAIL;
             }
             if (str[0] - '0' < 8 && str[1]-'0' <8  && str[2] - '0' < 8 && strlen(str) == 3) {
                 tmpMode = atoi(str);
                 str = strtok(NULL, " ");
                 if (!str) {
-                    printf("mkdir: 잘못된 연산자\n");
+                    printf("mkdir: mkdir: Invalid option\n");
                     printf("Try 'mkdir --help' for more information.\n");
-                    return -1;
+                    return FAIL;
                 }
                 val = MakeDir(dirTree, str, 'd');
                 if (!val) {

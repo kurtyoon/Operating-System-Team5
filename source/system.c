@@ -1,33 +1,40 @@
 #include "../include/main.h"
 
-void PrintStart() {
-    printf("Welcome to Ubuntu 22.04.2 LTS (GNU/Linux 5.15.0-1031-aws x86_64)\n\n");
-    printf(" * Documentation:  https://help.ubuntu.com\n");
-    printf(" * Management:     https://landscape.canonical.com\n");
-    printf(" * Support:        https://ubuntu.com/advantage\n\n");
-    printf("  System information as of ");
-    // GetWeekday(today->tm_wday);
-    // GetMonth(today->tm_mon);
-    // printf("%d %02d:%02d:%02d UTC %d\n\n", today->tm_mday, today->tm_hour, today->tm_min, today->tm_sec, today->tm_year + 1900);
-    printf("  System load:  0.01708984375     Processes:             96\n");
-    printf("  Usage of /:   20.4%% of 7.57GB   Users logged in:       0\n");
-    printf("  Memory usage: 24%%               IPv4 address for eth0: 172.31.44.72\n");
-    printf("  Swap usage:   0%%\n\n\n");
-    printf(" * Introducing Expanded Security Maintenance for Applications.\n");
-    printf("   Receive updates to over 25,000 software packages with your\n");
-    printf("   Ubuntu Pro subscription. Free for personal use.\n\n");
-    printf("     https://ubuntu.com/aws/pro\n\n");
-    printf("Expanded Security Maintenance for Applications is not enabled.\n\n");
-    printf("0 updates can be applied immediately.\n\n");
-    printf("Enable ESM Apps to receive additional future security updates.\n");
-    printf("See https://ubuntu.com/esm or run: sudo pro status\n\n\n");
+void getToday(Date *date) {
+    time(&ltime);
+    today = localtime(&ltime);
+
+    date->weekday = today->tm_wday;
+    date->month = today->tm_mon + 1;
+    date->day = today->tm_mday;
+    date->hour = today->tm_hour;
+    date->minute = today->tm_min;
+    date->second = today->tm_sec;
+    date->year = today->tm_year + 1900;
+}
+
+void printStart() {
+    Date tmpDate;
+    getToday(&tmpDate);
+    printf("Welcome to Operating-System Team5 MINILINUX\n\n");
+    printf(" * Development: Yoon, Jang\n");
+    printf(" * Documentation: Yoo, Song\n");
+    printf(" * Presentation: Cho\n\n");
+    printf(" * You can check the code on https://github.com/kurtyoon/Operating-System-Team5\n\n");
+    printf("System information as of ");
+    getWeekday(tmpDate.weekday);
+    getMonth(tmpDate.month);
+    printf("%d %02d:%02d:%02d UTC %d\n\n", tmpDate.day, tmpDate.hour, tmpDate.minute, tmpDate.second, tmpDate.year);
+    printf("You can use the command displayed below.\n");
+    printf("\t- ls\n\t- cat\n\t- cd\n\t- mkdir\n\t- rm\n\t- chmod\n\t- chown\n\t- cp\n\t- grep\n\t- find\n\t- pwd\n\n");
+    printf("The 'exit' command allows you to exit the program.\n\n");
     printf("Last login: ");
-    GetWeekday(usrList->current->date.weekday);
-    GetMonth(usrList->current->date.month);
+    getWeekday(usrList->current->date.weekday);
+    getMonth(usrList->current->date.month);
     printf("%d %02d:%02d:%02d %d\n", usrList->current->date.day, usrList->current->date.hour, usrList->current->date.minute, usrList->current->date.second, usrList->current->date.year);
 }
 
-void PrintHead(DirectoryTree *dirTree, Stack *dirStack) {
+void printPrompt(DirectoryTree *dirTree, Stack *dirStack) {
     DirectoryNode *tmpNode = NULL;
     char tmp[MAX_DIR] = "";
     char tmp2[MAX_DIR] = "";
@@ -53,12 +60,12 @@ void PrintHead(DirectoryTree *dirTree, Stack *dirStack) {
         strcpy(tmp, "/");
     } else {
         while (tmpNode->parent) {
-            Push(dirStack, tmpNode->name);
+            pushStack(dirStack, tmpNode->name);
             tmpNode = tmpNode->parent;
         }
-        while (IsEmpty(dirStack) == 0) {
+        while (isEmpty(dirStack) == FALSE) {
             strcat(tmp, "/");
-            strcat(tmp ,Pop(dirStack));
+            strcat(tmp ,popStack(dirStack));
         }
     }
     strncpy(tmp2, tmp, strlen(usrList->current->dir));
@@ -71,23 +78,23 @@ void PrintHead(DirectoryTree *dirTree, Stack *dirStack) {
     } else {
         tmpNode = dirTree->current;
         while (tmpNode->parent) {
-            Push(dirStack, tmpNode->name);
+            pushStack(dirStack, tmpNode->name);
             tmpNode = tmpNode->parent;
         }
-        Pop(dirStack);
-        Pop(dirStack);
+        popStack(dirStack);
+        popStack(dirStack);
 	    BOLD;BLUE;
         printf("~");
-        while (IsEmpty(dirStack) == 0) {
+        while (isEmpty(dirStack) == FALSE) {
             printf("/");
-            printf("%s",Pop(dirStack));
+            printf("%s", popStack(dirStack));
         }
     }
     DEFAULT;
     printf("%c ", usr);
 }
 
-void Login(UserList *userList, DirectoryTree *dirTree) {
+void login(UserList *userList, DirectoryTree *dirTree) {
     UserNode *tmpUser = NULL;
     char userName[MAX_NAME];
     char tmp[MAX_DIR];
@@ -97,7 +104,7 @@ void Login(UserList *userList, DirectoryTree *dirTree) {
     printf("Users: ");
     while (tmpUser) {
         printf("%s ", tmpUser->name);
-        tmpUser = tmpUser->LinkNode;
+        tmpUser = tmpUser->nextNode;
     }
     printf("\n");
     while (TRUE) {

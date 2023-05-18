@@ -1,64 +1,103 @@
 #include "../include/main.h"
 
-int chmod(DirectoryTree* dirTree, char* cmd) {
+int changeMode(DirectoryTree *dirTree, int mode, char *dirName) {
+    DirectoryNode *tmpNode = NULL;
+    DirectoryNode *tmpNode2 = NULL;
+
+    tmpNode = IsExistDir(dirTree, dirName, 'd');
+    tmpNode2 = IsExistDir(dirTree, dirName, 'f');
+
+    if (tmpNode) {
+        if (checkPermission(tmpNode, 'w')) {
+            printf("chmod: Can not modify file '%s': Permission denied\n", dirName);
+            return FAIL;
+        }
+        tmpNode->permission.mode = mode;
+        modeToPermission(tmpNode);
+    } else if (tmpNode2) {
+        if (checkPermission(tmpNode2, 'w')) {
+            printf("chmod: Can not modify file '%s': Permission denied\n", dirName);
+            return FAIL;
+        }
+        tmpNode2->permission.mode = mode;
+        modeToPermission(tmpNode2);
+    } else {
+        printf("chmod: Can not access to '%s: There is no such file or directory\n", dirName);
+        return FAIL;
+    }
+    return SUCCESS;
+}
+
+void changeModeAll(DirectoryNode *dirNode, int mode) {
+    if (dirNode->nextSibling) {
+        changeModeAll(dirNode->nextSibling, mode);
+    }
+    if (dirNode->firstChild) {
+        changeModeAll(dirNode->firstChild, mode);
+    }
+    dirNode->permission.mode = mode;
+    modeToPermission(dirNode);
+}
+
+int ft_chmod(DirectoryTree* dirTree, char* cmd) {
     DirectoryNode* tmpNode = NULL;
     char* str;
     int tmp;
 
     if (!cmd) {
-        printf("chmod: 잘못된 연산자\n");
+        printf("chmod: Invalid option\n");
         printf("Try 'chmod --help' for more information.\n");
-        return -1;
+        return FAIL;
     }
     if(cmd[0] == '-') {
         if (!strcmp(cmd, "-R")) {
             str = strtok(NULL, " ");
             if(!str) {
-                printf("chmod: 잘못된 연산자\n");
+                printf("chmod: Invalid option\n");
                 printf("Try 'chmod --help' for more information.\n");
-                return -1;
+                return FAIL;
             }
             if (str[0] - '0' < 8 && str[1] - '0' < 8 && str[2] - '0' < 8 && strlen(str) == 3) {
                 tmp = atoi(str);
                 str = strtok(NULL, " ");
                 if (!str) {
-                    printf("chmod: 잘못된 연산자\n");
+                    printf("chmod: Invalid option\n");
                     printf("Try 'chmod --help' for more information.\n");
-                    return -1;
+                    return FAIL;
                 }
                 tmpNode = IsExistDir(dirTree, str, 'd');
                 if (tmpNode) {
-                    if (!tmpNode->firstChild) ChangeMode(dirTree, tmp, str);
+                    if (!tmpNode->firstChild) changeMode(dirTree, tmp, str);
                     else{
-                        ChangeMode(dirTree, tmp, str);
-                        ChangeModeAll(tmpNode->firstChild, tmp);
+                        changeMode(dirTree, tmp, str);
+                        changeModeAll(tmpNode->firstChild, tmp);
                     }
                 } else {
-                    printf("chmod: '%s': 그런 파일이나 디렉터리가 없습니다\n", str);
-                    return -1;
+                    printf("chmod: '%s': No such file or directory.\n", str);
+                    return FAIL;
                 }
             } else {
-                printf("chmod: 잘못된 모드: '%s'\n", str);
+                printf("chmod: Invalid Mode: '%s'\n", str);
                 printf("Try 'chmod --help' for more information.\n");
-                return -1;
+                return FAIL;
             }
         } else if (!strcmp(cmd, "--help")) {
-            printf("사용법: chmod [옵션]... 8진수-MODE... 디렉터리...\n");
-            printf("  Change the mode of each FILE to MODE.\n\n");
+            printf("Usage: chmod [OPTION]... OCTAL-MODE FILE...\n");
+            printf("Change the mode of each FILE to MODE.\n\n");
             printf("  Options:\n");
-            printf("    -R, --recursive\t change files and directories recursively\n");
-            printf("        --help\t 이 도움말을 표시하고 끝냅니다\n");
-            return -1;
+            printf("  -R, --recursive        change files and directories recursively\n");
+            printf("      --help\t Display this help and exit\n");
+            return FAIL;
         } else {
             str = strtok(cmd, "-");
             if (!str) {
-                printf("chmod: 잘못된 연산자\n");
+                printf("chmod: Invalid option\n");
                 printf("Try 'chmod --help' for more information.\n");
-                return -1;
+                return FAIL;
             } else {
-                printf("chmod: 부적절한 옵션 -- '%s'\n", str);
+                printf("chmod: Unrecognized option -- '%s'\n", str);
                 printf("Try 'chmod --help' for more information.\n");
-                return -1;
+                return FAIL;
             }
         }
     } else {
@@ -66,16 +105,16 @@ int chmod(DirectoryTree* dirTree, char* cmd) {
             tmp = atoi(cmd);
             str = strtok(NULL, " ");
             if (!str) {
-                printf("chmod: 잘못된 연산자\n");
+                printf("chmod: Invalid option\n");
                 printf("Try 'chmod --help' for more information.\n");
-                return -1;
+                return FAIL;
             }
-            ChangeMode(dirTree, tmp, str);
+            changeMode(dirTree, tmp, str);
         } else {
-            printf("chmod: 잘못된 모드: '%s'\n", cmd);
+            printf("chmod: Invalid Mode: '%s'\n", cmd);
             printf("Try 'chmod --help' for more information.\n");
-            return -1;
+            return FAIL;
         }
     }
-    return 0;
+    return SUCCESS;
 }

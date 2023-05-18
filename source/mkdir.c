@@ -1,6 +1,65 @@
 #include "../include/main.h"
 
-int mkdir(DirectoryTree *dirTree, char *cmd) {
+int MakeDir(DirectoryTree *dirTree, char *dirName, char type) {
+    DirectoryNode *NewNode = (DirectoryNode *)malloc(sizeof(DirectoryNode));
+    DirectoryNode *tmpNode = NULL;
+
+    if (checkPermission(dirTree->current, 'w')) {
+        printf("mkdir: '%s' Can not create directory: Permission denied.\n", dirName);
+        free(NewNode);
+        return FAIL;
+    }
+    if (!strcmp(dirName, ".") || !strcmp(dirName, "..")) {
+        printf("mkdir: '%s' Can not create directory.\n", dirName);
+        free(NewNode);
+        return FAIL;
+    }
+    tmpNode = IsExistDir(dirTree, dirName, type);
+    if (tmpNode && tmpNode->type == 'd'){
+        printf("mkdir: : '%s' Can not create directory: File exists.\n", dirName);
+        free(NewNode);
+        return FAIL;
+    }
+    time(&ltime);
+    today = localtime(&ltime);
+
+    NewNode->firstChild = NULL;
+    NewNode->nextSibling = NULL;
+
+    strncpy(NewNode->name, dirName, MAX_NAME);
+    if (dirName[0] == '.') {
+	    NewNode->type = 'd';
+        NewNode->permission.mode = 700;
+        NewNode->SIZE = 4096;
+    } else if(type == 'd'){
+        NewNode->type = 'd';
+        NewNode->permission.mode = 755;
+        NewNode->SIZE = 4096;
+    } else {
+        NewNode->type = 'f';
+        NewNode->permission.mode = 644;
+        NewNode->SIZE = 0;
+    }
+    modeToPermission(NewNode);
+
+    NewNode->id.UID = usrList->current->id.UID;
+    NewNode->id.GID = usrList->current->id.GID;
+    NewNode->date.month = today->tm_mon + 1;
+    NewNode->date.day = today->tm_mday;
+    NewNode->date.hour = today->tm_hour;
+    NewNode->date.minute = today->tm_min;
+	NewNode->parent = dirTree->current;
+
+	if (!dirTree->current->firstChild) dirTree->current->firstChild = NewNode;
+	else {
+        tmpNode = dirTree->current->firstChild;
+        while (tmpNode->nextSibling) tmpNode = tmpNode->nextSibling;
+        tmpNode->nextSibling = NewNode;
+	}
+    return 0;
+}
+
+int ft_mkdir(DirectoryTree *dirTree, char *cmd) {
     DirectoryNode *tmpNode = NULL;
     char *str;
     char tmp[MAX_DIR];
@@ -9,18 +68,18 @@ int mkdir(DirectoryTree *dirTree, char *cmd) {
     int val;
     int tmpMode;
     if (!cmd) {
-        printf("mkdir: 잘못된 연산자\n");
+        printf("mkdir: Invalid option\n");
         printf("Try 'mkdir --help' for more information.\n");
-        return -1;
+        return FAIL;
     }
     tmpNode = dirTree->current;
     if (cmd[0] == '-') {
         if (!strcmp(cmd, "-p")) {
             str = strtok(NULL, " ");
             if (!str) {
-                printf("mkdir: 잘못된 연산자\n");
+                printf("mkdir: Invalid option\n");
                 printf("Try 'mkdir --help' for more information.\n");
-                return -1;
+                return FAIL;
             }
             if (!strncmp(str, "/", 1)) dirTree->current = dirTree->root;
             str = strtok(str, "/");
@@ -36,23 +95,23 @@ int mkdir(DirectoryTree *dirTree, char *cmd) {
         } else if (!strcmp(cmd, "-m")) {
             str = strtok(NULL, " ");
             if (!str) {
-                printf("mkdir: 잘못된 연산자\n");
+                printf("mkdir: Invalid option\n");
                 printf("Try 'mkdir --help' for more information.\n");
-                return -1;
+                return FAIL;
             }
             if (str[0] - '0' < 8 && str[1]-'0' <8  && str[2] - '0' < 8 && strlen(str) == 3) {
                 tmpMode = atoi(str);
                 str = strtok(NULL, " ");
                 if (!str) {
-                    printf("mkdir: 잘못된 연산자\n");
+                    printf("mkdir: mkdir: Invalid option\n");
                     printf("Try 'mkdir --help' for more information.\n");
-                    return -1;
+                    return FAIL;
                 }
                 val = MakeDir(dirTree, str, 'd');
                 if (!val) {
                     tmpNode = IsExistDir(dirTree, str, 'd');
                     tmpNode->permission.mode = tmpMode;
-                    Mode2Permission(tmpNode);
+                    modeToPermission(tmpNode);
                 }
             } else {
                 printf("mkdir: 잘못된 모드: '%s'\n", str);
@@ -138,7 +197,7 @@ int mkdir(DirectoryTree *dirTree, char *cmd) {
                     NewNode->permission.mode = 755;
                     NewNode->SIZE = 4096;
                 }
-                Mode2Permission(NewNode);
+                modeToPermission(NewNode);
                 NewNode->id.UID = usrList->current->id.UID;
                 NewNode->id.GID = usrList->current->id.GID;
                 NewNode->date.month = today->tm_mon + 1;
@@ -155,7 +214,7 @@ int mkdir(DirectoryTree *dirTree, char *cmd) {
                 sleep(0.1);
                 sem_wait(&semp);
                 read(fd[0], NewNode, sizeof(DirectoryNode));
-                if (HasPermission(dirTree->current, 'w')) {
+                if (checkPermission(dirTree->current, 'w')) {
                     printf("mkdir: '%s' 디렉터리를 만들 수 없습니다: 허가 거부\n", NewNode->name);
                     free(NewNode);
                     return -1;

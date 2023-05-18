@@ -16,13 +16,13 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int type) {
             tmpUser = usrList->head;
             while (tmpUser){
                 printf("%s:x:%d:%d:%s:%s\n", tmpUser->name, tmpUser->id.UID, tmpUser->id.GID, tmpUser->name, tmpUser->dir);
-                tmpUser = tmpUser->LinkNode;
+                tmpUser = tmpUser->nextNode;
             }
             return 0;
         }
         tmpNode = IsExistDir(dirTree,fName, 'f');
 
-        if(!tmpNode) return -1;
+        if(!tmpNode) return FAIL;
 
         fp = fopen(fName, "r");
         while (!feof(fp)) {
@@ -49,6 +49,7 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int type) {
             fputs(buf, fp);
             tmpSIZE += strlen(buf) - 1;
         }
+        rewind(stdin);
         fclose(fp);
 
         tmpNode = IsExistDir(dirTree, fName, 'f');
@@ -64,10 +65,10 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int type) {
         tmpNode = IsExistDir(dirTree, fName, 'f');
         tmpNode->SIZE = tmpSIZE;
     }
-    return 0;
+    return SUCCESS;
 }
 
-int ft_cat(DirectoryTree* dirTree, char* cmd)
+int ft_cat(DirectoryTree* dirTree, char* command)
 {
     DirectoryNode* currentNode = NULL;
     DirectoryNode* tmpNode = NULL;
@@ -76,87 +77,95 @@ int ft_cat(DirectoryTree* dirTree, char* cmd)
     char tmp[MAX_DIR];
     char tmp2[MAX_DIR];
     char tmp3[MAX_DIR];
-    int val;
+    int value;
 
-    if (!cmd) {
-        printf("cat: 잘못된 연산자\n");
-        return -1;
+    if (!command) {
+        long			size;
+	    unsigned char	c;
+        size = read(0, &c, 1);
+	    while (size)
+	    {
+		    write(1, &c, size);
+		    size = read(0, &c, 1);
+	    }
+        rewind(stdin);
+        return SUCCESS;
     }
     currentNode = dirTree->current;
 
-    if (strcmp(cmd, ">") == 0) {
+    if (strcmp(command, ">") == 0) {
         str = strtok(NULL, " ");
         if(str == NULL){
-            printf("cat: 잘못된 연산자\n");
+            printf("cat: Invalid option\n");
             printf("Try 'cat --help' for more information.\n");
-            return -1;
+            return FAIL;
         }
         strncpy(tmp, str, MAX_DIR);
         if(!strstr(str, "/")) {
-            if (HasPermission(dirTree->current, 'w')) {
-                printf("cat: '%s'파일을 만들 수 없음: 허가거부\n", dirTree->current->name);
-                return -1;
+            if (checkPermission(dirTree->current, 'w')) {
+                printf("cat: Can not create file '%s': No permission.\n", dirTree->current->name);
+                return FAIL;
             }
             tmpNode = IsExistDir(dirTree, str, 'd');
             if (tmpNode) {
-                printf("cat: '%s': 디렉터리입니다\n", str);
-                return -1;
+                printf("cat: '%s': Is a directory\n", str);
+                return FAIL;
             }
             else Concatenate(dirTree, str, 0);
         } else {
             strncpy(tmp2, getDir(str), MAX_DIR);
-            val = MovePath(dirTree, tmp2);
-            if (val) {
-                printf("cat: '%s': 그런 파일이나 디렉터리가 없습니다\n", tmp2);
-                return -1;
+            value = MovePath(dirTree, tmp2);
+            if (value) {
+                printf("cat: '%s': No such file or directory\n", tmp2);
+                return FAIL;
             }
             str = strtok(tmp, "/");
             while (str) {
                 strncpy(tmp3, str, MAX_NAME);
                 str = strtok(NULL, "/");
             }
-            if (HasPermission(dirTree->current, 'w')) {
-                printf("cat: '%s'파일을 만들 수 없음: 허가거부\n", dirTree->current->name);
+            if (checkPermission(dirTree->current, 'w')) {
+                printf("cat: Can not create file '%s': No permission.\n", dirTree->current->name);
                 dirTree->current = currentNode;
-                return -1;
+                return FAIL;
             }
             tmpNode = IsExistDir(dirTree, tmp3, 'd');
             if (tmpNode) {
-                printf("cat: '%s': 디렉터리입니다\n", tmp3);
+                printf("cat: '%s': Is a directory\n", tmp3);
                 dirTree->current = currentNode;
-                return -1;
+                return FAIL;
             } else Concatenate(dirTree, tmp3, 0);
             dirTree->current = currentNode;
         }
         return 0;
-    } else if(cmd[0] == '-'){
-        if (!strcmp(cmd, "-n")) {
+    } else if(command[0] == '-'){
+        if (!strcmp(command, "-n")) {
             str = strtok(NULL, " ");
             strncpy(tmp, str, MAX_DIR);
             if (!strstr(str, "/")) {
-                if (HasPermission(dirTree->current, 'w')) {
-                    printf("cat: '%s'파일을 만들 수 없음: 허가거부\n", dirTree->current->name);
-                    return -1;
+                if (checkPermission(dirTree->current, 'w')) {
+                    printf("cat: Can not create file '%s': No permission.\n", dirTree->current->name);
+                    return FAIL;
                 }
                 tmpNode = IsExistDir(dirTree, str, 'd');
                 tmpNode2 = IsExistDir(dirTree, str, 'f');
     
                 if (!tmpNode && !tmpNode2) {
-                    printf("cat: '%s': 그런 파일이나 디렉터리가 없습니다\n", str);
-                    return -1;
+                    printf("cat: '%s': No such file or directory.\n", str);
+                    return FAIL;
                 } else if (tmpNode && !tmpNode2) {
-                    printf("cat: '%s': 디렉터리입니다\n", str);
-                    return -1;
-                } else if (tmpNode2 && HasPermission(tmpNode2, 'r')){
-                    printf("cat: '%s'파일을 열 수 없음: 허가거부\n", tmpNode2->name);
-                    return -1;
+                    printf("cat: '%s': Is a directory.\n", str);
+                    return FAIL;
+                } else if (tmpNode2 && checkPermission(tmpNode2, 'r')){
+                    printf("cat: Can not open file '%s': Permission denied\n", tmpNode2->name);
+                    return FAIL;
                 } else Concatenate(dirTree, str, 2);
             } else {
                 strncpy(tmp2, getDir(str), MAX_DIR);
-                val = MovePath(dirTree, tmp2);
-                if (val) {
-                    printf("cat: '%s': 그런 파일이나 디렉터리가 없습니다\n", tmp2);
-                    return -1;
+                value = MovePath(dirTree, tmp2);
+                if (value) {
+                    printf("cat: '%s': No such file or directory.\n", tmp2);
+                    return FAIL;
                 }
                 str = strtok(tmp, "/");
                 while (str) {
@@ -167,52 +176,52 @@ int ft_cat(DirectoryTree* dirTree, char* cmd)
                 tmpNode2 = IsExistDir(dirTree, tmp3, 'f');
     
                 if (!tmpNode && !tmpNode2) {
-                    printf("cat: '%s': 그런 파일이나 디렉터리가 없습니다\n", tmp3);
+                    printf("cat: '%s': No such file or directory.\n", tmp3);
                     dirTree->current = currentNode;
-                    return -1;
+                    return FAIL;
                 }
                 else if (tmpNode && !tmpNode2) {
-                    printf("cat: '%s': 디렉터리입니다\n", tmp3);
+                    printf("cat: '%s': Is a directory.\n", tmp3);
                     dirTree->current = currentNode;
-                    return -1;
+                    return FAIL;
                 }
-                else if (tmpNode2 && HasPermission(tmpNode2, 'r')) {
-                    printf("cat: '%s'파일을 열 수 없음: 허가거부\n", tmpNode2->name);
+                else if (tmpNode2 && checkPermission(tmpNode2, 'r')) {
+                    printf("cat: Can not open file '%s': Permission denied\n", tmpNode2->name);
                     dirTree->current = currentNode;
-                    return -1;
+                    return FAIL;
                 } else Concatenate(dirTree, tmp3, 2);
                 dirTree->current = currentNode;
             }
-        } else if(!strcmp(cmd, "-b")) {
+        } else if(!strcmp(command, "-b")) {
             str = strtok(NULL, " ");
             strncpy(tmp, str, MAX_DIR);
             if (!strstr(str, "/")) {
-                if (HasPermission(dirTree->current, 'w')) {
-                    printf("cat: '%s'파일을 만들 수 없음: 허가거부\n", dirTree->current->name);
-                    return -1;
+                if (checkPermission(dirTree->current, 'w')) {
+                    printf("cat: Can not create file '%s': Permission denied\n", dirTree->current->name);
+                    return FAIL;
                 }
                 tmpNode = IsExistDir(dirTree, str, 'd');
                 tmpNode2 = IsExistDir(dirTree, str, 'f');
                 if(!tmpNode && !tmpNode2) {
-                    printf("cat: '%s': 그런 파일이나 디렉터리가 없습니다\n", str);
-                    return -1;
+                    printf("cat: '%s': No such file or directory.\n", str);
+                    return FAIL;
                 }
                 else if (tmpNode && !tmpNode2) {
-                    printf("cat: '%s': 디렉터리입니다\n", str);
-                    return -1;
+                    printf("cat: '%s': Is a directory.\n", str);
+                    return FAIL;
                 }
-                else if (tmpNode2 && HasPermission(tmpNode2, 'r')) {
-                    printf("cat: '%s'파일을 열 수 없음: 허가거부\n", tmpNode2->name);
-                    return -1;
+                else if (tmpNode2 && checkPermission(tmpNode2, 'r')) {
+                    printf("cat: Can not open file '%s': Permission denied\n", tmpNode2->name);
+                    return FAIL;
                 }
                 else Concatenate(dirTree, str, 3);
                 
             } else {
                 strncpy(tmp2, getDir(str), MAX_DIR);
-                val = MovePath(dirTree, tmp2);
-                if (val) {
-                    printf("cat: '%s': 그런 파일이나 디렉터리가 없습니다\n", tmp2);
-                    return -1;
+                value = MovePath(dirTree, tmp2);
+                if (value) {
+                    printf("cat: '%s': No such file or directory.\n", tmp2);
+                    return FAIL;
                 }
                 str = strtok(tmp, "/");
                 while (str) {
@@ -222,72 +231,72 @@ int ft_cat(DirectoryTree* dirTree, char* cmd)
                 tmpNode = IsExistDir(dirTree, tmp3, 'd');
                 tmpNode2 = IsExistDir(dirTree, tmp3, 'f');
                 if (!tmpNode && !tmpNode2) {
-                    printf("cat: '%s': 그런 파일이나 디렉터리가 없습니다\n", tmp3);
+                    printf("cat: '%s': No such file or directory.\n", tmp3);
                     dirTree->current = currentNode;
-                    return -1;
+                    return FAIL;
                 }
                 else if (tmpNode && !tmpNode2){
-                    printf("cat: '%s': 디렉터리입니다\n", tmp3);
+                    printf("cat: '%s': Is a direcotry\n", tmp3);
                     dirTree->current = currentNode;
-                    return -1;
+                    return FAIL;
                 }
-                else if (tmpNode2 && HasPermission(tmpNode2, 'r')) {
-                    printf("cat: '%s'파일을 열 수 없음: 허가거부\n", tmpNode2->name);
+                else if (tmpNode2 && checkPermission(tmpNode2, 'r')) {
+                    printf("cat: Can not open file '%s': Permission denied\n", tmpNode2->name);
                     dirTree->current = currentNode;
-                    return -1;
+                    return FAIL;
                 }
                 else Concatenate(dirTree, tmp3, 3);
                 dirTree->current = currentNode;
             }
-        } else if(strcmp(cmd, "--help") == 0) {
-            printf("사용법: cat [<옵션>]... [<파일>]...\n");
-            printf("  FILE(들)을 합쳐서 표준 출력으로 보낸다.\n\n");
-            printf("  Options:\n");
-            printf("    -n, --number         \t number all output line\n");
-            printf("    -b, --number-nonblank\t number nonempty output line\n");
-            printf("        --help\t 이 도움말을 표시하고 끝냅니다\n");
-            return -1;
+        } else if(strcmp(command, "--help") == 0) {
+            printf("Usage: cat [OPTION]... [FILE]...\n");
+            printf("Concatenate FILE(s) to standard output.\n\n");
+            printf("With no FILE, or when FILE is -, read standard input.\n\n");
+            printf("  -n, --number             number all output lines\n");
+            printf("  -b, --number-nonblank    number nonempty output lines, overrides -n\n");
+            printf("      --help     display this help and exit\n");
+            return FAIL;
         } else {
-            str = strtok(cmd, "-");
+            str = strtok(command, "-");
             if(!str) {
-                printf("cat: 잘못된 연산자\n");
+                printf("cat: Invalid option\n");
                 printf("Try 'cat --help' for more information.\n");
-                return -1;
+                return FAIL;
             } else {
-                printf("cat: 부적절한 옵션 -- '%s'\n", str);
+                printf("cat: Unrecognized option -- '%s'\n", str);
                 printf("Try 'cat --help' for more information.\n");
-                return -1;
+                return FAIL;
             }
         }
     } else {
-        if (!strcmp(cmd, "/etc/passwd")) {
-            Concatenate(dirTree, cmd, 4);
-            return 0;
+        if (!strcmp(command, "/etc/passwd")) {
+            Concatenate(dirTree, command, 4);
+            return SUCCESS;
         }
-        strncpy(tmp, cmd, MAX_DIR);
-        if (!strstr(cmd, "/")) {
-            if (HasPermission(dirTree->current, 'w')) {
-                printf("cat: '%s'파일을 만들 수 없음: 허가거부\n", dirTree->current->name);
-                return -1;
+        strncpy(tmp, command, MAX_DIR);
+        if (!strstr(command, "/")) {
+            if (checkPermission(dirTree->current, 'w')) {
+                printf("cat: Can not create file '%s': Permission denied\n", dirTree->current->name);
+                return FAIL;
             }
-            tmpNode = IsExistDir(dirTree, cmd, 'd');
-            tmpNode2 = IsExistDir(dirTree, cmd, 'f');
+            tmpNode = IsExistDir(dirTree, command, 'd');
+            tmpNode2 = IsExistDir(dirTree, command, 'f');
             if (!tmpNode && !tmpNode2) {
-                printf("cat: '%s': 그런 파일이나 디렉터리가 없습니다\n", cmd);
-                return -1;
+                printf("cat: '%s': No such file or directory.\n", command);
+                return FAIL;
             } else if (tmpNode && !tmpNode2) {
-                printf("cat: '%s': 디렉터리입니다\n", cmd);
-                return -1;
-            } else if (tmpNode2 && HasPermission(tmpNode2, 'r')) {
-                printf("cat: '%s'파일을 열 수 없음: 허가거부\n", tmpNode2->name);
-                return -1;
-            } else Concatenate(dirTree, cmd, 1);
+                printf("cat: '%s': Is a directory\n", command);
+                return FAIL;
+            } else if (tmpNode2 && checkPermission(tmpNode2, 'r')) {
+                printf("cat: Can not open file '%s': Permission denied\n", tmpNode2->name);
+                return FAIL;
+            } else Concatenate(dirTree, command, 1);
         } else {
-            strncpy(tmp2, getDir(cmd), MAX_DIR);
-            val = MovePath(dirTree, tmp2);
-            if (val) {
-                printf("cat: '%s': 그런 파일이나 디렉터리가 없습니다\n", tmp2);
-                return -1;
+            strncpy(tmp2, getDir(command), MAX_DIR);
+            value = MovePath(dirTree, tmp2);
+            if (value) {
+                printf("cat: '%s': No such file or directory.\n", tmp2);
+                return FAIL;
             }
             str = strtok(tmp, "/");
             while (str) {
@@ -297,17 +306,17 @@ int ft_cat(DirectoryTree* dirTree, char* cmd)
             tmpNode = IsExistDir(dirTree, tmp3, 'd');
             tmpNode2 = IsExistDir(dirTree, tmp3, 'f');
             if(!tmpNode && !tmpNode2) {
-                printf("cat: '%s': 그런 파일이나 디렉터리가 없습니다\n", tmp3);
+                printf("cat: '%s': No such file or directory.\n", tmp3);
                 dirTree->current = currentNode;
-                return -1;
+                return FALSE;
             } else if (tmpNode && !tmpNode2) {
-                printf("cat: '%s': 디렉터리입니다\n", tmp3);
+                printf("cat: '%s': Is a directory\n", tmp3);
                 dirTree->current = currentNode;
-                return -1;
-            } else if (tmpNode2 && HasPermission(tmpNode2, 'r')) {
-                printf("cat: '%s'파일을 열 수 없음: 허가거부\n", tmpNode2->name);
+                return FALSE;
+            } else if (tmpNode2 && checkPermission(tmpNode2, 'r')) {
+                printf("cat:  Can not open file '%s': Permission denied\n", tmpNode2->name);
                 dirTree->current = currentNode;
-                return -1;
+                return FALSE;
             } else Concatenate(dirTree, tmp3, 1);
             dirTree->current = currentNode;
         }

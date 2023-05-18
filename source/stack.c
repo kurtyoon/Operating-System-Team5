@@ -1,47 +1,40 @@
 #include "../include/main.h"
 
-boolean IsEmpty(Stack* stack) {
-    if(stack->TopNode == NULL){
-        return -1;
+boolean isEmpty(Stack* stack) {
+    if(stack->topNode == NULL){
+        return TRUE;
     }
-    return 0;
+    return FALSE;
 }
 
-Stack *InitializeStack() {
-	Stack *returnStack = (Stack *)malloc(sizeof(Stack));
+Stack *initStack() {
+	Stack *newStack = (Stack *)malloc(sizeof(Stack));
 
-	if (!returnStack) {
-        printf("error occurred, returnStack.\n");
+	if (!newStack) {
         return NULL;
 	}
-    returnStack->TopNode = NULL;
-	return returnStack;
+    newStack->topNode = NULL;
+	return newStack;
 }
 
-int Push(Stack *dirStack, char *dirName) {
+int pushStack(Stack *dirStack, char *dirName) {
 	StackNode *dirNode = (StackNode *)malloc(sizeof(StackNode));
 
 	if (!dirStack || !dirNode) {
-        printf("error occurred, dirStack.\n");
-        return -1;
+        return FALSE;
 	}
 	strncpy(dirNode->name, dirName, MAX_NAME);
-	dirNode->LinkNode = dirStack->TopNode;
-    dirStack->TopNode = dirNode;
-    return 0;
+	dirNode->nextNode = dirStack->topNode;
+    dirStack->topNode = dirNode;
+    return TRUE;
 }
 
-char *Pop(Stack *dirStack) {
+char *popStack(Stack *dirStack) {
 	StackNode *returnNode = NULL;
-	if (!dirStack) {
-        printf("error occurred, dirStack.\n");
+	if (!dirStack || (isEmpty(dirStack) == TRUE)) {
         return NULL;
 	}
-	if (IsEmpty(dirStack) == -1) {
-        printf("Stack Empty.\n");
-        return NULL;
-	}
-	returnNode = dirStack->TopNode;
-	dirStack->TopNode = returnNode->LinkNode;
+	returnNode = dirStack->topNode;
+	dirStack->topNode = returnNode->nextNode;
 	return returnNode->name;
 }

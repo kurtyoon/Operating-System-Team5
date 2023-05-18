@@ -5,14 +5,14 @@ int main() {
 
     Linux = LoadDir();
     usrList = LoadUserList();
-    dStack = InitializeStack();
+    dStack = initStack();
 
-    Login(usrList, Linux);
-    PrintStart();
+    login(usrList, Linux);
+    printStart();
     SaveUserList(usrList);
 
     while (TRUE) {
-        PrintHead(Linux, dStack);
+        printPrompt(Linux, dStack);
         fgets(command, sizeof(command), stdin);
         command[strlen(command) - 1] = '\0';
         Instruction(Linux, command);

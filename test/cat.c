@@ -22,7 +22,7 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int type) {
         }
         tmpNode = IsExistDir(dirTree,fName, 'f');
 
-        if(!tmpNode) return -1;
+        if(!tmpNode) return FAIL;
 
         fp = fopen(fName, "r");
         while (!feof(fp)) {
@@ -49,6 +49,7 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int type) {
             fputs(buf, fp);
             tmpSIZE += strlen(buf) - 1;
         }
+        rewind(stdin);
         fclose(fp);
 
         tmpNode = IsExistDir(dirTree, fName, 'f');
@@ -64,7 +65,7 @@ int Concatenate(DirectoryTree* dirTree, char* fName, int type) {
         tmpNode = IsExistDir(dirTree, fName, 'f');
         tmpNode->SIZE = tmpSIZE;
     }
-    return 0;
+    return SUCCESS;
 }
 
 int ft_cat(DirectoryTree* dirTree, char* command)
@@ -84,9 +85,11 @@ int ft_cat(DirectoryTree* dirTree, char* command)
         size = read(0, &c, 1);
 	    while (size)
 	    {
-		write(1, &c, size);
-		size = read(0, &c, 1);
+		    write(1, &c, size);
+		    size = read(0, &c, 1);
 	    }
+        rewind(stdin);
+        return SUCCESS;
     }
     currentNode = dirTree->current;
 
@@ -95,18 +98,18 @@ int ft_cat(DirectoryTree* dirTree, char* command)
         if(str == NULL){
             printf("cat: Invalid option\n");
             printf("Try 'cat --help' for more information.\n");
-            return -1;
+            return FAIL;
         }
         strncpy(tmp, str, MAX_DIR);
         if(!strstr(str, "/")) {
             if (checkPermission(dirTree->current, 'w')) {
                 printf("cat: Can not create file '%s': No permission.\n", dirTree->current->name);
-                return -1;
+                return FAIL;
             }
             tmpNode = IsExistDir(dirTree, str, 'd');
             if (tmpNode) {
                 printf("cat: '%s': Is a directory\n", str);
-                return -1;
+                return FAIL;
             }
             else Concatenate(dirTree, str, 0);
         } else {
@@ -114,7 +117,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
             value = MovePath(dirTree, tmp2);
             if (value) {
                 printf("cat: '%s': No such file or directory\n", tmp2);
-                return -1;
+                return FAIL;
             }
             str = strtok(tmp, "/");
             while (str) {
@@ -124,13 +127,13 @@ int ft_cat(DirectoryTree* dirTree, char* command)
             if (checkPermission(dirTree->current, 'w')) {
                 printf("cat: Can not create file '%s': No permission.\n", dirTree->current->name);
                 dirTree->current = currentNode;
-                return -1;
+                return FAIL;
             }
             tmpNode = IsExistDir(dirTree, tmp3, 'd');
             if (tmpNode) {
                 printf("cat: '%s': Is a directory\n", tmp3);
                 dirTree->current = currentNode;
-                return -1;
+                return FAIL;
             } else Concatenate(dirTree, tmp3, 0);
             dirTree->current = currentNode;
         }
@@ -142,27 +145,27 @@ int ft_cat(DirectoryTree* dirTree, char* command)
             if (!strstr(str, "/")) {
                 if (checkPermission(dirTree->current, 'w')) {
                     printf("cat: Can not create file '%s': No permission.\n", dirTree->current->name);
-                    return FALSE;
+                    return FAIL;
                 }
                 tmpNode = IsExistDir(dirTree, str, 'd');
                 tmpNode2 = IsExistDir(dirTree, str, 'f');
     
                 if (!tmpNode && !tmpNode2) {
                     printf("cat: '%s': No such file or directory.\n", str);
-                    return FALSE;
+                    return FAIL;
                 } else if (tmpNode && !tmpNode2) {
                     printf("cat: '%s': Is a directory.\n", str);
-                    return FALSE;
+                    return FAIL;
                 } else if (tmpNode2 && checkPermission(tmpNode2, 'r')){
                     printf("cat: Can not open file '%s': Permission denied\n", tmpNode2->name);
-                    return FALSE;
+                    return FAIL;
                 } else Concatenate(dirTree, str, 2);
             } else {
                 strncpy(tmp2, getDir(str), MAX_DIR);
                 value = MovePath(dirTree, tmp2);
                 if (value) {
                     printf("cat: '%s': No such file or directory.\n", tmp2);
-                    return -1;
+                    return FAIL;
                 }
                 str = strtok(tmp, "/");
                 while (str) {
@@ -175,17 +178,17 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                 if (!tmpNode && !tmpNode2) {
                     printf("cat: '%s': No such file or directory.\n", tmp3);
                     dirTree->current = currentNode;
-                    return -1;
+                    return FAIL;
                 }
                 else if (tmpNode && !tmpNode2) {
                     printf("cat: '%s': Is a directory.\n", tmp3);
                     dirTree->current = currentNode;
-                    return -1;
+                    return FAIL;
                 }
                 else if (tmpNode2 && checkPermission(tmpNode2, 'r')) {
                     printf("cat: Can not open file '%s': Permission denied\n", tmpNode2->name);
                     dirTree->current = currentNode;
-                    return -1;
+                    return FAIL;
                 } else Concatenate(dirTree, tmp3, 2);
                 dirTree->current = currentNode;
             }
@@ -195,21 +198,21 @@ int ft_cat(DirectoryTree* dirTree, char* command)
             if (!strstr(str, "/")) {
                 if (checkPermission(dirTree->current, 'w')) {
                     printf("cat: Can not create file '%s': Permission denied\n", dirTree->current->name);
-                    return FALSE;
+                    return FAIL;
                 }
                 tmpNode = IsExistDir(dirTree, str, 'd');
                 tmpNode2 = IsExistDir(dirTree, str, 'f');
                 if(!tmpNode && !tmpNode2) {
                     printf("cat: '%s': No such file or directory.\n", str);
-                    return FALSE;
+                    return FAIL;
                 }
                 else if (tmpNode && !tmpNode2) {
                     printf("cat: '%s': Is a directory.\n", str);
-                    return FALSE;
+                    return FAIL;
                 }
                 else if (tmpNode2 && checkPermission(tmpNode2, 'r')) {
                     printf("cat: Can not open file '%s': Permission denied\n", tmpNode2->name);
-                    return FALSE;
+                    return FAIL;
                 }
                 else Concatenate(dirTree, str, 3);
                 
@@ -218,7 +221,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                 value = MovePath(dirTree, tmp2);
                 if (value) {
                     printf("cat: '%s': No such file or directory.\n", tmp2);
-                    return -1;
+                    return FAIL;
                 }
                 str = strtok(tmp, "/");
                 while (str) {
@@ -230,17 +233,17 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                 if (!tmpNode && !tmpNode2) {
                     printf("cat: '%s': No such file or directory.\n", tmp3);
                     dirTree->current = currentNode;
-                    return FALSE;
+                    return FAIL;
                 }
                 else if (tmpNode && !tmpNode2){
                     printf("cat: '%s': Is a direcotry\n", tmp3);
                     dirTree->current = currentNode;
-                    return FALSE;
+                    return FAIL;
                 }
                 else if (tmpNode2 && checkPermission(tmpNode2, 'r')) {
                     printf("cat: Can not open file '%s': Permission denied\n", tmpNode2->name);
                     dirTree->current = currentNode;
-                    return FALSE;
+                    return FAIL;
                 }
                 else Concatenate(dirTree, tmp3, 3);
                 dirTree->current = currentNode;
@@ -252,17 +255,17 @@ int ft_cat(DirectoryTree* dirTree, char* command)
             printf("  -n, --number             number all output lines\n");
             printf("  -b, --number-nonblank    number nonempty output lines, overrides -n\n");
             printf("      --help     display this help and exit\n");
-            return FALSE;
+            return FAIL;
         } else {
             str = strtok(command, "-");
             if(!str) {
                 printf("cat: Invalid option\n");
                 printf("Try 'cat --help' for more information.\n");
-                return FALSE;
+                return FAIL;
             } else {
                 printf("cat: Unrecognized option -- '%s'\n", str);
                 printf("Try 'cat --help' for more information.\n");
-                return FALSE;
+                return FAIL;
             }
         }
     } else {
@@ -274,26 +277,26 @@ int ft_cat(DirectoryTree* dirTree, char* command)
         if (!strstr(command, "/")) {
             if (checkPermission(dirTree->current, 'w')) {
                 printf("cat: Can not create file '%s': Permission denied\n", dirTree->current->name);
-                return FALSE;
+                return FAIL;
             }
             tmpNode = IsExistDir(dirTree, command, 'd');
             tmpNode2 = IsExistDir(dirTree, command, 'f');
             if (!tmpNode && !tmpNode2) {
                 printf("cat: '%s': No such file or directory.\n", command);
-                return FALSE;
+                return FAIL;
             } else if (tmpNode && !tmpNode2) {
                 printf("cat: '%s': Is a directory\n", command);
-                return FALSE;
+                return FAIL;
             } else if (tmpNode2 && checkPermission(tmpNode2, 'r')) {
                 printf("cat: Can not open file '%s': Permission denied\n", tmpNode2->name);
-                return FALSE;
+                return FAIL;
             } else Concatenate(dirTree, command, 1);
         } else {
             strncpy(tmp2, getDir(command), MAX_DIR);
             value = MovePath(dirTree, tmp2);
             if (value) {
                 printf("cat: '%s': No such file or directory.\n", tmp2);
-                return FALSE;
+                return FAIL;
             }
             str = strtok(tmp, "/");
             while (str) {

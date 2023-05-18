@@ -1,8 +1,7 @@
 #include "../include/main.h"
 
-void GetMonth(int i)
-{
-    switch(i){
+void getMonth(int type) {
+    switch(type) {
     case 1:
         printf("Jan ");
         break;
@@ -44,9 +43,8 @@ void GetMonth(int i)
     }
 }
 
-void GetWeekday(int i)
-{
-    switch(i){
+void getWeekday(int type) {
+    switch(type) {
     case 0:
         printf("Sun ");
         break;

@@ -1,35 +1,35 @@
 #include "main.h"
 
-UserList *InitializeUser() {
+UserList *initUser() {
     UserList *returnList = (UserList *)malloc(sizeof(UserList));
-    UserNode *NewNode = (UserNode *)malloc(sizeof(UserNode));
+    UserNode *newNode = (UserNode *)malloc(sizeof(UserNode));
 
     time(&ltime);
     today = localtime(&ltime);
 
-    strncpy(NewNode->name, "root", MAX_NAME);
-    strncpy(NewNode->dir, "/", MAX_NAME);
-    NewNode->id.UID = 0;
-    NewNode->id.GID = 0;
-    NewNode->date.year = today->tm_year+1900;
-    NewNode->date.month = today->tm_mon+1;
-    NewNode->date.weekday = today->tm_wday;
-    NewNode->date.day = today->tm_mday;
-    NewNode->date.hour = today->tm_hour;
-    NewNode->date.minute = today->tm_min;
-    NewNode->date.second = today->tm_sec;
-    NewNode->nextNode = NULL;
+    strncpy(newNode->name, "root", MAX_NAME);
+    strncpy(newNode->dir, "/", MAX_NAME);
+    newNode->id.UID = 0;
+    newNode->id.GID = 0;
+    newNode->date.year = today->tm_year+1900;
+    newNode->date.month = today->tm_mon+1;
+    newNode->date.weekday = today->tm_wday;
+    newNode->date.day = today->tm_mday;
+    newNode->date.hour = today->tm_hour;
+    newNode->date.minute = today->tm_min;
+    newNode->date.second = today->tm_sec;
+    newNode->nextNode = NULL;
 
-    returnList->head = NewNode;
-    returnList->tail = NewNode;
-    returnList->current = NewNode;
+    returnList->head = newNode;
+    returnList->tail = newNode;
+    returnList->current = newNode;
     returnList->topId.UID = 0;
     returnList->topId.GID = 0;
 
     return returnList;
 }
 
-void WriteUser(UserList *userList, UserNode *userNode) {
+void writeUser(UserList *userList, UserNode *userNode) {
     time(&ltime);
     today = localtime(&ltime);
 
@@ -44,14 +44,14 @@ void WriteUser(UserList *userList, UserNode *userNode) {
     fprintf(User, "%s %d %d %d %d %d %d %d %d %d %s\n", userNode->name, userNode->id.UID, userNode->id.GID, userNode->date.year, userNode->date.month, userNode->date.weekday, userNode->date.day, userNode->date.hour, userNode->date.minute, userNode->date.second, userNode->dir);
 
     if (userNode->nextNode) {
-        WriteUser(userList, userNode->nextNode);
+        writeUser(userList, userNode->nextNode);
     }
 
 }
 
 void SaveUserList(UserList *userList) {
     User = fopen("file/User.txt", "w");
-    WriteUser(userList, userList->head);
+    writeUser(userList, userList->head);
     fclose(Dir);
 }
 
@@ -113,9 +113,7 @@ UserNode *IsExistUser(UserList *userList, char *userName) {
 
     returnUser = userList->head;
     while (returnUser) {
-        if (!strcmp(returnUser->name, userName)) {
-            break;
-        }
+        if (!strcmp(returnUser->name, userName)) break;
         returnUser = returnUser->nextNode;
     }
     return returnUser;
@@ -126,9 +124,7 @@ char *GetUID(DirectoryNode *dirNode) {
 
     tmpNode = usrList->head;
     while (tmpNode) {
-        if (tmpNode->id.UID == dirNode->id.UID) {
-            break;
-        }
+        if (tmpNode->id.UID == dirNode->id.UID) break;
         tmpNode = tmpNode->nextNode;
     }
     return tmpNode->name;
@@ -139,9 +135,7 @@ char *GetGID(DirectoryNode *dirNode) {
 
     tmpNode = usrList->head;
     while (tmpNode) {
-        if(tmpNode->id.GID == dirNode->id.GID) {
-            break;
-        }
+        if(tmpNode->id.GID == dirNode->id.GID) break;
         tmpNode = tmpNode->nextNode;
     }
     return tmpNode->name;

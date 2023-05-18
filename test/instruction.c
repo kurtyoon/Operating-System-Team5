@@ -8,7 +8,8 @@ void Instruction(DirectoryTree *dirTree, char *command) {
 
     if (!strcmp(command, "") || command[0] == ' ') return;
     str = strtok(command, " ");
-    if (!strcmp(str, "mkdir")) {
+    if (!strcmp(str, "clear")) system("clear");
+    else if (!strcmp(str, "mkdir")) {
         str = strtok(NULL, " ");
         value = ft_mkdir(dirTree, str);
         if (!value) SaveDir(dirTree, dStack);

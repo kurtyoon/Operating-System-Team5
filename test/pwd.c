@@ -17,32 +17,32 @@ int PrintPath(DirectoryTree *dirTree, Stack *dirStack) {
         }
     }
     printf("\n");
-    return 0;
+    return SUCCESS;
 }
 
-int ft_pwd(DirectoryTree *dirTree, Stack *dirStack, char *cmd) {
+int ft_pwd(DirectoryTree *dirTree, Stack *dirStack, char *command) {
     char *str = NULL;
-    if (!cmd) {
+    if (!command) {
         PrintPath(dirTree, dirStack);
-    } else if(cmd[0] == '-') {
-        if (!strcmp(cmd, "--help")) {
-            printf("사용법: pwd\n");
-            printf("  Print the name of the current working directory.\n\n");
-            printf("  Options:\n");
-            printf("        --help\t 이 도움말을 표시하고 끝냅니다\n");
-            return -1;
+    } else if(command[0] == '-') {
+        if (!strcmp(command, "--help")) {
+            printf("pwd: pwd\n");
+            printf("    Print the name of the current working directory.\n\n");
+            printf("Options:\n");
+            printf("      --help     display this help and exit\n");
+            return FAIL;
         } else {
-            str = strtok(cmd, "-");
+            str = strtok(command, "-");
             if (!str) {
-                printf("pwd: 잘못된 연산자\n");
+                printf("pwd: Invalid option\n");
                 printf("Try 'cd --help' for more information.\n");
                 return -1;
             } else {
-            printf("pwd: 부적절한 옵션 -- '%s'\n", str);
+            printf("pwd: Unrecognized option -- '%s'\n", str);
             printf("Try 'pwd --help' for more information.\n");
-            return -1;
+            return FAIL;
             }
         }
     }
-    return 0;
+    return SUCCESS;
 }

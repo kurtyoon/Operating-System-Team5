@@ -9,9 +9,9 @@ int Movecurrent(DirectoryTree* dirTree, char* dirPath) {
     } else {
         tmpNode = IsExistDir(dirTree, dirPath, 'd');
         if (tmpNode) dirTree->current = tmpNode;
-        else return -1;
+        else return FAIL;
     }
-    return 0;
+    return SUCCESS;
 }
 
 int MovePath(DirectoryTree* dirTree, char* dirPath) {
@@ -39,10 +39,10 @@ int MovePath(DirectoryTree* dirTree, char* dirPath) {
             str = strtok( NULL, "/");
         }
     }
-    return 0;
+    return SUCCESS;
 }
 
-int cd(DirectoryTree* dirTree, char* cmd) {
+int ft_cd(DirectoryTree* dirTree, char* cmd) {
     DirectoryNode* tmpNode = NULL;
     char* str = NULL;
     char tmp[MAX_DIR];
@@ -53,38 +53,47 @@ int cd(DirectoryTree* dirTree, char* cmd) {
         MovePath(dirTree, tmp);
     } else if(cmd[0] == '-') {
         if (!strcmp(cmd, "--help")) {
-            printf("사용법: cd 디렉터리...\n");
-            printf("  Change the shell working directory.\n\n");
-            printf("  Options:\n");
-            printf("        --help\t 이 도움말을 표시하고 끝냅니다\n");
+            printf("cd: cd [dir]\n");
+            printf("    Change the shell working directory.\n\n");
+            printf("    Change the current directory to DIR.  The default DIR is the value of the\n");
+            printf("    HOME shell variable.\n\n");
+            printf("    The variable CDPATH defines the search path for the directory containing\n");
+            printf("    DIR.  Alternative directory names in CDPATH are separated by a colon (:).\n");
+            printf("    A null directory name is the same as the current directory.  If DIR begins\n");
+            printf("    with a slash (/), then CDPATH is not used.\n\n");
+            printf("    If the directory is not found, and the shell option `cdable_vars' is set,\n");
+            printf("    the word is assumed to be  a variable name.  If that variable has a value,\n");
+            printf("    its value is used for DIR.\n\n");
+            printf("    Options:\n");
+            printf("      --help     display this help and exit\n");
             return -1;
         } else {
             str = strtok(cmd, "-");
             if (!str) {
-                printf("cd: 잘못된 연산자\n");
+                printf("cd: Invalid option\n");
                 printf("Try 'cd --help' for more information.\n");
-                return -1;
+                return FAIL;
             } else {
-            printf("cd: 부적절한 옵션 -- '%s'\n", str);
+            printf("cd: Unrecognized option -- '%s'\n", str);
             printf("Try 'cd --help' for more information.\n");
-            return -1;
+            return FAIL;
             }
         }
     } else {
         tmpNode = IsExistDir(dirTree, cmd, 'd');
         if (tmpNode) {
-            if (HasPermission(tmpNode, 'r')) {
-                printf("-bash: cd: '%s': 허가거부\n", cmd);
-                return -1;
+            if (checkPermission(tmpNode, 'r')) {
+                printf("-bash: cd: '%s': Permission denied\n", cmd);
+                return FAIL;
             }
         }
         tmpNode = IsExistDir(dirTree, cmd,  'f');
         if (tmpNode) {
-            printf("-bash: cd: '%s': 디렉터리가 아닙니다\n", cmd);
-            return -1;
+            printf("-bash: cd: '%s': Not a directory\n", cmd);
+            return FAIL;
         }
         val = MovePath(dirTree, cmd);
-        if (val) printf("-bash: cd: '%s': 그런 파일이나 디렉터리가 없습니다\n", cmd);
+        if (val) printf("-bash: cd: No such file or directory '%s'\n", cmd);
     }
-    return 0;
+    return SUCCESS;
 }
