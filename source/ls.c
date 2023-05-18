@@ -7,10 +7,9 @@ int listDir(DirectoryTree *dirTree, int optionA, int optionL) {
     int cnt;
 
     tmpNode = dirTree->current->firstChild;
-
     if (checkPermission(dirTree->current, 'r')) {
         printf("ls: cannot open directory '%s'': Permission denied\n", dirTree->current->name);
-        return -1;
+        return FAIL;
     }
     if (!optionL) {
         if (!optionA) {

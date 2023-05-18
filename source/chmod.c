@@ -50,38 +50,7 @@ int ft_chmod(DirectoryTree* dirTree, char* command) {
         return FAIL;
     }
     if(command[0] == '-') {
-        if (!strcmp(command, "-R")) {
-            str = strtok(NULL, " ");
-            if(!str) {
-                printf("chmod: Invalid option\n");
-                printf("Try 'chmod --help' for more information.\n");
-                return FAIL;
-            }
-            if (str[0] - '0' < 8 && str[1] - '0' < 8 && str[2] - '0' < 8 && strlen(str) == 3) {
-                tmp = atoi(str);
-                str = strtok(NULL, " ");
-                if (!str) {
-                    printf("chmod: Invalid option\n");
-                    printf("Try 'chmod --help' for more information.\n");
-                    return FAIL;
-                }
-                tmpNode = dirExistence(dirTree, str, 'd');
-                if (tmpNode) {
-                    if (!tmpNode->firstChild) changeMode(dirTree, tmp, str);
-                    else{
-                        changeMode(dirTree, tmp, str);
-                        changeModeAll(tmpNode->firstChild, tmp);
-                    }
-                } else {
-                    printf("chmod: '%s': No such file or directory.\n", str);
-                    return FAIL;
-                }
-            } else {
-                printf("chmod: Invalid Mode: '%s'\n", str);
-                printf("Try 'chmod --help' for more information.\n");
-                return FAIL;
-            }
-        } else if (!strcmp(command, "--help")) {
+        if (!strcmp(command, "--help")) {
             printf("Usage: chmod [OPTION]... OCTAL-MODE FILE...\n");
             printf("Change the mode of each FILE to MODE.\n\n");
             printf("  Options:\n");
@@ -101,7 +70,7 @@ int ft_chmod(DirectoryTree* dirTree, char* command) {
             }
         }
     } else {
-        if (command[0] - '0' < 8 && command[1] - '0' < 8 && command[2] - '0' <8  && strlen(command) == 3) {
+        if (command[0] - '0' < 8 && command[1] - '0' < 8 && command[2] - '0' < 8 && strlen(command) == 3) {
             tmp = atoi(command);
             str = strtok(NULL, " ");
             if (!str) {

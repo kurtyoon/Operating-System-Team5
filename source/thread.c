@@ -1,6 +1,6 @@
 #include "../include/main.h"
 
-void *thread_routine_make_directory(void *arg) {
+void *makeDirUsedThread(void *arg) {
     ThreadTree *threadTree = ((ThreadTree *)arg);
     DirectoryTree *dirTree = threadTree->threadTree;
     DirectoryTree *p_preTree;

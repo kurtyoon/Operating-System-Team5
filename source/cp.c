@@ -1,5 +1,9 @@
 #include "../include/main.h"
 
+// cp sourceFile newFile
+// cp sourceFile directory
+// cp soureceFile direcotory/newFile
+
 int ft_cp(DirectoryTree* dirTree, char* SourceName, char* ObjectName) {
     char buf[1024];
     int original, new;

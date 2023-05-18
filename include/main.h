@@ -195,7 +195,7 @@ void printPermission(DirectoryNode *dirNode);
 int checkPermission(DirectoryNode *dirNode, char o);
 
 // thread.c
-void *thread_routine_make_directory(void *arg);
+void *makeDirUsedThread(void *arg);
 
 // stack.c
 boolean isEmpty(Stack *stack);

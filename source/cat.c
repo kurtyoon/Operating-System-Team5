@@ -17,12 +17,10 @@ int concatenate(DirectoryTree* dirTree, char* fileName, int type) {
                 printf("%s:x:%d:%d:%s:%s\n", tmpUser->name, tmpUser->id.UID, tmpUser->id.GID, tmpUser->name, tmpUser->dir);
                 tmpUser = tmpUser->nextNode;
             }
-            return 0;
+            return SUCCESS;
         }
         tmpNode = dirExistence(dirTree, fileName, 'f');
-
         if(!tmpNode) return FAIL;
-
         fp = fopen(fileName, "r");
         while (!feof(fp)) {
             fgets(buf, sizeof(buf), fp);
@@ -33,7 +31,7 @@ int concatenate(DirectoryTree* dirTree, char* fileName, int type) {
                     cnt++;
                 }
             } else if(type == 3) {
-                if(buf[strlen(buf)-1] == '\n' && buf[0] != '\n'){
+                if(buf[strlen(buf) - 1] == '\n' && buf[0] != '\n'){
                     printf("     %d ",cnt);
                     cnt++;
                 }

@@ -119,7 +119,7 @@ void login(UserList *userList, DirectoryTree *dirTree) {
             userList->current = tmpUser;
             break;
         }
-        printf("'%s' 유저가 존재하지 않습니다\n", userName);
+        printf("'%s' User not found\n", userName);
     }
     strcpy(tmp, userList->current->dir);
     movePath(dirTree, tmp);

@@ -14,7 +14,7 @@ int modeToPermission(DirectoryNode *dirNode) {
         tmp = buf[i] - '0';
         j = 2;
         while (tmp) {
-        dirNode->permission.permission[3 * i + j] = tmp%2;
+        dirNode->permission.permission[3 * i + j] = tmp % 2;
         tmp /= 2;
         j--;
         }

@@ -64,6 +64,9 @@ int ft_find(DirectoryTree *dirTree, char *command) {
                 return FAIL;
             }
         }
-    } else findDir(dirTree, command, 1);
+    } else {
+        findDir(dirTree, command, 0);
+        findDir(dirTree, command, 1);
+        }
     return 0;
 }

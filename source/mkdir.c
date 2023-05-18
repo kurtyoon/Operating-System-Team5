@@ -70,9 +70,9 @@ int ft_mkdir(DirectoryTree *p_directoryTree, char *command) {
         printf("Try 'mkdir --help' for more information.\n");
         return FAIL;
     }
-    int t_count = 0;
-    pthread_t t_command[MAX_THREAD];
-    ThreadTree p_threadArg[MAX_THREAD];
+    int threadCount = 0;
+    pthread_t threadPool[MAX_THREAD];
+    ThreadTree threadTree[MAX_THREAD];
     tmpNode = p_directoryTree->current;
     if (command[0] == '-') {
         if (!strcmp(command, "-p")) {
@@ -83,10 +83,9 @@ int ft_mkdir(DirectoryTree *p_directoryTree, char *command) {
                 return FAIL;
             }
             while (str) {
-                printf("%s : str\n", str);
-                p_threadArg[t_count].threadTree = p_directoryTree;
-                p_threadArg[t_count].option = 1;
-                p_threadArg[t_count++].command = str;
+                threadTree[threadCount].threadTree = p_directoryTree;
+                threadTree[threadCount].option = 1;
+                threadTree[threadCount++].command = str;
                 str = strtok(NULL, " ");
             }
         } else if (!strcmp(command, "--help")) {
@@ -110,19 +109,19 @@ int ft_mkdir(DirectoryTree *p_directoryTree, char *command) {
         }
     } else {
         str = strtok(NULL, " ");
-        p_threadArg[t_count].threadTree = p_directoryTree;
-        p_threadArg[t_count].option = 0;
-        p_threadArg[t_count++].command = command;
+        threadTree[threadCount].threadTree = p_directoryTree;
+        threadTree[threadCount].option = 0;
+        threadTree[threadCount++].command = command;
         while (str) {
-            p_threadArg[t_count].threadTree = p_directoryTree;
-            p_threadArg[t_count].option = 0;
-            p_threadArg[t_count++].command = str;
+            threadTree[threadCount].threadTree = p_directoryTree;
+            threadTree[threadCount].option = 0;
+            threadTree[threadCount++].command = str;
             str = strtok(NULL, " ");
         }
     }
-    for (int i = 0; i < t_count; i++) {
-        pthread_create(&t_command[i], NULL, thread_routine_make_directory, (void *)&p_threadArg[i]);
-        pthread_join(t_command[i], NULL);
+    for (int i = 0; i < threadCount; i++) {
+        pthread_create(&threadPool[i], NULL, makeDirUsedThread, (void *)&threadTree[i]);
+        pthread_join(threadPool[i], NULL);
     }
     return SUCCESS;
 }

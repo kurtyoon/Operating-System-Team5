@@ -34,7 +34,7 @@ int movePath(DirectoryTree* dirTree, char* dirPath) {
             val = moveCurrent(dirTree, str);
             if (val) {
                 dirTree->current = tmpNode;
-                return -1;
+                return FAIL;
             }
             str = strtok( NULL, "/");
         }
@@ -66,7 +66,7 @@ int ft_cd(DirectoryTree *dirTree, char *command) {
             printf("    its value is used for DIR.\n\n");
             printf("    Options:\n");
             printf("      --help     display this help and exit\n");
-            return -1;
+            return FAIL;
         } else {
             str = strtok(command, "-");
             if (!str) {
