@@ -114,7 +114,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
             else concatenate(dirTree, str, 0);
         } else {
             strncpy(tmp2, getDir(str), MAX_DIR);
-            value = MovePath(dirTree, tmp2);
+            value = movePath(dirTree, tmp2);
             if (value) {
                 printf("cat: '%s': No such file or directory\n", tmp2);
                 return FAIL;
@@ -162,7 +162,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                 } else concatenate(dirTree, str, 2);
             } else {
                 strncpy(tmp2, getDir(str), MAX_DIR);
-                value = MovePath(dirTree, tmp2);
+                value = movePath(dirTree, tmp2);
                 if (value) {
                     printf("cat: '%s': No such file or directory.\n", tmp2);
                     return FAIL;
@@ -218,7 +218,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                 
             } else {
                 strncpy(tmp2, getDir(str), MAX_DIR);
-                value = MovePath(dirTree, tmp2);
+                value = movePath(dirTree, tmp2);
                 if (value) {
                     printf("cat: '%s': No such file or directory.\n", tmp2);
                     return FAIL;
@@ -293,7 +293,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
             } else concatenate(dirTree, command, 1);
         } else {
             strncpy(tmp2, getDir(command), MAX_DIR);
-            value = MovePath(dirTree, tmp2);
+            value = movePath(dirTree, tmp2);
             if (value) {
                 printf("cat: '%s': No such file or directory.\n", tmp2);
                 return FAIL;

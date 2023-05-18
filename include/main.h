@@ -110,25 +110,27 @@ struct tm *today;
 
 // user.c
 void writeUser(UserList *userList, UserNode *userNode);
-int ReadUser(UserList *userList, char *tmp);
+int readUser(UserList *userList, char *tmp);
 UserNode *IsExistUser(UserList *userList, char *userName);
-char *GetUID(DirectoryNode *dirNode);
-char *GetGID(DirectoryNode *dirNode);
+char *getUID(DirectoryNode *dirNode);
+char *getGID(DirectoryNode *dirNode);
 
 // userlist.c
 UserList *loadUserList();
-void SaveUserList(UserList *userList);
+void saveUserList(UserList *userList);
 UserList *initUserList();
 
 // directory.c
 char *getDir(char *dirPath);
 void getPath(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack);
 void writeDirNode(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack);
-void saveDir(DirectoryTree *dirTree, Stack *dirStack);
 int readDirNode(DirectoryTree *dirTree, char *tmp);
+DirectoryNode *IsExistDir(DirectoryTree *dirTree, char *dirName, char type);
+
+// directorytree.c
+void saveDirectoryTree(DirectoryTree *dirTree, Stack *dirStack);
 DirectoryTree *loadDirectoryTree();
 DirectoryTree *initDirectoryTree();
-DirectoryNode *IsExistDir(DirectoryTree *dirTree, char *dirName, char type);
 
 // cat.c
 int concatenate(DirectoryTree* dirTree, char* fName, int type);

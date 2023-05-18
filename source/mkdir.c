@@ -84,10 +84,10 @@ int ft_mkdir(DirectoryTree *dirTree, char *cmd) {
             if (!strncmp(str, "/", 1)) dirTree->current = dirTree->root;
             str = strtok(str, "/");
             while (str) {
-                val = Movecurrent(dirTree, str);
+                val = moveCurrent(dirTree, str);
                 if (val) {
                     MakeDir(dirTree, str, 'd');
-                    Movecurrent(dirTree, str);
+                    moveCurrent(dirTree, str);
                 }
                 str = strtok(NULL, "/");
             }
@@ -147,7 +147,7 @@ int ft_mkdir(DirectoryTree *dirTree, char *cmd) {
                 return 0;
             } else {
                 strncpy(tmp2, getDir(cmd), MAX_DIR);
-                val = MovePath(dirTree, tmp2);
+                val = movePath(dirTree, tmp2);
                 if (val) {
                     printf("mkdir: '%s': 그런 파일이나 디렉터리가 없습니다\n", tmp2);
                     return -1;

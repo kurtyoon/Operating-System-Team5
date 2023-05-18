@@ -122,5 +122,5 @@ void login(UserList *userList, DirectoryTree *dirTree) {
         printf("'%s' 유저가 존재하지 않습니다\n", userName);
     }
     strcpy(tmp, userList->current->dir);
-    MovePath(dirTree, tmp);
+    movePath(dirTree, tmp);
 }

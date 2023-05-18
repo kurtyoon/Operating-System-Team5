@@ -41,7 +41,7 @@ UserList *loadUserList() {
 
     User = fopen("file/User.txt", "r");
     while (fgets(tmp, MAX_LENGTH, User)) {
-        ReadUser(userList, tmp);
+        readUser(userList, tmp);
     }
     fclose(User);
     userList->current = NULL;

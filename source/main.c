@@ -9,7 +9,7 @@ int main() {
 
     login(usrList, Linux);
     printStart();
-    SaveUserList(usrList);
+    saveUserList(usrList);
 
     while (TRUE) {
         printPrompt(Linux, dStack);

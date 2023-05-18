@@ -66,7 +66,7 @@ int listDir(DirectoryTree *dirTree, int optionA, int optionL) {
             printPermission(dirTree->current);
             printf("%3d", cnt);
             printf("   ");
-            printf("%-5s%-5s", GetUID(dirTree->current), GetGID(dirTree->current));
+            printf("%-5s%-5s", getUID(dirTree->current), getGID(dirTree->current));
             printf("%5d ", dirTree->current->SIZE);
             getMonth(dirTree->current->date.month);
             printf("%2d %02d:%02d ", dirTree->current->date.day, dirTree->current->date.hour, dirTree->current->date.minute);
@@ -89,7 +89,7 @@ int listDir(DirectoryTree *dirTree, int optionA, int optionL) {
                 printPermission(dirTree->current->parent);
                 printf("%3d", cnt);
                 printf("   ");
-                printf("%-5s%-5s", GetUID(dirTree->current->parent), GetGID(dirTree->current->parent));
+                printf("%-5s%-5s", getUID(dirTree->current->parent), getGID(dirTree->current->parent));
                 printf("%5d ", dirTree->current->SIZE);
                 getMonth(dirTree->current->parent->date.month);
                 printf("%2d %02d:%02d ", dirTree->current->parent->date.day, dirTree->current->parent->date.hour, dirTree->current->parent->date.minute);
@@ -123,7 +123,7 @@ int listDir(DirectoryTree *dirTree, int optionA, int optionL) {
             printPermission(tmpNode);
             printf("%3d", cnt);
             printf("   ");
-            printf("%-5s%-5s", GetUID(tmpNode), GetGID(tmpNode));
+            printf("%-5s%-5s", getUID(tmpNode), getGID(tmpNode));
             printf("%5d ", tmpNode->SIZE);
             getMonth(tmpNode->date.month);
             printf("%2d %02d:%02d ", tmpNode->date.day, tmpNode->date.hour, tmpNode->date.minute);
@@ -152,7 +152,7 @@ int ft_ls(DirectoryTree *dirTree, char *command) {
             str = strtok(NULL, " ");
             if (str) {
                 tmpNode = dirTree->current;
-                value = MovePath(dirTree, str);
+                value = movePath(dirTree, str);
                 if (value) return FAIL;
             }
             listDir(dirTree, 1, 1);
@@ -160,7 +160,7 @@ int ft_ls(DirectoryTree *dirTree, char *command) {
             str = strtok(NULL, " ");
             if (str) {
                 tmpNode = dirTree->current;
-                value = MovePath(dirTree, str);
+                value = movePath(dirTree, str);
                 if (value) return FAIL;
             }
             listDir(dirTree, 0, 1);
@@ -168,7 +168,7 @@ int ft_ls(DirectoryTree *dirTree, char *command) {
             str = strtok(NULL, " ");
             if (str) {
                 tmpNode = dirTree->current;
-                value = MovePath(dirTree, str);
+                value = movePath(dirTree, str);
                 if (value) return FAIL;
             }
             listDir(dirTree, 1, 0);
@@ -193,7 +193,7 @@ int ft_ls(DirectoryTree *dirTree, char *command) {
         }
     } else {
         tmpNode = dirTree->current;
-        value = MovePath(dirTree, command);
+        value = movePath(dirTree, command);
         if (value) return FAIL;
         listDir(dirTree, 0, 0);
         dirTree->current = tmpNode;
