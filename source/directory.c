@@ -1,6 +1,6 @@
 #include "../include/main.h"
 
-DirectoryNode *IsExistDir(DirectoryTree *dirTree, char *dirName, char type) {
+DirectoryNode *dirExistence(DirectoryTree *dirTree, char *dirName, char type) {
     DirectoryNode *returnNode = NULL;
 
     returnNode = dirTree->current->firstChild;
@@ -33,37 +33,28 @@ void getPath(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack) {
     char tmp[MAX_DIR] = "";
 
     tmpNode = dirNode->parent;
-    if (tmpNode == dirTree->root) {
-        strcpy(tmp, "/");
-    } else {
+    if (tmpNode == dirTree->root) strcpy(tmp, "/");
+    else {
         while (tmpNode->parent) {
             pushStack(dirStack, tmpNode->name);
             tmpNode = tmpNode->parent;
         }
         while (isEmpty(dirStack) == FALSE) {
-                strcat(tmp, "/");
-                strcat(tmp, popStack(dirStack));
+            strcat(tmp, "/");
+            strcat(tmp, popStack(dirStack));
         }
     }
     fprintf(Dir, " %s\n", tmp);
 }
 
-
 void writeDirNode(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack) {
     fprintf(Dir, "%s %c %d ", dirNode->name, dirNode->type, dirNode->permission.mode);
     fprintf(Dir, "%d %d %d %d %d %d %d", dirNode->SIZE, dirNode->id.UID, dirNode->id.GID, dirNode->date.month, dirNode->date.day, dirNode->date.hour, dirNode->date.minute);
 
-    if(dirNode == dirTree->root) {
-        fprintf(Dir, "\n");
-    } else {
-        getPath(dirTree, dirNode, dirStack);
-    }
-    if (dirNode->nextSibling) {
-        writeDirNode(dirTree, dirNode->nextSibling, dirStack);
-    }
-    if (dirNode->firstChild) {
-        writeDirNode(dirTree, dirNode->firstChild, dirStack);
-    }
+    if(dirNode == dirTree->root) fprintf(Dir, "\n");
+    else getPath(dirTree, dirNode, dirStack);
+    if (dirNode->nextSibling) writeDirNode(dirTree, dirNode->nextSibling, dirStack);
+    if (dirNode->firstChild) writeDirNode(dirTree, dirNode->firstChild, dirStack);
 }
 
 int readDirNode(DirectoryTree *dirTree, char *tmp) {
@@ -102,13 +93,10 @@ int readDirNode(DirectoryTree *dirTree, char *tmp) {
         str[strlen(str) - 1] = '\0';
         movePath(dirTree, str);
         NewNode->parent = dirTree->current;
-        if (!dirTree->current->firstChild) {
-            dirTree->current->firstChild = NewNode;
-        } else {
+        if (!dirTree->current->firstChild) dirTree->current->firstChild = NewNode;
+        else {
             tmpNode = dirTree->current->firstChild;
-            while (tmpNode->nextSibling) {
-                tmpNode = tmpNode->nextSibling;
-            }
+            while (tmpNode->nextSibling) tmpNode = tmpNode->nextSibling;
             tmpNode->nextSibling = NewNode;
         }
     } else {

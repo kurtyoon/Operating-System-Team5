@@ -5,8 +5,8 @@ int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName) {
     DirectoryNode *tmpNode2 = NULL;
     UserNode *tmpUser = NULL;
 
-    tmpNode = IsExistDir(dirTree, dirName, 'd');
-    tmpNode2 = IsExistDir(dirTree, dirName, 'f');
+    tmpNode = dirExistence(dirTree, dirName, 'd');
+    tmpNode2 = dirExistence(dirTree, dirName, 'f');
 
 
     if (tmpNode) {
@@ -14,7 +14,7 @@ int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName) {
             printf("chown: Can not modify file '%s': Permission denied\n", dirName);
             return FAIL;
         }
-        tmpUser = IsExistUser(usrList, userName);
+        tmpUser = userExistence(usrList, userName);
         if (tmpUser) {
             tmpNode->id.UID = tmpUser->id.UID;
             tmpNode->id.GID = tmpUser->id.GID;
@@ -28,7 +28,7 @@ int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName) {
             printf("chown: Can not modify file '%s': Permission denied\n", dirName);
             return FAIL;
         }
-        tmpUser = IsExistUser(usrList, userName);
+        tmpUser = userExistence(usrList, userName);
         if (tmpUser) {
             tmpNode2->id.UID = tmpUser->id.UID;
             tmpNode2->id.GID = tmpUser->id.GID;
@@ -47,7 +47,7 @@ int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName) {
 void changeOwnerAll(DirectoryNode *dirNode, char *userName) {
     UserNode *tmpUser = NULL;
 
-    tmpUser = IsExistUser(usrList, userName);
+    tmpUser = userExistence(usrList, userName);
     if (dirNode->nextSibling) {
         changeOwnerAll(dirNode->nextSibling, userName);
     }
@@ -77,7 +77,7 @@ int ft_chown(DirectoryTree* dirTree, char* cmd) {
                 printf("Try 'chown --help' for more information.\n");
                 return FAIL;
             }
-            tmpUser = IsExistUser(usrList, str);
+            tmpUser = userExistence(usrList, str);
             if (tmpUser) strncpy(tmp, str, MAX_NAME);
             else {
                 printf("chown: Invalid option: '%s'\n", str);
@@ -90,7 +90,7 @@ int ft_chown(DirectoryTree* dirTree, char* cmd) {
                 printf("Try 'chown --help' for more information.\n");
                 return FAIL;
             }
-            tmpNode = IsExistDir(dirTree, str, 'd');
+            tmpNode = dirExistence(dirTree, str, 'd');
             if (tmpNode) {
                 if (!tmpNode->firstChild) changeOwner(dirTree, tmp, str);
                 else {

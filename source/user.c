@@ -14,10 +14,7 @@ void writeUser(UserList *userList, UserNode *userNode) {
 
     fprintf(User, "%s %d %d %d %d %d %d %d %d %d %s\n", userNode->name, userNode->id.UID, userNode->id.GID, userNode->date.year, userNode->date.month, userNode->date.weekday, userNode->date.day, userNode->date.hour, userNode->date.minute, userNode->date.second, userNode->dir);
 
-    if (userNode->nextNode) {
-        writeUser(userList, userNode->nextNode);
-    }
-
+    if (userNode->nextNode) writeUser(userList, userNode->nextNode);
 }
 
 int readUser(UserList *userList, char *tmp) {
@@ -60,7 +57,7 @@ int readUser(UserList *userList, char *tmp) {
     return 0;
 }
 
-UserNode *IsExistUser(UserList *userList, char *userName) {
+UserNode *userExistence(UserList *userList, char *userName) {
     UserNode *returnUser = NULL;
 
     returnUser = userList->head;

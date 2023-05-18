@@ -79,7 +79,7 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
             }
             strncpy(tmp, str, MAX_DIR);
             if (!strstr(str, "/")) {
-                tmpNode = IsExistDir(dirTree, str, 'd');
+                tmpNode = dirExistence(dirTree, str, 'd');
                 if (!tmpNode) {
                     printf("rm: Can not remove '%s': No such file or directory.\n", str);
                     return FAIL;
@@ -102,7 +102,7 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
                     strncpy(tmp3, str, MAX_NAME);
                     str = strtok(NULL, "/");
                 }
-                tmpNode = IsExistDir(dirTree, tmp3, 'd');
+                tmpNode = dirExistence(dirTree, tmp3, 'd');
                 if (!tmpNode) {
                     printf("rm: Can not remove '%s': No such file or directory.\n", tmp3);
                     dirTree->current = currentNode;
@@ -124,8 +124,8 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
             }
             strncpy(tmp, str, MAX_DIR);
             if (!strstr(str, "/")) {
-                tmpNode = IsExistDir(dirTree, str, 'f');
-                tmpNode2 = IsExistDir(dirTree, str, 'd');
+                tmpNode = dirExistence(dirTree, str, 'f');
+                tmpNode2 = dirExistence(dirTree, str, 'd');
 
                 if (!tmpNode2) {
                     return FAIL;
@@ -149,8 +149,8 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
                     strncpy(tmp3, str, MAX_NAME);
                     str = strtok(NULL, "/");
                 }
-                tmpNode = IsExistDir(dirTree, tmp3, 'f');
-                tmpNode2 = IsExistDir(dirTree, tmp3, 'd');
+                tmpNode = dirExistence(dirTree, tmp3, 'f');
+                tmpNode2 = dirExistence(dirTree, tmp3, 'd');
 
                 if (tmpNode2) {
                     dirTree->current = currentNode;
@@ -175,7 +175,7 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
             }
             strncpy(tmp, str, MAX_DIR);
             if (!strstr(str, "/")) {
-                tmpNode = IsExistDir(dirTree, str, 'd');
+                tmpNode = dirExistence(dirTree, str, 'd');
                 if(!tmpNode){
                     return FAIL;
                 } else {
@@ -195,7 +195,7 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
                     strncpy(tmp3, str, MAX_NAME);
                     str = strtok(NULL, "/");
                 }
-                tmpNode = IsExistDir(dirTree, tmp3, 'd');
+                tmpNode = dirExistence(dirTree, tmp3, 'd');
                 if (!tmpNode) {
                     dirTree->current = currentNode;
                     return FAIL;
@@ -231,8 +231,8 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
     } else {
         strncpy(tmp, command, MAX_DIR);
         if (!strstr(command, "/")) {
-            tmpNode = IsExistDir(dirTree, command, 'f');
-            tmpNode2 = IsExistDir(dirTree, command, 'd');
+            tmpNode = dirExistence(dirTree, command, 'f');
+            tmpNode2 = dirExistence(dirTree, command, 'd');
 
             if (tmpNode2) {
                 printf("rm:Can not remove '%s': Is a directory.\n", command);
@@ -260,8 +260,8 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
                 strncpy(tmp3, str, MAX_NAME);
                 str = strtok(NULL, "/");
             }
-            tmpNode = IsExistDir(dirTree, tmp3, 'f');
-            tmpNode2 = IsExistDir(dirTree, tmp3, 'd');
+            tmpNode = dirExistence(dirTree, tmp3, 'f');
+            tmpNode2 = dirExistence(dirTree, tmp3, 'd');
 
             if (tmpNode2) {
                 printf("rm: Can not remove '%s': Is a directory.\n", tmp3);

@@ -1,6 +1,6 @@
 #include "../include/main.h"
 
-int PrintPath(DirectoryTree *dirTree, Stack *dirStack) {
+int printPath(DirectoryTree *dirTree, Stack *dirStack) {
     DirectoryNode *tmpNode = NULL;
 
     tmpNode = dirTree->current;
@@ -23,7 +23,7 @@ int PrintPath(DirectoryTree *dirTree, Stack *dirStack) {
 int ft_pwd(DirectoryTree *dirTree, Stack *dirStack, char *command) {
     char *str = NULL;
     if (!command) {
-        PrintPath(dirTree, dirStack);
+        printPath(dirTree, dirStack);
     } else if(command[0] == '-') {
         if (!strcmp(command, "--help")) {
             printf("pwd: pwd\n");

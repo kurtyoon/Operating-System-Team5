@@ -111,7 +111,7 @@ struct tm *today;
 // user.c
 void writeUser(UserList *userList, UserNode *userNode);
 int readUser(UserList *userList, char *tmp);
-UserNode *IsExistUser(UserList *userList, char *userName);
+UserNode *userExistence(UserList *userList, char *userName);
 char *getUID(DirectoryNode *dirNode);
 char *getGID(DirectoryNode *dirNode);
 
@@ -125,7 +125,7 @@ char *getDir(char *dirPath);
 void getPath(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack);
 void writeDirNode(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack);
 int readDirNode(DirectoryTree *dirTree, char *tmp);
-DirectoryNode *IsExistDir(DirectoryTree *dirTree, char *dirName, char type);
+DirectoryNode *dirExistence(DirectoryTree *dirTree, char *dirName, char type);
 
 // directorytree.c
 void saveDirectoryTree(DirectoryTree *dirTree, Stack *dirStack);
@@ -171,7 +171,7 @@ int MakeDir(DirectoryTree *dirTree, char *dirName, char type);
 int ft_mkdir(DirectoryTree *dirTree, char *cmd);
 
 // pwd.c
-int PrintPath(DirectoryTree *dirTree, Stack *dirStack);
+int printPath(DirectoryTree *dirTree, Stack *dirStack);
 int ft_pwd(DirectoryTree *dirTree, Stack *dirStack, char *cmd);
 
 // rm.c
@@ -181,7 +181,7 @@ int removeDir(DirectoryTree *dirTree, char *dirName);
 int ft_rm(DirectoryTree *dirTree, char *cmd);
 
 // instruction.c
-void Instruction(DirectoryTree* dirTree, char* cmd);
+void instruction(DirectoryTree* dirTree, char* cmd);
 
 // system.c
 void getToday(Date *date);

@@ -14,7 +14,7 @@ int MakeDir(DirectoryTree *dirTree, char *dirName, char type) {
         free(NewNode);
         return FAIL;
     }
-    tmpNode = IsExistDir(dirTree, dirName, type);
+    tmpNode = dirExistence(dirTree, dirName, type);
     if (tmpNode && tmpNode->type == 'd'){
         printf("mkdir: : '%s' Can not create directory: File exists.\n", dirName);
         free(NewNode);
@@ -109,7 +109,7 @@ int ft_mkdir(DirectoryTree *dirTree, char *cmd) {
                 }
                 val = MakeDir(dirTree, str, 'd');
                 if (!val) {
-                    tmpNode = IsExistDir(dirTree, str, 'd');
+                    tmpNode = dirExistence(dirTree, str, 'd');
                     tmpNode->permission.mode = tmpMode;
                     modeToPermission(tmpNode);
                 }
@@ -224,7 +224,7 @@ int ft_mkdir(DirectoryTree *dirTree, char *cmd) {
                     free(NewNode);
                     return -1;
                 }
-                tmpNode = IsExistDir(dirTree, NewNode->name, 'd');
+                tmpNode = dirExistence(dirTree, NewNode->name, 'd');
                 if (tmpNode && tmpNode->type == 'd'){
                     printf("mkdir: '%s' 디렉터리를 만들 수 없습니다: 파일이 존재합니다\n", NewNode->name);
                     free(NewNode);

@@ -20,7 +20,7 @@ int concatenate(DirectoryTree* dirTree, char* fileName, int type) {
             }
             return 0;
         }
-        tmpNode = IsExistDir(dirTree, fileName, 'f');
+        tmpNode = dirExistence(dirTree, fileName, 'f');
 
         if(!tmpNode) return FAIL;
 
@@ -52,7 +52,7 @@ int concatenate(DirectoryTree* dirTree, char* fileName, int type) {
         rewind(stdin);
         fclose(fp);
 
-        tmpNode = IsExistDir(dirTree, fileName, 'f');
+        tmpNode = dirExistence(dirTree, fileName, 'f');
         if (tmpNode) {
             time(&ltime);
             today = localtime(&ltime);
@@ -62,7 +62,7 @@ int concatenate(DirectoryTree* dirTree, char* fileName, int type) {
             tmpNode->date.hour = today->tm_hour;
             tmpNode->date.minute = today->tm_min;
         } else MakeDir(dirTree, fileName, 'f');
-        tmpNode = IsExistDir(dirTree, fileName, 'f');
+        tmpNode = dirExistence(dirTree, fileName, 'f');
         tmpNode->SIZE = tmpSIZE;
     }
     return SUCCESS;
@@ -106,7 +106,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                 printf("cat: Can not create file '%s': No permission.\n", dirTree->current->name);
                 return FAIL;
             }
-            tmpNode = IsExistDir(dirTree, str, 'd');
+            tmpNode = dirExistence(dirTree, str, 'd');
             if (tmpNode) {
                 printf("cat: '%s': Is a directory\n", str);
                 return FAIL;
@@ -129,7 +129,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                 dirTree->current = currentNode;
                 return FAIL;
             }
-            tmpNode = IsExistDir(dirTree, tmp3, 'd');
+            tmpNode = dirExistence(dirTree, tmp3, 'd');
             if (tmpNode) {
                 printf("cat: '%s': Is a directory\n", tmp3);
                 dirTree->current = currentNode;
@@ -147,8 +147,8 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                     printf("cat: Can not create file '%s': No permission.\n", dirTree->current->name);
                     return FAIL;
                 }
-                tmpNode = IsExistDir(dirTree, str, 'd');
-                tmpNode2 = IsExistDir(dirTree, str, 'f');
+                tmpNode = dirExistence(dirTree, str, 'd');
+                tmpNode2 = dirExistence(dirTree, str, 'f');
     
                 if (!tmpNode && !tmpNode2) {
                     printf("cat: '%s': No such file or directory.\n", str);
@@ -172,8 +172,8 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                     strncpy(tmp3, str, MAX_NAME);
                     str = strtok(NULL, "/");
                 }
-                tmpNode = IsExistDir(dirTree, tmp3, 'd');
-                tmpNode2 = IsExistDir(dirTree, tmp3, 'f');
+                tmpNode = dirExistence(dirTree, tmp3, 'd');
+                tmpNode2 = dirExistence(dirTree, tmp3, 'f');
     
                 if (!tmpNode && !tmpNode2) {
                     printf("cat: '%s': No such file or directory.\n", tmp3);
@@ -200,8 +200,8 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                     printf("cat: Can not create file '%s': Permission denied\n", dirTree->current->name);
                     return FAIL;
                 }
-                tmpNode = IsExistDir(dirTree, str, 'd');
-                tmpNode2 = IsExistDir(dirTree, str, 'f');
+                tmpNode = dirExistence(dirTree, str, 'd');
+                tmpNode2 = dirExistence(dirTree, str, 'f');
                 if(!tmpNode && !tmpNode2) {
                     printf("cat: '%s': No such file or directory.\n", str);
                     return FAIL;
@@ -228,8 +228,8 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                     strncpy(tmp3, str, MAX_NAME);
                     str = strtok(NULL, "/");
                 }
-                tmpNode = IsExistDir(dirTree, tmp3, 'd');
-                tmpNode2 = IsExistDir(dirTree, tmp3, 'f');
+                tmpNode = dirExistence(dirTree, tmp3, 'd');
+                tmpNode2 = dirExistence(dirTree, tmp3, 'f');
                 if (!tmpNode && !tmpNode2) {
                     printf("cat: '%s': No such file or directory.\n", tmp3);
                     dirTree->current = currentNode;
@@ -279,8 +279,8 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                 printf("cat: Can not create file '%s': Permission denied\n", dirTree->current->name);
                 return FAIL;
             }
-            tmpNode = IsExistDir(dirTree, command, 'd');
-            tmpNode2 = IsExistDir(dirTree, command, 'f');
+            tmpNode = dirExistence(dirTree, command, 'd');
+            tmpNode2 = dirExistence(dirTree, command, 'f');
             if (!tmpNode && !tmpNode2) {
                 printf("cat: '%s': No such file or directory.\n", command);
                 return FAIL;
@@ -303,8 +303,8 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                 strncpy(tmp3, str, MAX_NAME);
                 str = strtok(NULL, "/");
             }
-            tmpNode = IsExistDir(dirTree, tmp3, 'd');
-            tmpNode2 = IsExistDir(dirTree, tmp3, 'f');
+            tmpNode = dirExistence(dirTree, tmp3, 'd');
+            tmpNode2 = dirExistence(dirTree, tmp3, 'f');
             if(!tmpNode && !tmpNode2) {
                 printf("cat: '%s': No such file or directory.\n", tmp3);
                 dirTree->current = currentNode;

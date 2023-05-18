@@ -1,6 +1,6 @@
 #include "../include/main.h"
 
-void Instruction(DirectoryTree *dirTree, char *command) {
+void instruction(DirectoryTree *dirTree, char *command) {
     char *str;
     char *str1;
     char *str2;

@@ -114,7 +114,7 @@ void login(UserList *userList, DirectoryTree *dirTree) {
         if (!strcmp(userName, "exit")) {
             exit(0);
         }
-        tmpUser = IsExistUser(userList, userName);
+        tmpUser = userExistence(userList, userName);
         if (tmpUser) {
             userList->current = tmpUser;
             break;

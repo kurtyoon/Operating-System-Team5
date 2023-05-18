@@ -7,7 +7,7 @@ int moveCurrent(DirectoryTree* dirTree, char* dirPath) {
     } else if (!strcmp(dirPath, "..")) {
         if (dirTree->current != dirTree->root) dirTree->current = dirTree->current->parent;
     } else {
-        tmpNode = IsExistDir(dirTree, dirPath, 'd');
+        tmpNode = dirExistence(dirTree, dirPath, 'd');
         if (tmpNode) dirTree->current = tmpNode;
         else return FAIL;
     }
@@ -26,7 +26,7 @@ int movePath(DirectoryTree* dirTree, char* dirPath) {
     if (!strcmp(dirPath, "/")) dirTree->current = dirTree->root;
     else {
         if (!strncmp(dirPath, "/", 1)) {
-            if (strtok(dirPath, "/")) return -1;
+            if (strtok(dirPath, "/")) return FAIL;
             dirTree->current = dirTree->root;
         }
         str = strtok(tmpPath, "/");
@@ -74,20 +74,20 @@ int ft_cd(DirectoryTree *dirTree, char *command) {
                 printf("Try 'cd --help' for more information.\n");
                 return FAIL;
             } else {
-            printf("cd: Unrecognized option -- '%s'\n", str);
-            printf("Try 'cd --help' for more information.\n");
-            return FAIL;
+                printf("cd: Unrecognized option -- '%s'\n", str);
+                printf("Try 'cd --help' for more information.\n");
+                return FAIL;
             }
         }
     } else {
-        tmpNode = IsExistDir(dirTree, command, 'd');
+        tmpNode = dirExistence(dirTree, command, 'd');
         if (tmpNode) {
             if (checkPermission(tmpNode, 'r')) {
                 printf("-bash: cd: '%s': Permission denied\n", command);
                 return FAIL;
             }
         }
-        tmpNode = IsExistDir(dirTree, command, 'f');
+        tmpNode = dirExistence(dirTree, command, 'f');
         if (tmpNode) {
             printf("-bash: cd: '%s': Not a directory\n", command);
             return FAIL;

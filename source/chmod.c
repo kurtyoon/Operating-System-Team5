@@ -4,8 +4,8 @@ int changeMode(DirectoryTree *dirTree, int mode, char *dirName) {
     DirectoryNode *tmpNode = NULL;
     DirectoryNode *tmpNode2 = NULL;
 
-    tmpNode = IsExistDir(dirTree, dirName, 'd');
-    tmpNode2 = IsExistDir(dirTree, dirName, 'f');
+    tmpNode = dirExistence(dirTree, dirName, 'd');
+    tmpNode2 = dirExistence(dirTree, dirName, 'f');
 
     if (tmpNode) {
         if (checkPermission(tmpNode, 'w')) {
@@ -65,7 +65,7 @@ int ft_chmod(DirectoryTree* dirTree, char* command) {
                     printf("Try 'chmod --help' for more information.\n");
                     return FAIL;
                 }
-                tmpNode = IsExistDir(dirTree, str, 'd');
+                tmpNode = dirExistence(dirTree, str, 'd');
                 if (tmpNode) {
                     if (!tmpNode->firstChild) changeMode(dirTree, tmp, str);
                     else{

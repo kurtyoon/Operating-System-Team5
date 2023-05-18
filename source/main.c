@@ -15,7 +15,7 @@ int main() {
         printPrompt(Linux, dStack);
         fgets(command, sizeof(command), stdin);
         command[strlen(command) - 1] = '\0';
-        Instruction(Linux, command);
+        instruction(Linux, command);
     }
     return 0;
 }
