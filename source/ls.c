@@ -15,7 +15,7 @@ int listDir(DirectoryTree *dirTree, int optionA, int optionL) {
         if (!optionA) {
             if (!tmpNode) return FAIL;
         }
-        if (optionA == 1) {
+        if (optionA) {
 	        BOLD;BLUE;
             printf(".\t");
 	        DEFAULT;

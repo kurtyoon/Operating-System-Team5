@@ -1,7 +1,7 @@
 #include "../include/main.h"
 
-int moveCurrent(DirectoryTree* dirTree, char* dirPath) {
-    DirectoryNode* tmpNode = NULL;
+int moveCurrent(DirectoryTree *dirTree, char *dirPath) {
+    DirectoryNode *tmpNode = NULL;
 
     if (!strcmp(dirPath,".")) {
     } else if (!strcmp(dirPath, "..")) {
@@ -14,29 +14,28 @@ int moveCurrent(DirectoryTree* dirTree, char* dirPath) {
     return SUCCESS;
 }
 
-int movePath(DirectoryTree* dirTree, char* dirPath) {
-    DirectoryNode* tmpNode = NULL;
+int movePath(DirectoryTree *dirTree, char *dirPath) {
+    DirectoryNode *tmpNode = NULL;
     char tmpPath[MAX_DIR];
-    char* str = NULL;
-    int val = 0;
+    char *str = NULL;
+    int value = 0;
 
     strncpy(tmpPath, dirPath, MAX_DIR);
     tmpNode = dirTree->current;
-
     if (!strcmp(dirPath, "/")) dirTree->current = dirTree->root;
     else {
         if (!strncmp(dirPath, "/", 1)) {
-            if (strtok(dirPath, "/")) return FAIL;
+            if (!strtok(dirPath, "/")) return FAIL;
             dirTree->current = dirTree->root;
         }
         str = strtok(tmpPath, "/");
         while (str) {
-            val = moveCurrent(dirTree, str);
-            if (val) {
+            value = moveCurrent(dirTree, str);
+            if (value) {
                 dirTree->current = tmpNode;
                 return FAIL;
             }
-            str = strtok( NULL, "/");
+            str = strtok(NULL, "/");
         }
     }
     return SUCCESS;

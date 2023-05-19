@@ -5,7 +5,7 @@ DirectoryNode *dirExistence(DirectoryTree *dirTree, char *dirName, char type) {
 
     returnNode = dirTree->current->firstChild;
     while (returnNode) {
-        if(!strcmp(returnNode->name, dirName) && returnNode->type == type) break;
+        if (!strcmp(returnNode->name, dirName) && returnNode->type == type) break;
         returnNode = returnNode->nextSibling;
     }
     return returnNode;
@@ -51,7 +51,7 @@ void writeDirNode(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStac
     fprintf(Dir, "%s %c %d ", dirNode->name, dirNode->type, dirNode->permission.mode);
     fprintf(Dir, "%d %d %d %d %d %d %d", dirNode->SIZE, dirNode->id.UID, dirNode->id.GID, dirNode->date.month, dirNode->date.day, dirNode->date.hour, dirNode->date.minute);
 
-    if(dirNode == dirTree->root) fprintf(Dir, "\n");
+    if (dirNode == dirTree->root) fprintf(Dir, "\n");
     else getPath(dirTree, dirNode, dirStack);
     if (dirNode->nextSibling) writeDirNode(dirTree, dirNode->nextSibling, dirStack);
     if (dirNode->firstChild) writeDirNode(dirTree, dirNode->firstChild, dirStack);
