@@ -1,28 +1,33 @@
 #include "../include/main.h"
 
-//chmod(Change_Mode) : change the permission of File and directory.
+//chmod(Change_Mode) : change the permission of File and directory.(권한부여)
+//실제로 권한 부여는 문자열, 정수로 지정가능하지만, 코드에서는 int로 지정가능.
 
 int changeMode(DirectoryTree *dirTree, int mode, char *dirName) {
     DirectoryNode *fileNode = NULL;
     DirectoryNode *dirNode = NULL;
-    
-    fileNode = dirExistence(dirTree, dirName, 'd');
-    dirNode = dirExistence(dirTree, dirName, 'f');
+
+    fileNode = dirExistence(dirTree, dirName, 'f');
+    dirNode = dirExistence(dirTree, dirName, 'd');
 
     if (fileNode) {
+    //file is not "Write" permission 
         if (checkPermission(fileNode, 'w')) {
             printf("chmod: Can not modify file '%s': Permission denied\n", dirName);
             return FAIL;
         }
         fileNode->permission.mode = mode;
         modeToPermission(fileNode);
+    //directory is not "Write" permission
     } else if (dirNode) {
         if (checkPermission(dirNode, 'w')) {
-            printf("chmod: Can not modify file '%s': Permission denied\n", dirName);
+            printf("chmod: Can not modify directory '%s': Permission denied\n", dirName);
             return FAIL;
         }
+        //int mode를 문자열로 저장.
         dirNode->permission.mode = mode;
         modeToPermission(dirNode);
+    //fileNode, dirNode == NULL
     } else {
         printf("chmod: Can not access to '%s: There is no such file or directory\n", dirName);
         return FAIL;
@@ -30,16 +35,14 @@ int changeMode(DirectoryTree *dirTree, int mode, char *dirName) {
     return SUCCESS;
 }
 
-void changeModeAll(DirectoryNode *dirNode, int mode) {
-    if (dirNode->nextSibling) {
-        changeModeAll(dirNode->nextSibling, mode);
-    }
-    if (dirNode->firstChild) {
-        changeModeAll(dirNode->firstChild, mode);
-    }
-    dirNode->permission.mode = mode;
-    modeToPermission(dirNode);
-}
+
+// Reading - 4, Writing - 2, Executing - 1
+// command[0] ; 소유자 권한
+// command[1] ; 그룹 사용자 권한
+// command[2] ; 기타 사용자 권한
+
+//ex) command = '755' : 소유자는 모든권한, 이외는 읽기, 실행만 가능.
+
 
 int ft_chmod(DirectoryTree* dirTree, char* command) {
     DirectoryNode* tmpNode = NULL;

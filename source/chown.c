@@ -43,20 +43,6 @@ int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName, int flag)
     return SUCCESS;
 }
 
-void changeOwnerAll(DirectoryNode *dirNode, char *userName) {
-    UserNode *tmpUser = NULL;
-
-    tmpUser = userExistence(usrList, userName);
-    if (dirNode->nextSibling) {
-        changeOwnerAll(dirNode->nextSibling, userName);
-    }
-    if (dirNode->firstChild) {
-        changeOwnerAll(dirNode->firstChild, userName);
-    }
-    dirNode->id.UID = tmpUser->id.UID;
-    dirNode->id.GID = tmpUser->id.GID;
-}
-
 int ft_chown(DirectoryTree* dirTree, char* command) {
     DirectoryNode* tmpNode = NULL;
     UserNode* tmpUser = NULL;

@@ -1,5 +1,7 @@
 #include "../include/main.h"
 
+
+//
 int modeToPermission(DirectoryNode *dirNode) {
     char buf[4];
     int tmp;
@@ -22,6 +24,7 @@ int modeToPermission(DirectoryNode *dirNode) {
     return SUCCESS;
 }
 
+//dirNode가 소유한 Permission을 출력.
 void printPermission(DirectoryNode *dirNode) {
     char rwx[4] = "rwx";
 
