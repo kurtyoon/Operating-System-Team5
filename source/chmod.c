@@ -1,9 +1,11 @@
 #include "../include/main.h"
 
+//chmod(Change_Mode) : change the permission of File and directory.
+
 int changeMode(DirectoryTree *dirTree, int mode, char *dirName) {
     DirectoryNode *fileNode = NULL;
     DirectoryNode *dirNode = NULL;
-
+    
     fileNode = dirExistence(dirTree, dirName, 'd');
     dirNode = dirExistence(dirTree, dirName, 'f');
 

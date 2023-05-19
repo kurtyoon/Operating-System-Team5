@@ -26,6 +26,8 @@
 typedef int boolean;
 
 // Date
+
+//file, directory created Data
 typedef struct s_date {
     int year;
     int month;
@@ -42,7 +44,7 @@ typedef struct s_id {
     int GID;
 } ID;
 
-// Permission
+// Permission 
 typedef struct s_permission {
     int mode;
     int permission[9];
@@ -73,9 +75,9 @@ typedef struct directoryNode {
     Permission permission;
     ID id;
 	Date date;
-	struct directoryNode *parent;
-	struct directoryNode *firstChild;
-	struct directoryNode *nextSibling;
+	struct directoryNode *parent; 
+	struct directoryNode *firstChild; //첫번째 자식노드
+	struct directoryNode *nextSibling;  //형제노드, 부모노드 동일
 } DirectoryNode;
 
 // DirectoryTree

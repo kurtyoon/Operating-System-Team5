@@ -1,5 +1,7 @@
 #include "../include/main.h"
 
+
+//
 DirectoryNode *dirExistence(DirectoryTree *dirTree, char *dirName, char type) {
     DirectoryNode *returnNode = NULL;
 
