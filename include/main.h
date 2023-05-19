@@ -170,6 +170,9 @@ int ft_ls(DirectoryTree *dirTree, char *cmd);
 int makeDir(DirectoryTree *dirTree, char *dirName, char type);
 int ft_mkdir(DirectoryTree *dirTree, char *cmd);
 
+// touch.c
+int ft_touch(DirectoryTree *dirTree, char *command);
+
 // pwd.c
 int printPath(DirectoryTree *dirTree, Stack *dirStack);
 int ft_pwd(DirectoryTree *dirTree, Stack *dirStack, char *cmd);
@@ -196,6 +199,8 @@ int checkPermission(DirectoryNode *dirNode, char o);
 
 // thread.c
 void *makeDirUsedThread(void *arg);
+void *removeDirUsedThread(void *arg);
+void *touchUsedThread(void *arg);
 
 // stack.c
 boolean isEmpty(Stack *stack);

@@ -13,6 +13,10 @@ void instruction(DirectoryTree *dirTree, char *command) {
         str = strtok(NULL, " ");
         value = ft_mkdir(dirTree, str);
         if (!value) saveDirectoryTree(dirTree, dStack);
+    } else if (!strcmp(str, "touch")) {
+        str = strtok(NULL, " ");
+        value = ft_touch(dirTree, str);
+        if (!value) saveDirectoryTree(dirTree, dStack);
     } else if (!strcmp(str, "cp")) {
         str = strtok(NULL, " ");
         str1 = strtok(NULL, " ");
