@@ -59,9 +59,12 @@ void changeOwnerAll(DirectoryNode *dirNode, char *userName) {
 
 int ft_chown(DirectoryTree* dirTree, char* command) {
     DirectoryNode* tmpNode = NULL;
-    UserNode* tmpUser = NULL;
-    char* str;
+    ThreadTree threadTree[MAX_THREAD];
+    pthread_t threadPool[MAX_THREAD];
     char tmp[MAX_NAME];
+    int threadCount = 0;
+    UserNode* tmpUser = NULL;
+    char *str;
 
     if (!command) {
         printf("chown: Invalid option\n");
@@ -96,19 +99,20 @@ int ft_chown(DirectoryTree* dirTree, char* command) {
             printf("Try 'chown --help' for more information.\n");
             return FAIL;
         } else {
-            if (!strstr(tmp, ":")) changeOwner(dirTree, tmp, str, 0);
-            else {
-                char tmp2[MAX_NAME];
-                strncpy(tmp2, tmp, MAX_NAME);
-                char *str2 = strtok(tmp, ":");
-                if (str2 && strcmp(tmp, tmp2)) {
-                    changeOwner(dirTree, str2, str, 0);
-                    str2 = strtok(NULL, " ");
-                    if (str2) changeOwner(dirTree, str2, str, 1);
-                }
-                else if (str2 && !strcmp(tmp, tmp2)) changeOwner(dirTree, str2, str, 1);
+            threadTree[threadCount].threadTree = dirTree;
+            threadTree[threadCount].usrName = tmp;
+            threadTree[threadCount++].command = str;
+            while (str) {
+                threadTree[threadCount].threadTree = dirTree;
+                threadTree[threadCount].usrName = tmp;
+                threadTree[threadCount++].command = str;
+                str = strtok(NULL, " ");
             }
         }
+    }
+    for (int i = 0; i < threadCount; i++) {
+        pthread_create(&threadPool[i], NULL, chownUsedThread, (void*)&threadTree[i]);
+        pthread_join(threadPool[i], NULL);
     }
     return SUCCESS;
 }

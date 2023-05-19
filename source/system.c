@@ -65,7 +65,7 @@ void printPrompt(DirectoryTree *dirTree, Stack *dirStack) {
         }
         while (isEmpty(dirStack) == FALSE) {
             strcat(tmp, "/");
-            strcat(tmp ,popStack(dirStack));
+            strcat(tmp, popStack(dirStack));
         }
     }
     strncpy(tmp2, tmp, strlen(usrList->current->dir));
