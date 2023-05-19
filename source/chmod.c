@@ -86,6 +86,7 @@ int ft_chmod(DirectoryTree* dirTree, char* command) {
                 printf("Try 'chmod --help' for more information.\n");
                 return FAIL;
             }
+            //chmod with Multithreading.
             threadTree[threadCount].threadTree = dirTree;
             threadTree[threadCount].command = str;
             threadTree[threadCount++].mode = tmp;
