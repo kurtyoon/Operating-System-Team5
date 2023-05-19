@@ -201,6 +201,7 @@ int checkPermission(DirectoryNode *dirNode, char o);
 void *makeDirUsedThread(void *arg);
 void *removeDirUsedThread(void *arg);
 void *touchUsedThread(void *arg);
+void *catUsedThread(void *arg);
 
 // stack.c
 boolean isEmpty(Stack *stack);

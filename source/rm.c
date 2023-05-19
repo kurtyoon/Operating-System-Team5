@@ -135,7 +135,10 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
         }
     } else {
         str = strtok(NULL, " ");
-        if (!str) {
+        threadTree[threadCount].threadTree = dirTree;
+        threadTree[threadCount].option = 0;
+        threadTree[threadCount++].command = command;
+        if (!command) {
             printf("rm: Invalid option\n");
             printf("Try 'rm --help' for more information.\n");
             return FAIL;
