@@ -100,7 +100,7 @@ typedef struct threadTree {
     DirectoryTree *threadTree;
     DirectoryTree *fileName;
     char *command;
-    char *copyPath;
+    int mode;
     int option;
 } ThreadTree;
 
@@ -202,6 +202,7 @@ void *makeDirUsedThread(void *arg);
 void *removeDirUsedThread(void *arg);
 void *touchUsedThread(void *arg);
 void *catUsedThread(void *arg);
+void *chmodUsedThread(void *arg);
 
 // stack.c
 boolean isEmpty(Stack *stack);

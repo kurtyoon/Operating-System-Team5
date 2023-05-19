@@ -388,3 +388,13 @@ void *removeDirUsedThread(void *arg) {
     }
     pthread_exit(NULL);
 }
+
+void *chmodUsedThread(void *arg) {
+    ThreadTree *threadTree = (ThreadTree *) arg;
+    DirectoryTree *dirTree = threadTree->threadTree;
+    int mode = threadTree->mode;
+    char *command = threadTree->command;
+    
+    changeMode(dirTree, mode, command);
+    pthread_exit(NULL);
+}
