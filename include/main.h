@@ -40,8 +40,8 @@ typedef struct s_date {
 
 // ID
 typedef struct s_id {
-    int UID;
-    int GID;
+    int UID;    //UserID
+    int GID;    //GuestID, access 제한.
 } ID;
 
 // Permission 

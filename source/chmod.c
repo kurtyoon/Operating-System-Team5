@@ -1,6 +1,6 @@
 #include "../include/main.h"
 
-//chmod(Change_Mode) : change the permission of File and directory.(권한부여)
+//chmod(Change_Mode) : change the permission of File and directory.(권한변경)
 //실제로 권한 부여는 문자열, 정수로 지정가능하지만, 코드에서는 int로 지정가능.
 
 int changeMode(DirectoryTree *dirTree, int mode, char *dirName) {

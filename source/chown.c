@@ -1,5 +1,8 @@
 #include "../include/main.h"
 
+//chown(Change_Owner) : change the owner of File and directory.(소유권 변경)
+//실제로는 소유자,그룹을 대상으로 하지만, 코드에서는 소유자만을 대상으로 지정.
+
 int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName, int flag) {
     DirectoryNode *dirNode = NULL;
     DirectoryNode *fileNode = NULL;
@@ -8,13 +11,16 @@ int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName, int flag)
     dirNode = dirExistence(dirTree, dirName, 'd');
     fileNode = dirExistence(dirTree, dirName, 'f');
 
+    //Change Owner of Directory
     if (dirNode) {
         if (checkPermission(dirNode, 'w')) {
-            printf("chown: Can not modify file '%s': Permission denied\n", dirName);
+            printf("chown: Can not modify directory '%s': Permission denied\n", dirName);
             return FAIL;
         }
         tmpUser = userExistence(usrList, userName);
+        //usrList에 존재하는 userName을 확인한 후,
         if (tmpUser) {
+            //UserID, GuestID -> flag로 구분
             if (!flag) dirNode->id.UID = tmpUser->id.UID;
             else dirNode->id.GID = tmpUser->id.GID;
         } else {
@@ -22,13 +28,16 @@ int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName, int flag)
             printf("Try 'chown --help' for more information.\n");
             return FAIL;
         }
+    //Change Owner of File        
     } else if (fileNode) {
         if (checkPermission(fileNode, 'w')) {
             printf("chown: Can not modify file '%s': Permission denied\n", dirName);
             return FAIL;
         }
         tmpUser = userExistence(usrList, userName);
+        //usrList에 존재하는 userName을 확인한 후,
         if (tmpUser) {
+            //UserID, GuestID -> flag로 구분
             if (!flag) fileNode->id.UID = tmpUser->id.UID;
             else fileNode->id.GID = tmpUser->id.GID;
         } else {
@@ -82,7 +91,10 @@ int ft_chown(DirectoryTree* dirTree, char* command) {
             printf("Try 'chown --help' for more information.\n");
             return FAIL;
         } else {
+            // command without ':' -> just chown
             if (!strstr(tmp, ":")) changeOwner(dirTree, tmp, str, 0);
+            //int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName, int flag)
+            //chown userName:dirName
             else {
                 char tmp2[MAX_NAME];
                 strncpy(tmp2, tmp, MAX_NAME);
