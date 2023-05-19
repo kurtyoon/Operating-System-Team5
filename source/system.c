@@ -1,5 +1,6 @@
 #include "../include/main.h"
 
+// 현재 시간을 가져오는 함수
 void getToday(Date *date) {
     time(&ltime);
     today = localtime(&ltime);
@@ -13,6 +14,7 @@ void getToday(Date *date) {
     date->year = today->tm_year + 1900;
 }
 
+// welcome message를 출력하는 함수
 void printStart() {
     Date tmpDate;
     getToday(&tmpDate);
@@ -26,7 +28,7 @@ void printStart() {
     getMonth(tmpDate.month);
     printf("%d %02d:%02d:%02d UTC %d\n\n", tmpDate.day, tmpDate.hour, tmpDate.minute, tmpDate.second, tmpDate.year);
     printf("You can use the command displayed below.\n");
-    printf("\t- ls\n\t- cat\n\t- cd\n\t- mkdir\n\t- rm\n\t- chmod\n\t- chown\n\t- cp\n\t- grep\n\t- find\n\t- pwd\n\n");
+    printf("\t- ls\n\t- cat\n\t- cd\n\t- mkdir\n\t-touch\n\t- rm\n\t- chmod\n\t- chown\n\t- cp\n\t- grep\n\t- find\n\t- pwd\n\n");
     printf("The 'exit' command allows you to exit the program.\n\n");
     printf("Last login: ");
     getWeekday(usrList->current->date.weekday);
@@ -34,6 +36,7 @@ void printStart() {
     printf("%d %02d:%02d:%02d %d\n", usrList->current->date.day, usrList->current->date.hour, usrList->current->date.minute, usrList->current->date.second, usrList->current->date.year);
 }
 
+// prompt를 출력하는 함수
 void printPrompt(DirectoryTree *dirTree, Stack *dirStack) {
     DirectoryNode *tmpNode = NULL;
     char tmp[MAX_DIR] = "";
@@ -41,14 +44,14 @@ void printPrompt(DirectoryTree *dirTree, Stack *dirStack) {
     char usr;
 
     if (usrList->current == usrList->head) {
-        usr = '#';
+        usr = '#'; // root로 로그인 했을 떄
         BOLD;
         printf("%s@Operating-System-Team5", usrList->current->name);
         DEFAULT;
         printf(":");
     }
     else {
-        usr = '$';
+        usr = '$'; // 그 외 user로 로그인 했을 때
         BOLD;GREEN;
         printf("%s@Operating-System-Team5", usrList->current->name);
         DEFAULT;

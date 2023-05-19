@@ -217,10 +217,10 @@ void getMonth(int type);
 void getWeekday(int type);
 
 //global variable
-DirectoryTree* Linux;
-Stack* dStack;
-UserList* usrList;
-FILE* Dir;
-FILE* User;
+DirectoryTree* Linux; // 전체 Directory 트리
+Stack* dStack; // Directory 스택
+UserList* usrList; // user 리스트
+FILE* Dir; // Directory 파일
+FILE* User; // User 파일
 
 #endif 
