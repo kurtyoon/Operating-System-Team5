@@ -25,3 +25,7 @@
 ### How to handling segmentation fault
 
 <pre>gcc [all source files] -fsanitize=address -g3 -o [output]</pre>
+
+### If you want to build faster
+
+<pre>make -j</pre>

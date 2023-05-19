@@ -55,6 +55,186 @@ int removeDir(DirectoryTree *dirTree, char *dirName) {
     return SUCCESS;
 }
 
+void *rmThread(void *arg) {
+    ThreadTree *threadTree = (ThreadTree *)arg;
+    DirectoryTree *dirTree = threadTree->threadTree;
+
+    DirectoryNode *tmpNode = NULL;
+    DirectoryNode *tmpNode2 = NULL;
+
+    char *command = threadTree->command;
+    char tmp[MAX_DIR];
+    char tmp2[MAX_DIR];
+    char tmp3[MAX_DIR];
+    DirectoryNode *currentNode = dirTree->current;
+
+    strncpy(tmp, command, MAX_DIR);
+    int Option = threadTree->option;
+
+    if (Option == 0) {
+        if (!strstr(tmp, "/")) {
+            tmpNode = dirExistence(dirTree, tmp, 'f');
+            tmpNode2 = dirExistence(dirTree, tmp, 'd');
+            if (!tmpNode && !tmpNode2) {
+                printf("rm: Can not remove '%s': No such file or directory.\n", tmp);
+                return NULL;
+            }
+            if (!tmpNode) {
+                printf("rm: Can not remove '%s': No such file or directory.\n", command);
+                return NULL;
+            } else {
+                if (checkPermission(dirTree->current, 'w') || checkPermission(tmpNode, 'w')) {
+                    printf("rm: Can not remove '%s': Permission denied.\n", command);
+                    return NULL;
+                }
+                removeDir(dirTree, tmp);
+            }
+        } else {
+            strncpy(tmp2, getDir(tmp), MAX_DIR);
+            int value = movePath(dirTree, tmp2);
+            if (value) {
+                printf("rm: Can not remove '%s': No such file or directory.\n", tmp2);
+                return NULL;
+            }
+            char *str = strtok(tmp, "/");
+            while (str) {
+                strncpy(tmp3, str, MAX_NAME);
+                str = strtok(NULL, "/");
+            }
+            tmpNode = dirExistence(dirTree, tmp3, 'f');
+            tmpNode2 = dirExistence(dirTree, tmp3, 'd');
+            if (tmpNode2) {
+                printf("rm: Can not remove '%s': Is a directory.\n", tmp3);
+                dirTree->current = currentNode;
+                return NULL;
+            }
+            if (!tmpNode) {
+                printf("rm: Can not remove '%s' No such file or directory.\n", tmp3);
+                dirTree->current = currentNode;
+                return NULL;
+            } else {
+                if (checkPermission(dirTree->current, 'w') || checkPermission(tmpNode, 'w')) {
+                    printf("rm: Can not remove '%s' Permission denied.\n", tmp3);
+                    dirTree->current = currentNode;
+                    return NULL;
+                }
+                removeDir(dirTree, tmp3);
+            }
+            dirTree->current = currentNode;
+        }
+    } else if (Option == 1) {
+        if (!strstr(tmp, "/")) {
+            tmpNode = dirExistence(dirTree, tmp, 'd');
+            if (!tmpNode) {
+                printf("rm: Can not remove '%s': No such file or directory.\n", tmp);
+                return NULL;
+            } else {
+                if (checkPermission(dirTree->current, 'w') || checkPermission(tmpNode, 'w')) {
+                    printf("rm: failed to remove '%s'Can not remove directory or file: Permission denied.", tmp);
+                    return NULL;
+                }
+                removeDir(dirTree, tmp);
+            }
+        } else {
+            strncpy(tmp2, getDir(tmp), MAX_DIR);
+            int value = movePath(dirTree, tmp2);
+            if (value) {
+                printf("rm: '%s': No such file or directory.\n", tmp2);
+                return NULL;
+            }
+            char *str = strtok(tmp, "/");
+            while (str) {
+                strncpy(tmp3, str, MAX_NAME);
+                str = strtok(NULL, "/");
+            }
+            tmpNode = dirExistence(dirTree, tmp3, 'f');
+            tmpNode = dirExistence(dirTree, tmp3, 'd') == NULL ? tmpNode : dirExistence(dirTree, tmp3, 'd');
+            if (tmpNode) {
+                printf("rm: Can not remove '%s': No such file or directory.\n", tmp3);
+                dirTree->current = currentNode;
+                return NULL;
+            } else {
+                if (checkPermission(dirTree->current, 'w') || checkPermission(tmpNode, 'w')) {
+                    printf("rm: failed to remove '%s' Can not remove directory or file: Permission denied.\n", tmp3);
+                    dirTree->current = currentNode;
+                    return NULL;
+                }
+                removeDir(dirTree, tmp3);
+            }
+            dirTree->current = currentNode;
+        }
+    } else if (Option == 2) {
+        if (!strstr(tmp, "/")) {
+            tmpNode = dirExistence(dirTree, tmp, 'f');
+            if (!tmpNode) {
+                return NULL;
+            } else {
+                if (checkPermission(dirTree->current, 'w') || checkPermission(tmpNode, 'w')) {
+                    return NULL;
+                }
+                removeDir(dirTree, tmp);
+            }
+        } else {
+            strncpy(tmp2, getDir(tmp), MAX_DIR);
+            int value = movePath(dirTree, tmp2);
+            if (value) return NULL;
+            char *str = strtok(tmp, "/");
+            while (str) {
+                strncpy(tmp3, str, MAX_NAME);
+                str = strtok(NULL, "/");
+            }
+            tmpNode = dirExistence(dirTree, tmp3, 'f');
+            if (!tmpNode) {
+                dirTree->current = currentNode;
+                return NULL;
+            } else {
+                if (checkPermission(dirTree->current, 'w') || checkPermission(tmpNode, 'w')) {
+                    dirTree->current = currentNode;
+                    return NULL;
+                }
+                removeDir(dirTree, tmp3);
+            }
+            dirTree->current = currentNode;
+        }
+    } else if (Option == 3) {
+        if (!strstr(tmp, "/")) {
+            tmpNode = dirExistence(dirTree, tmp, 'f');
+            tmpNode = dirExistence(dirTree, tmp, 'd') == NULL ? tmpNode : dirExistence(dirTree, tmp, 'd');
+            if (!tmpNode) {
+                return NULL;
+            } else {
+                if (checkPermission(dirTree->current, 'w') || checkPermission(tmpNode, 'w')) {
+                    return NULL;
+                }
+                removeDir(dirTree, tmp);
+            }
+        } else {
+            strncpy(tmp2, getDir(tmp), MAX_DIR);
+            int value = movePath(dirTree, tmp2);
+            if (value) return NULL;
+            char *str = strtok(tmp, "/");
+            while (str) {
+                strncpy(tmp3, str, MAX_NAME);
+                str = strtok(NULL, "/");
+            }
+            tmpNode = dirExistence(dirTree, tmp3, 'f');
+            tmpNode = dirExistence(dirTree, tmp3, 'd') == NULL ? tmpNode : dirExistence(dirTree, tmp3, 'd');
+            if (!tmpNode) {
+                dirTree->current = currentNode;
+                return NULL;
+            } else {
+                if (checkPermission(dirTree->current, 'w') || checkPermission(tmpNode, 'w')) {
+                    dirTree->current = currentNode;
+                    return NULL;
+                }
+                removeDir(dirTree, tmp3);
+            }
+            dirTree->current = currentNode;
+        }
+    }
+    pthread_exit(NULL);
+}
+
 int ft_rm(DirectoryTree *dirTree, char *command) {
     DirectoryNode *currentNode = NULL;
     DirectoryNode *tmpNode = NULL;
@@ -64,6 +244,10 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
     char tmp2[MAX_DIR];
     char tmp3[MAX_DIR];
     int val;
+
+    int threadCount = 0;
+    pthread_t threadPool[MAX_THREAD];
+    ThreadTree threadTree[MAX_THREAD];
 
     // not command
     if (!command) {
@@ -81,129 +265,33 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
                 printf("Try 'rm --help' for more information.\n");
                 return FAIL;
             }
-            strncpy(tmp, str, MAX_DIR); // copy dirName to tmp
-            if (!strstr(str, "/")) { // find sutstring '/' in str
-                tmpNode = dirExistence(dirTree, str, 'd');
-                if (!tmpNode) {
-                    printf("rm: Can not remove '%s': No such file or directory.\n", str);
-                    return FAIL;
-                } else {
-                    if (checkPermission(dirTree->current, 'w') || checkPermission(tmpNode, 'w')) {
-                        printf("rm: failed to remove '%s'Can not remove directory or file: Permission denied.", str);
-                        return FAIL;
-                    }
-                    removeDir(dirTree, str);
-                }
-            } else {
-                strncpy(tmp2, getDir(str), MAX_DIR);
-                val = movePath(dirTree, tmp2);
-                if (val) {
-                    printf("rm: '%s': No such file or directory.\n", tmp2);
-                    return FAIL;
-                }
-                str = strtok(tmp, "/");
-                while (str) {
-                    strncpy(tmp3, str, MAX_NAME);
-                    str = strtok(NULL, "/");
-                }
-                tmpNode = dirExistence(dirTree, tmp3, 'f');
-                tmpNode = dirExistence(dirTree, tmp3, 'd') == NULL ? tmpNode : dirExistence(dirTree, tmp3, 'd');
-                if (!tmpNode) {
-                    printf("rm: Can not remove '%s': No such file or directory.\n", tmp3);
-                    dirTree->current = currentNode;
-                    return FAIL;
-                } else {
-                    if (checkPermission(dirTree->current, 'w') || checkPermission(tmpNode, 'w')) {
-                        printf("rm: failed to remove '%s' Can not remove directory or file: Permission denied.\n", tmp3);
-                        dirTree->current = currentNode;
-                        return FAIL;
-                    }
-                    removeDir(dirTree, tmp3);
-                }
-                dirTree->current = currentNode;
+            while (str) {
+                threadTree[threadCount].threadTree = dirTree;
+                threadTree[threadCount].command = str;
+                threadTree[threadCount++].option = 1;
+                str = strtok(NULL, " ");
             }
         } else if(!strcmp(command, "-f")) {
             str = strtok(NULL, " ");
             if (!str) {
                 return FAIL;
             }
-            strncpy(tmp, str, MAX_DIR);
-            if (!strstr(str, "/")) {
-                tmpNode = dirExistence(dirTree, str, 'f');
-                if (!tmpNode2) {
-                    return FAIL;
-                }
-                if (!tmpNode) {
-                    return FAIL;
-                } else {
-                    if (checkPermission(dirTree->current, 'w') || checkPermission(tmpNode, 'w')) {
-                        return FAIL;
-                    }
-                    removeDir(dirTree, str);
-                }
-            } else {
-                strncpy(tmp2, getDir(str), MAX_DIR);
-                val = movePath(dirTree, tmp2);
-                if (val) {
-                    return FAIL;
-                }
-                str = strtok(tmp, "/");
-                while (str) {
-                    strncpy(tmp3, str, MAX_NAME);
-                    str = strtok(NULL, "/");
-                }
-                tmpNode = dirExistence(dirTree, tmp3, 'f');
-                if (!tmpNode) {
-                    dirTree->current = currentNode;
-                    return FAIL;
-                } else {
-                    if (checkPermission(dirTree->current, 'w') || checkPermission(tmpNode, 'w')) {
-                        dirTree->current = currentNode;
-                        return FAIL;
-                    }
-                    removeDir(dirTree, tmp3);
-                }
-                dirTree->current = currentNode;
+            while (str) {
+                threadTree[threadCount].threadTree = dirTree;
+                threadTree[threadCount].option = 2;
+                threadTree[threadCount++].command = str;
+                str = strtok(NULL, " ");
             }
-        } else if (!strcmp(command, "-rf")) {
+        } else if (!strcmp(command, "-rf") || !strcmp(command, "-fr")) {
             str = strtok(NULL, " ");
             if (!str) {
                 return FAIL;
             }
-            strncpy(tmp, str, MAX_DIR);
-            if (!strstr(str, "/")) {
-                tmpNode = dirExistence(dirTree, str, 'f');
-                tmpNode = dirExistence(dirTree, str, 'd') == NULL ? tmpNode : dirExistence(dirTree, str, 'd');
-                if(!tmpNode){
-                    return FAIL;
-                } else {
-                    if (checkPermission(dirTree->current, 'w') || checkPermission(tmpNode, 'w')) {
-                        return FAIL;
-                    }
-                    removeDir(dirTree, str);
-                }
-            } else {
-                strncpy(tmp2, getDir(str), MAX_DIR);
-                val = movePath(dirTree, tmp2);
-                if (val) return FAIL;
-                str = strtok(tmp, "/");
-                while (str) {
-                    strncpy(tmp3, str, MAX_NAME);
-                    str = strtok(NULL, "/");
-                }
-                tmpNode = dirExistence(dirTree, tmp3, 'f');
-                tmpNode = dirExistence(dirTree, tmp3, 'd') == NULL ? tmpNode : dirExistence(dirTree, tmp3, 'd');
-                if (!tmpNode) {
-                    dirTree->current = currentNode;
-                    return FAIL;
-                } else {
-                    if (checkPermission(dirTree->current, 'w') || checkPermission(tmpNode, 'w')) {
-                        dirTree->current = currentNode;
-                        return FAIL;
-                    }
-                    removeDir(dirTree, tmp3);
-                }
-                dirTree->current = currentNode;
+            while (str) {
+                threadTree[threadCount].threadTree = dirTree;
+                threadTree[threadCount].option = 3;
+                threadTree[threadCount++].command = str;
+                str = strtok(NULL, " ");
             }
         } else if (!strcmp(command, "--help")) {
             printf("Manual: rm [Option]... [File]...\n");
@@ -226,59 +314,22 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
             }
         }
     } else {
-        strncpy(tmp, command, MAX_DIR);
-        if (!strstr(command, "/")) {
-            tmpNode = dirExistence(dirTree, command, 'f');
-            tmpNode2 = dirExistence(dirTree, command, 'd');
-
-            if (tmpNode2) {
-                printf("rm: Can not remove '%s': Is a directory.\n", command);
-                return FAIL;
-            }
-            if (!tmpNode) {
-                printf("rm: Can not remove '%s': No such file or directory.\n", command);
-                return FAIL;
-            } else {
-                if (checkPermission(dirTree->current, 'w') || checkPermission(tmpNode, 'w')) {
-                    printf("rm: Can not remove '%s': Permission denied.\n", command);
-                    return FAIL;
-                }
-                removeDir(dirTree, command);
-            }
-        } else {
-            strncpy(tmp2, getDir(command), MAX_DIR);
-            val = movePath(dirTree, tmp2);
-            if (val) {
-                printf("rm: Can not remove '%s': No such file or directory.\n", tmp2);
-                return FAIL;
-            }
-            str = strtok(tmp, "/");
-            while (str) {
-                strncpy(tmp3, str, MAX_NAME);
-                str = strtok(NULL, "/");
-            }
-            tmpNode = dirExistence(dirTree, tmp3, 'f');
-            tmpNode2 = dirExistence(dirTree, tmp3, 'd');
-
-            if (tmpNode2) {
-                printf("rm: Can not remove '%s': Is a directory.\n", tmp3);
-                dirTree->current = currentNode;
-                return FAIL;
-            }
-            if (!tmpNode) {
-                printf("rm: Can not remove '%s' No such file or directory.\n", tmp3);
-                dirTree->current = currentNode;
-                return FAIL;
-            } else {
-                if (checkPermission(dirTree->current, 'w') || checkPermission(tmpNode, 'w')) {
-                    printf("rm: Can not remove '%s' Permission denied.\n", tmp3);
-                    dirTree->current = currentNode;
-                    return FAIL;
-                }
-                removeDir(dirTree, tmp3);
-            }
-            dirTree->current = currentNode;
+        str = strtok(NULL, " ");
+        if (!str) {
+            printf("rm: Invalid option\n");
+            printf("Try 'rm --help' for more information.\n");
+            return FAIL;
         }
+        while (str) {
+            threadTree[threadCount].threadTree = dirTree;
+            threadTree[threadCount].option = 0;
+            threadTree[threadCount++].command = str;
+            str = strtok(NULL, " ");
+        }
+    }
+    for (int i = 0; i < threadCount; i++) {
+        pthread_create(&threadPool[i], NULL, rmThread, (void *)&threadTree[i]);
+        pthread_join(threadPool[i], NULL);
     }
     return SUCCESS;
 }
