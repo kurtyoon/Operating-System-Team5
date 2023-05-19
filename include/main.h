@@ -147,7 +147,7 @@ void changeModeAll(DirectoryNode *dirNode, int mode);
 int ft_chmod(DirectoryTree* dirTree, char* cmd);
 
 // chown.c
-int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName);
+int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName, int flag);
 void changeOwnerAll(DirectoryNode *dirNode, char *userName);
 int ft_chown(DirectoryTree* dirTree, char* cmd);
 

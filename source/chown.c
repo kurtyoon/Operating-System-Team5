@@ -1,6 +1,6 @@
 #include "../include/main.h"
 
-int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName) {
+int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName, int flag) {
     DirectoryNode *dirNode = NULL;
     DirectoryNode *fileNode = NULL;
     UserNode *tmpUser = NULL;
@@ -15,8 +15,8 @@ int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName) {
         }
         tmpUser = userExistence(usrList, userName);
         if (tmpUser) {
-            dirNode->id.UID = tmpUser->id.UID;
-            dirNode->id.GID = tmpUser->id.GID;
+            if (!flag) dirNode->id.UID = tmpUser->id.UID;
+            else dirNode->id.GID = tmpUser->id.GID;
         } else {
             printf("chown: Invalid user: '%s'\n", userName);
             printf("Try 'chown --help' for more information.\n");
@@ -29,8 +29,8 @@ int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName) {
         }
         tmpUser = userExistence(usrList, userName);
         if (tmpUser) {
-            fileNode->id.UID = tmpUser->id.UID;
-            fileNode->id.GID = tmpUser->id.GID;
+            if (!flag) fileNode->id.UID = tmpUser->id.UID;
+            else fileNode->id.GID = tmpUser->id.GID;
         } else {
             printf("chown: Invalid user: '%s'\n", userName);
             printf("Try 'chown --help' for more information.\n");
@@ -95,7 +95,20 @@ int ft_chown(DirectoryTree* dirTree, char* command) {
             printf("chown: Invalid option\n");
             printf("Try 'chown --help' for more information.\n");
             return FAIL;
-        } else changeOwner(dirTree, tmp, str);
+        } else {
+            if (!strstr(tmp, ":")) changeOwner(dirTree, tmp, str, 0);
+            else {
+                char tmp2[MAX_NAME];
+                strncpy(tmp2, tmp, MAX_NAME);
+                char *str2 = strtok(tmp, ":");
+                if (str2 && strcmp(tmp, tmp2)) {
+                    changeOwner(dirTree, str2, str, 0);
+                    str2 = strtok(NULL, " ");
+                    if (str2) changeOwner(dirTree, str2, str, 1);
+                }
+                else if (str2 && !strcmp(tmp, tmp2)) changeOwner(dirTree, str2, str, 1);
+            }
+        }
     }
     return SUCCESS;
 }
