@@ -1,5 +1,10 @@
 #include "../include/main.h"
 
+//ls -a : 경로안의 모든 파일을 나열한다.(숨김파일도 포함)
+//".  ..  file1.txt  .hidden_dir  .hidden_file"
+//ls -l : 파일들을 나열할때 자세히 출력.
+//"-rw-r--r-- 1 user group 1024 May 18 15:30 file1.txt"
+
 int listDir(DirectoryTree *dirTree, int optionA, int optionL) {
     DirectoryNode *tmpNode = NULL;
     DirectoryNode *tmpNode2 = NULL;
