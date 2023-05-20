@@ -420,3 +420,61 @@ void *chownUsedThread(void *arg) {
     }
     pthread_exit(NULL);
 }
+
+void *grepUsedThread(void *arg) {
+    ThreadTree *threadTree = (ThreadTree *)arg;
+    DirectoryTree *dirTree = threadTree->threadTree;
+    char *command = threadTree->command;
+    char *content = threadTree->content;
+    DirectoryNode *currentNode = dirTree->current;
+    DirectoryNode *tmpNode = NULL;
+    DirectoryNode *tmpNode2 = NULL;
+    char *str;
+    char tmp[MAX_DIR];
+    char tmp2[MAX_DIR];
+    char tmp3[MAX_DIR];
+    int option = threadTree->option;
+    int value;
+
+    strncpy(tmp, command, MAX_DIR);
+    if (!strstr(tmp, "/")) {
+        tmpNode = dirExistence(dirTree, tmp, 'd');
+        tmpNode2 = dirExistence(dirTree, tmp, 'f');
+        if (!tmpNode && !tmpNode2) {
+            printf("grep: '%s': No such file or directory.\n", command);
+            return NULL;
+        } else if (tmpNode && !tmpNode2) {
+            printf("grep: '%s': Is a directory.\n", command);
+            return NULL;
+        } else if (tmpNode2 && checkPermission(tmpNode2, 'r')) {
+            printf("grep: Can not open file '%s': Permission denied.\n", command);
+            return NULL;
+        } else printContent(dirTree, content, command, option);
+    } else {
+        strncpy(tmp2, getDir(tmp), MAX_DIR);
+        value = movePath(dirTree, tmp2);
+        if (value) {
+            printf("grep: '%s': No such file or directory.\n", command);
+            return NULL;
+        }
+        str = strtok(tmp, "/");
+        while (str) {
+            strncpy(tmp3, str, MAX_NAME);
+            str = strtok(NULL, "/");
+        }
+        tmpNode = dirExistence(dirTree, tmp3, 'd');
+        tmpNode2 = dirExistence(dirTree, tmp3, 'f');
+        if (!tmpNode && !tmpNode2) {
+            printf("grep: '%s': No such file or directory.\n", command);
+            return NULL;
+        } else if (tmpNode && !tmpNode2) {
+            printf("grep: '%s': Is a directory.\n", command);
+            return NULL;
+        } else if (tmpNode2 && checkPermission(tmpNode2, 'r')) {
+            printf("grep: Can not open file '%s': Permission denied.\n", command);
+            return NULL;
+        } else printContent(dirTree, content, command, option);
+        dirTree->current = currentNode;
+    }
+    pthread_exit(NULL);
+}

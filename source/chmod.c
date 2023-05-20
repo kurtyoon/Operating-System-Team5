@@ -28,17 +28,6 @@ int changeMode(DirectoryTree *dirTree, int mode, char *dirName) {
     return SUCCESS;
 }
 
-void changeModeAll(DirectoryNode *dirNode, int mode) {
-    if (dirNode->nextSibling) {
-        changeModeAll(dirNode->nextSibling, mode);
-    }
-    if (dirNode->firstChild) {
-        changeModeAll(dirNode->firstChild, mode);
-    }
-    dirNode->permission.mode = mode;
-    modeToPermission(dirNode);
-}
-
 int ft_chmod(DirectoryTree* dirTree, char* command) {
     DirectoryNode* tmpNode = NULL;
     ThreadTree threadTree[MAX_THREAD];

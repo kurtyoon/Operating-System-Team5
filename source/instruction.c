@@ -52,18 +52,7 @@ void instruction(DirectoryTree *dirTree, char *command) {
         ft_find(dirTree, str);
     } else if (!strcmp(str, "grep")) {
         str = strtok(NULL, " ");
-        str1 = strtok(NULL, " ");
-        str2 = strtok(NULL, " ");
-        if (!strcmp(str, "-n")) ft_grep(str1, str2, 1);
-        else if (!strcmp(str, "-v")) ft_grep(str1, str2, 2);
-        else if (!strcmp(str, "-i")) ft_grep(str1, str2, 3);
-        else if (!strcmp(str, "-nv") || !strcmp(str, "-vn")) ft_grep(str1, str2, 4);
-        else if (!strcmp(str, "-vi") || !strcmp(str, "-iv")) ft_grep(str1, str2, 5);
-        else if (!strcmp(str, "-in") || !strcmp(str, "-ni")) ft_grep(str1, str2, 6);
-        else if (!strcmp(str, "-nvi") || !strcmp(str, "-niv") || !strcmp(str, "-inv") \
-         || !strcmp(str, "-ivn") || !strcmp(str, "-vni") || !strcmp(str, "-vin")) {
-            ft_grep(str1, str2, 7);
-         } else ft_grep(str, str1, 0);
+        ft_grep(dirTree, str);
     } else if(!strcmp(command, "exit")) {
         printf("logout\n");
         exit(0);

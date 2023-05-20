@@ -99,6 +99,7 @@ typedef struct stack {
 typedef struct threadTree {
     DirectoryTree *threadTree;
     DirectoryTree *fileName;
+    char *content;
     char *command;
     char *usrName;
     int mode;
@@ -119,7 +120,6 @@ char *getGID(DirectoryNode *dirNode);
 // userlist.c
 UserList *loadUserList();
 void saveUserList(UserList *userList);
-UserList *initUserList();
 
 // directory.c
 char *getDir(char *dirPath);
@@ -131,7 +131,6 @@ DirectoryNode *dirExistence(DirectoryTree *dirTree, char *dirName, char type);
 // directorytree.c
 void saveDirectoryTree(DirectoryTree *dirTree, Stack *dirStack);
 DirectoryTree *loadDirectoryTree();
-DirectoryTree *initDirectoryTree();
 
 // cat.c
 int concatenate(DirectoryTree* dirTree, char* fName, int type);
@@ -144,12 +143,10 @@ int ft_cd(DirectoryTree* dirTree, char* cmd);
 
 // chmod.c
 int changeMode(DirectoryTree *dirTree, int mode, char *dirName);
-void changeModeAll(DirectoryNode *dirNode, int mode);
 int ft_chmod(DirectoryTree* dirTree, char* cmd);
 
 // chown.c
 int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName, int flag);
-void changeOwnerAll(DirectoryNode *dirNode, char *userName);
 int ft_chown(DirectoryTree* dirTree, char* cmd);
 
 // cp.c
@@ -161,7 +158,8 @@ void findDir(DirectoryTree *dirTree, char *dirName, int o);
 int ft_find(DirectoryTree *dirTree, char *cmd);
 
 // grep.c
-void ft_grep(char *search, char *fname, int Option);
+int printContent(DirectoryTree *dirtree, char *search, char *fileName, int option);
+int ft_grep(DirectoryTree *dirTree, char *command);
 
 // ls.c
 int listDir(DirectoryTree *dirTree, int a, int l);
@@ -205,6 +203,7 @@ void *touchUsedThread(void *arg);
 void *catUsedThread(void *arg);
 void *chmodUsedThread(void *arg);
 void *chownUsedThread(void *arg);
+void *grepUsedThread(void *arg);
 
 // stack.c
 boolean isEmpty(Stack *stack);
