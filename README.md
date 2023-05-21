@@ -29,3 +29,10 @@
 ### If you want to build faster
 
 <pre>make -j</pre>
+
+### In Ubuntu
+
+<pre>sudo apt install git
+git clone https://github.com/kurtyoon/Operating-System-Team5.git
+sudo apt install make
+sudo apt install gcc</pre>

@@ -1,4 +1,5 @@
 CC = gcc
+CFLAG = -fcommon
 RM = rm -rf
 NAME = MINILINUX
 
@@ -15,11 +16,11 @@ OBJS = $(addprefix $(OBJ_DIR)/, $(SRCS:.c=.o))
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) -o $(NAME) $(OBJS) -o $@ -I$(INCS) -lpthread
+	$(CC) $(CFLAG) -o $@ $(OBJS) -I$(INCS) -lpthread
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	@mkdir -p $(OBJ_DIR)
-	$(CC) -c $< -o $@ -I$(INCS)
+	$(CC) $(CFLAG) -c $< -o $@ -I$(INCS)
 
 clean:
 	$(RM) $(OBJS)
