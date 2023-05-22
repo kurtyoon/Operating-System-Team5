@@ -1,9 +1,11 @@
 #include "../include/main.h"
 
+//현재 date, time 기반으로 사용자 정보를 입력.
 void writeUser(UserList *userList, UserNode *userNode) {
     time(&ltime);
     today = localtime(&ltime);
 
+    //현재 시간 정보를 사용자 정보에 저장.
     userList->current->date.year = today->tm_year+1900;
     userList->current->date.month = today->tm_mon+1;
     userList->current->date.weekday = today->tm_wday;
@@ -12,14 +14,17 @@ void writeUser(UserList *userList, UserNode *userNode) {
     userList->current->date.minute = today->tm_min;
     userList->current->date.second =today->tm_sec;
 
+    //사용자 정보를 input.
     fprintf(User, "%s %d %d %d %d %d %d %d %d %d %s\n", \
     userNode->name, userNode->id.UID, userNode->id.GID, userNode->date.year, \
     userNode->date.month, userNode->date.weekday, userNode->date.day, userNode->date.hour, \
     userNode->date.minute, userNode->date.second, userNode->dir);
 
+    //next_userNode가 있을 경우, recursion call.
     if (userNode->nextNode) writeUser(userList, userNode->nextNode);
 }
 
+//사용자 정보를 읽어 userList에 추가.
 int readUser(UserList *userList, char *tmp) {
     UserNode *NewNode = (UserNode *)malloc(sizeof(UserNode));
     char *str;
@@ -49,6 +54,7 @@ int readUser(UserList *userList, char *tmp) {
     str[strlen(str)-1] = '\0';
     strncpy(NewNode->dir, str, MAX_DIR);
 
+    //userList에 Node 추가.
     if (!strcmp(NewNode->name, "root")) {
         userList->head = NewNode;
         userList->tail = NewNode;
@@ -59,6 +65,7 @@ int readUser(UserList *userList, char *tmp) {
     return SUCCESS;
 }
 
+//userList에서 해당 userName의 사용자가 존재하는지 확인.
 UserNode *userExistence(UserList *userList, char *userName) {
     UserNode *returnUser = NULL;
 
@@ -70,6 +77,7 @@ UserNode *userExistence(UserList *userList, char *userName) {
     return returnUser;
 }
 
+//해당 dirNode의 UID에 해당하는 userName을 return.
 char *getUID(DirectoryNode *dirNode) {
     UserNode *tmpNode = NULL;
 
@@ -81,6 +89,7 @@ char *getUID(DirectoryNode *dirNode) {
     return tmpNode->name;
 }
 
+//해당 dirNode의 GID에 해당하는 userName을 return.
 char *getGID(DirectoryNode *dirNode) {
     UserNode *tmpNode = NULL;
 
