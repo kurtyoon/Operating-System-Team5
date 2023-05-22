@@ -6,6 +6,11 @@
 //-rwxrwxr-x 1 ubuntu ubuntu 1052 May 22 05:34 Directory.txt
 //ls -al,-la : '-a' + '-l' 
 
+
+//list Dir ; 디렉토리의 내용을 나열하는 역할
+//dirTree->current로 현재 directory를 가져온 후, optionA,L에 따라 file, directory를 출력함.
+//optionA = 0: 숨겨진 파일 무시, optionA = 1: 숨겨진 파일도 출력
+//optionL = 0: 간단한 형식, optionL = 1: 상세한 형식
 int listDir(DirectoryTree *dirTree, int optionA, int optionL) {
     DirectoryNode *tmpNode = NULL;
     DirectoryNode *tmpNode2 = NULL;
@@ -17,6 +22,7 @@ int listDir(DirectoryTree *dirTree, int optionA, int optionL) {
         printf("ls: cannot open directory '%s'': Permission denied\n", dirTree->current->name);
         return FAIL;
     }
+    //optionA
     if (!optionL) {
         if (!optionA) {
             if (!tmpNode) return FAIL;
@@ -49,6 +55,7 @@ int listDir(DirectoryTree *dirTree, int optionA, int optionL) {
         }
         printf("\n");
     }
+    //optionL
     else {
         if (!optionA) {
             if (!tmpNode) {
@@ -142,6 +149,7 @@ int listDir(DirectoryTree *dirTree, int optionA, int optionL) {
     }
     return SUCCESS;
 }
+
 
 int ft_ls(DirectoryTree *dirTree, char *command) {
     DirectoryNode *tmpNode = NULL;
