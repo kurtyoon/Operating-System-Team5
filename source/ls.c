@@ -1,9 +1,10 @@
 #include "../include/main.h"
 
-//ls -a : 경로안의 모든 파일을 나열한다.(숨김파일도 포함)
-//".  ..  file1.txt  .hidden_dir  .hidden_file"
-//ls -l : 파일들을 나열할때 자세히 출력.
-//"-rw-r--r-- 1 user group 1024 May 18 15:30 file1.txt"
+//ls -a : 숨긴파일도 표현
+//.  ..  Directory.txt  User.txt
+//ls -l : file, directory의 생성 정보들 출력 (main.h)
+//-rwxrwxr-x 1 ubuntu ubuntu 1052 May 22 05:34 Directory.txt
+//ls -al,-la : '-a' + '-l' 
 
 int listDir(DirectoryTree *dirTree, int optionA, int optionL) {
     DirectoryNode *tmpNode = NULL;
@@ -147,11 +148,14 @@ int ft_ls(DirectoryTree *dirTree, char *command) {
     char *str;
     int value;
 
+    //ls
     if (!command) {
         listDir(dirTree, 0, 0);
         return 0;
     }
+    //ls option exists.
     if (command[0] == '-') {
+        //ls -al, -la
         if (!strcmp(command, "-al") || !strcmp(command, "-la")) {
             str = strtok(NULL, " ");
             if (str) {
@@ -160,6 +164,7 @@ int ft_ls(DirectoryTree *dirTree, char *command) {
                 if (value) return FAIL;
             }
             listDir(dirTree, 1, 1);
+        //ls -l            
         } else if (!strcmp(command, "-l")) {
             str = strtok(NULL, " ");
             if (str) {
@@ -168,6 +173,7 @@ int ft_ls(DirectoryTree *dirTree, char *command) {
                 if (value) return FAIL;
             }
             listDir(dirTree, 0, 1);
+        //ls -a            
         } else if (!strcmp(command, "-a")) {
             str = strtok(NULL, " ");
             if (str) {
@@ -176,6 +182,7 @@ int ft_ls(DirectoryTree *dirTree, char *command) {
                 if (value) return FAIL;
             }
             listDir(dirTree, 1, 0);
+        //ls --help : print guideline    
         } else if(!strcmp(command, "--help")) {
             printf("Usage: ls [OPTION]... [FILE]...\n");
             printf("List information about the FILEs (the current directory by default).\n\n");
@@ -186,15 +193,18 @@ int ft_ls(DirectoryTree *dirTree, char *command) {
             return FAIL;
         } else {
             str = strtok(command, "-");
+            //ls - : print guideline
             if (!str) {
                 printf("ls: ls: cannot access '-': No such file or directory\n");
                 return FAIL;
+            //ls -- : print guideline    
             } else {
                 printf("ls: invalid option -- '%s'\n", str);
                 printf("Try 'ls --help' for more information.\n");
                 return FAIL;
             }
         }
+
     } else {
         tmpNode = dirTree->current;
         value = movePath(dirTree, command);
