@@ -1,32 +1,41 @@
 #include "../include/main.h"
 
+//DirectoryTree에서 directory 생성.
 int makeDir(DirectoryTree *dirTree, char *dirName, char type) {
-    DirectoryNode *newNode = (DirectoryNode *)malloc(sizeof(DirectoryNode));
+    DirectoryNode *newNode = (DirectoryNode *)malloc(sizeof(DirectoryNode)); //동적 할당.
     DirectoryNode *tmpNode = NULL;
 
+    //current_directory에 쓰기 권한이 있는지 확인.
     if (checkPermission(dirTree->current, 'w')) {
         printf("mkdir: '%s' Can not create directory: Permission denied.\n", dirName);
         free(newNode);
         return FAIL;
     }
+    //'.', '..'인 경우 생성X
     if (!strcmp(dirName, ".") || !strcmp(dirName, "..")) {
         printf("mkdir: '%s' Can not create directory.\n", dirName);
         free(newNode);
         return FAIL;
     }
+    //해당 directory가 이미 존재하는지 확인.
     tmpNode = dirExistence(dirTree, dirName, type);
     if (tmpNode && tmpNode->type == 'd'){
         printf("mkdir: : '%s' Can not create directory: File exists.\n", dirName);
         free(newNode);
         return FAIL;
     }
+    //현재시간 가져오기
     time(&ltime);
     today = localtime(&ltime);
 
+    //Child, Sibling Node 초기화
     newNode->firstChild = NULL;
     newNode->nextSibling = NULL;
 
+    //copy dirName
     strncpy(newNode->name, dirName, MAX_NAME);
+    //directory : type, permission, dirSize 설정
+    //'.'로 시작하는 경우 directory 취급
     if (dirName[0] == '.') {
 	    newNode->type = 'd';
         newNode->permission.mode = 700;
@@ -35,6 +44,7 @@ int makeDir(DirectoryTree *dirTree, char *dirName, char type) {
         newNode->type = 'd';
         newNode->permission.mode = 755;
         newNode->SIZE = 4096;
+    //else, 'f'(file)로 설정    
     } else {
         newNode->type = 'f';
         newNode->permission.mode = 644;
@@ -42,6 +52,7 @@ int makeDir(DirectoryTree *dirTree, char *dirName, char type) {
     }
     modeToPermission(newNode);
 
+    //file, directory 생성 정보 설정
     newNode->id.UID = usrList->current->id.UID;
     newNode->id.GID = usrList->current->id.GID;
     newNode->date.month = today->tm_mon + 1;
@@ -49,6 +60,7 @@ int makeDir(DirectoryTree *dirTree, char *dirName, char type) {
     newNode->date.hour = today->tm_hour;
     newNode->date.minute = today->tm_min;
 	newNode->parent = dirTree->current;
+
 
 	if (!dirTree->current->firstChild) dirTree->current->firstChild = newNode;
 	else {
@@ -58,6 +70,7 @@ int makeDir(DirectoryTree *dirTree, char *dirName, char type) {
 	}
     return SUCCESS;
 }
+
 
 int ft_mkdir(DirectoryTree *p_directoryTree, char *command) {
     DirectoryNode *tmpNode = NULL;
@@ -71,10 +84,12 @@ int ft_mkdir(DirectoryTree *p_directoryTree, char *command) {
         return FAIL;
     }
     int threadCount = 0;
-    pthread_t threadPool[MAX_THREAD];
-    ThreadTree threadTree[MAX_THREAD];
-    tmpNode = p_directoryTree->current;
+    pthread_t threadPool[MAX_THREAD];   //threadPool
+    ThreadTree threadTree[MAX_THREAD];  //threadTree
+    tmpNode = p_directoryTree->current; //current_directory
     if (command[0] == '-') {
+        //mkdir -p : 다수 directory 생성.
+        //using multithreading.
         if (!strcmp(command, "-p")) {
             str = strtok(NULL, " ");
             if (!str) {
@@ -84,7 +99,7 @@ int ft_mkdir(DirectoryTree *p_directoryTree, char *command) {
             }
             while (str) {
                 threadTree[threadCount].threadTree = p_directoryTree;
-                threadTree[threadCount].option = 1;
+                threadTree[threadCount].option = 1; //option설정.
                 threadTree[threadCount++].command = str;
                 str = strtok(NULL, " ");
             }
@@ -107,7 +122,7 @@ int ft_mkdir(DirectoryTree *p_directoryTree, char *command) {
                 return FAIL;
             }
         }
-    } else {
+    } else { //option이 없는 경우,
         str = strtok(NULL, " ");
         threadTree[threadCount].threadTree = p_directoryTree;
         threadTree[threadCount].option = 0;
