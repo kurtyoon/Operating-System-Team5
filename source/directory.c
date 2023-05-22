@@ -59,6 +59,8 @@ void writeDirNode(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStac
     if (dirNode->firstChild) writeDirNode(dirTree, dirNode->firstChild, dirStack);
 }
 
+//file, directory read informations.
+//name, type, permission.mode, SIZE, UID, GID, date(day,hour,minute)
 int readDirNode(DirectoryTree *dirTree, char *tmp) {
     DirectoryNode *newNode = (DirectoryNode *)malloc(sizeof(DirectoryNode));
     DirectoryNode *tmpNode = NULL;
@@ -90,12 +92,13 @@ int readDirNode(DirectoryTree *dirTree, char *tmp) {
     str = strtok(NULL, " ");
     newNode->date.minute = atoi(str);
 
+
     str = strtok(NULL, " ");
     if (str) {
         str[strlen(str) - 1] = '\0';
         movePath(dirTree, str);
         newNode->parent = dirTree->current;
-        if (!dirTree->current->firstChild) dirTree->current->firstChild = newNode;
+        if (!dirTree->current->firstChild) dirTree->current->firstChild = newNode; //
         else {
             tmpNode = dirTree->current->firstChild;
             while (tmpNode->nextSibling) tmpNode = tmpNode->nextSibling;
