@@ -1,5 +1,9 @@
 #include "../include/main.h"
 
+
+//concatenate : making Linked file.
+//fileName : 연결할 파일, type : 연결 방식
+
 int concatenate(DirectoryTree* dirTree, char* fileName, int type) {
     UserNode* tmpUser = NULL;
     DirectoryNode* tmpNode = NULL;
@@ -10,6 +14,7 @@ int concatenate(DirectoryTree* dirTree, char* fileName, int type) {
     int tmpSIZE = 0;
     int cnt = 1;
 
+    //type 4, usrList에 있는 사용자 정보를 출력 후, SUCCESS
     if (type) {
         if(type == 4) {
             tmpUser = usrList->head;
@@ -19,12 +24,14 @@ int concatenate(DirectoryTree* dirTree, char* fileName, int type) {
             }
             return SUCCESS;
         }
+        //not type 4, file을 열고, 내용을 출력.
         tmpNode = dirExistence(dirTree, fileName, 'f');
         if(!tmpNode) return FAIL;
         fp = fopen(fileName, "r");
         while (!feof(fp)) {
             fgets(buf, sizeof(buf), fp);
             if(feof(fp)) break;
+            //type ==2, 3에 따라, 출력조건 설정
             if(type == 2) {
                 if (buf[strlen(buf) - 1] == '\n'){
                     printf("     %d ",cnt);
@@ -39,6 +46,7 @@ int concatenate(DirectoryTree* dirTree, char* fileName, int type) {
             fputs(buf, stdout);
         }
         fclose(fp);
+    //type이 0인 경우, 입력 데이터를 파일에 쓰고, tepSIZE 계산.    
     } else {
         fp = fopen(fileName, "w");
 
@@ -49,6 +57,7 @@ int concatenate(DirectoryTree* dirTree, char* fileName, int type) {
         rewind(stdin);
         fclose(fp);
 
+        //파일이 이미 존재하는 경우, date_update
         tmpNode = dirExistence(dirTree, fileName, 'f');
         if (tmpNode) {
             time(&ltime);
@@ -58,6 +67,7 @@ int concatenate(DirectoryTree* dirTree, char* fileName, int type) {
             tmpNode->date.day = today->tm_mday;
             tmpNode->date.hour = today->tm_hour;
             tmpNode->date.minute = today->tm_min;
+        //파일이 존재하지 않으면, driTree에 new file 생성.    
         } else makeDir(dirTree, fileName, 'f');
         tmpNode = dirExistence(dirTree, fileName, 'f');
         tmpNode->SIZE = tmpSIZE;
@@ -80,6 +90,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
     char tmp3[MAX_DIR];
     int value;
 
+    //command == NULL, file read and print.
     if (!command) {
         long size;
 	    unsigned char c;
@@ -94,6 +105,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
     }
     currentNode = dirTree->current;
 
+    //command == '>'인 경우, 파일을 생성하고
     if (strcmp(command, ">") == 0) {
         str = strtok(NULL, " ");
         if(str == NULL){
@@ -102,11 +114,15 @@ int ft_cat(DirectoryTree* dirTree, char* command)
             return FAIL;
         }
         strncpy(tmp, str, MAX_DIR);
+
+        //경로에 '/'가 없는경우,
         if(!strstr(str, "/")) {
+            //current directory의 쓰기 권한 확인. 
             if (checkPermission(dirTree->current, 'w')) {
                 printf("cat: Can not create file '%s': No permission.\n", dirTree->current->name);
                 return FAIL;
             }
+            //디렉토리인지 확인.
             tmpNode = dirExistence(dirTree, str, 'd');
             if (tmpNode) {
                 printf("cat: '%s': Is a directory\n", str);
@@ -125,11 +141,13 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                 strncpy(tmp3, str, MAX_NAME);
                 str = strtok(NULL, "/");
             }
+            //current directory의 쓰기 권한 확인.
             if (checkPermission(dirTree->current, 'w')) {
                 printf("cat: Can not create file '%s': No permission.\n", dirTree->current->name);
                 dirTree->current = currentNode;
                 return FAIL;
             }
+            //디렉토리인지 확인.
             tmpNode = dirExistence(dirTree, tmp3, 'd');
             if (tmpNode) {
                 printf("cat: '%s': Is a directory\n", tmp3);
@@ -140,6 +158,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
         }
         return 0;
     } else if(command[0] == '-'){
+        //command option exists,
         if (!strcmp(command, "-n")) {
             str = strtok(NULL, " ");
             if (!str) {
@@ -153,6 +172,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                 threadTree[threadCount++].command = str;
                 str = strtok(NULL, " ");
             }
+        //'--help' : print guideline.    
         } else if(strcmp(command, "--help") == 0) {
             printf("Usage: cat [OPTION]... [FILE]...\n");
             printf("Concatenate FILE(s) to standard output.\n\n");
@@ -162,6 +182,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
             printf("      --help     display this help and exit\n");
             return FAIL;
         } else {
+        //알수없는 option인 경우,    
             str = strtok(command, "-");
             if(!str) {
                 printf("cat: Invalid option\n");
@@ -194,7 +215,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
             str = strtok(NULL, " ");
         }
     }
-
+    //using threadPool, 
     for (int i = 0; i < threadCount; i++) {
         pthread_create(&threadPool[i], NULL, catUsedThread, (void*)&threadTree[i]);
         pthread_join(threadPool[i], NULL);
