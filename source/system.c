@@ -1,5 +1,6 @@
 #include "../include/main.h"
 
+// 현재 Data, time 가져오기.
 void getToday(Date *date) {
     time(&ltime);
     today = localtime(&ltime);
@@ -13,6 +14,7 @@ void getToday(Date *date) {
     date->year = today->tm_year + 1900;
 }
 
+//시작 화면 출력.
 void printStart() {
     Date tmpDate;
     getToday(&tmpDate);
@@ -34,6 +36,7 @@ void printStart() {
     printf("%d %02d:%02d:%02d %d\n", usrList->current->date.day, usrList->current->date.hour, usrList->current->date.minute, usrList->current->date.second, usrList->current->date.year);
 }
 
+//프롬프트 출력.
 void printPrompt(DirectoryTree *dirTree, Stack *dirStack) {
     DirectoryNode *tmpNode = NULL;
     char tmp[MAX_DIR] = "";
@@ -94,6 +97,7 @@ void printPrompt(DirectoryTree *dirTree, Stack *dirStack) {
     printf("%c ", usr);
 }
 
+//user 로그인.
 void login(UserList *userList, DirectoryTree *dirTree) {
     UserNode *tmpUser = NULL;
     char userName[MAX_NAME];

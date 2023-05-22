@@ -1,5 +1,6 @@
 #include "../include/main.h"
 
+//cat.c
 void *catUsedThread(void *arg) {
     ThreadTree *threadTree = (ThreadTree *)arg;
     DirectoryTree *dirTree = threadTree->threadTree;
@@ -115,6 +116,7 @@ void *catUsedThread(void *arg) {
     pthread_exit(NULL);
 }
 
+//touch.c
 void *touchUsedThread(void *arg) {
     ThreadTree *threadTree = ((ThreadTree *)arg);
     DirectoryTree *dirTree = threadTree->threadTree;
