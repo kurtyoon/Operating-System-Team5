@@ -1,5 +1,8 @@
 #include "../include/main.h"
 
+//current_directory의 Path 출력.
+//current_directory ~ parent_directory 까지 Stack에 저장한 후,
+//Pop()을 통해, 순차적으로 출력 
 int printPath(DirectoryTree *dirTree, Stack *dirStack) {
     DirectoryNode *tmpNode = NULL;
 
