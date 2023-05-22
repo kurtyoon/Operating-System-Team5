@@ -1,7 +1,12 @@
 #include "../include/main.h"
 
+//file, directory permission
+//permission[9] => [0~2] : User's permission, [3~5] : Group's permission, [6~8] : Other's permission
 
-//
+
+//modeToPermssion
+//dirNode's mode 값을 사용하여, dirNode의 권한을 permission[]에 설정.
+//이 때, 각 자릿수를 binary로 변환하여 permission[]에 저장.
 int modeToPermission(DirectoryNode *dirNode) {
     char buf[4];
     int tmp;
@@ -24,7 +29,7 @@ int modeToPermission(DirectoryNode *dirNode) {
     return SUCCESS;
 }
 
-//dirNode가 소유한 Permission을 출력.
+//permission[]을 사용하여 해당 file directory permission print.
 void printPermission(DirectoryNode *dirNode) {
     char rwx[4] = "rwx";
 
@@ -40,9 +45,11 @@ void printPermission(DirectoryNode *dirNode) {
     }
 }
 
-//checking the directory '접근 권한'
-//SUCCESS = 0, FAIL = -1
+//dirNode의 권한을 확인하고 주어진 mode에 따라 r,w,x를 각각 확인함.
+//이 때, 'userList->currnet'와 'dirNode'의 UID(user_id), GID(group_id)을 비교하여, 권한을 확인한다.
+//권한 O, SUCCESS ; 권한 X, FAIL
 int checkPermission(DirectoryNode *dirNode, char mode) {
+    //usrList에 
     if (usrList->current->id.UID == 0) return SUCCESS;
     if (usrList->current->id.UID == dirNode->id.UID) {
         if (mode == 'r') {
