@@ -1,74 +1,76 @@
 #include "../include/main.h"
 
 int concatenate(DirectoryTree *dirTree, char *fileName, int type) {
-    UserNode *user = NULL;
-    DirectoryNode *dirNode = NULL;
-    FILE *file;
+    if (type == 4) {
+        UserNode *user = usrList->head;
+        while (user) {
+            printf("%s:x:%d:%d:%s:%s\n", user->name, user->id.UID, user->id.GID, user->name, user->dir);
+            user = user->nextNode;
+        }
+        return SUCCESS;
+    }
+
+    DirectoryNode *dirNode = dirExistence(dirTree, fileName, 'f');
+    if (!dirNode)
+        return FAIL;
+
+    FILE *file = fopen(fileName, "r");
     char buffer[MAX_BUFFER];
-    char tmpName[MAX_NAME];
-    char *str;
-    int tmpSize = 0;
     int cnt = 1;
 
-    if (type) {
-        if (type == 4) {
-            user = usrList->head;
-            while (user) {
-                printf("%s:x:%d:%d:%s:%s\n", user->name, user->id.UID, user->id.GID, user->name, user->dir);
-                user = user->nextNode;
+    while (fgets(buffer, sizeof(buffer), file)) {
+        if (type == 2) {
+            if (buffer[strlen(buffer) - 1] == '\n') {
+                printf("     %d ", cnt);
+                cnt++;
             }
-            return SUCCESS;
-        }
-        dirNode = dirExistence(dirTree, fileName, 'f');
-        if (!dirNode) return FAIL;
-        file = fopen(fileName, "r");
-        while (!feof(file)) {
-            fgets(buffer, sizeof(buffer), file);
-            if (feof(file)) break;
-            if (type == 2) {
-                if (buffer[strlen(buffer) - 1] == '\n') {
-                    printf("     %d ", cnt);
-                    cnt++;
-                }
-            } else if (type == 3) {
-                if (buffer[strlen(buffer) - 1] == '\n' && buffer[0] != '\n') {
-                    printf("     %d ", cnt);
-                    cnt++;
-                }
+        } else if (type == 3) {
+            if (buffer[strlen(buffer) - 1] == '\n' && buffer[0] != '\n') {
+                printf("     %d ", cnt);
+                cnt++;
             }
-            fputs(buffer, stdout);
         }
-        fclose(file);
-    } else {
-        file = fopen(fileName, "w");
-
-        while (fgets(buffer, sizeof(buffer), stdin)) {
-            fputs(buffer, file);
-            tmpSize += strlen(buffer) - 1;
-        }
-        rewind(stdin);
-        fclose(file);
-
-        dirNode = dirExistence(dirTree, fileName, 'f');
-        if (dirNode) {
-            time(&ltime);
-            today = localtime(&ltime);
-
-            dirNode->date.month = today->tm_mon + 1;
-            dirNode->date.day = today->tm_mday;
-            dirNode->date.hour = today->tm_hour;
-            dirNode->date.minute = today->tm_min;
-        } else {
-            makeDir(dirTree, fileName, 'f');
-        }
-        dirNode = dirExistence(dirTree, fileName, 'f');
-        dirNode->SIZE = tmpSize;
+        fputs(buffer, stdout);
     }
+
+    fclose(file);
+    return SUCCESS;
+}
+
+int createFile(DirectoryTree *dirTree, char *fileName, char *filePath) {
+    FILE *file = fopen(fileName, "w");
+    char buffer[MAX_BUFFER];
+    int tmpSize = 0;
+
+    while (fgets(buffer, sizeof(buffer), stdin)) {
+        fputs(buffer, file);
+        tmpSize += strlen(buffer) - 1;
+    }
+
+    rewind(stdin);
+    fclose(file);
+
+    DirectoryNode *dirNode = dirExistence(dirTree, fileName, 'f');
+    if (dirNode) {
+        time(&ltime);
+        today = localtime(&ltime);
+
+        dirNode->date.month = today->tm_mon + 1;
+        dirNode->date.day = today->tm_mday;
+        dirNode->date.hour = today->tm_hour;
+        dirNode->date.minute = today->tm_min;
+    } else {
+        makeDir(dirTree, fileName, 'f');
+    }
+
+    dirNode = dirExistence(dirTree, fileName, 'f');
+    dirNode->SIZE = tmpSize;
+
     return SUCCESS;
 }
 
 int ft_cat(DirectoryTree *dirTree, char *command) {
-    DirectoryNode *currentNode = NULL;
+    DirectoryNode *currentNode = dirTree->current;
     DirectoryNode *dirNode = NULL;
     DirectoryNode *dirNode2 = NULL;
     ThreadTree threadTree[MAX_THREAD];
@@ -91,7 +93,6 @@ int ft_cat(DirectoryTree *dirTree, char *command) {
         rewind(stdin);
         return SUCCESS;
     }
-    currentNode = dirTree->current;
 
     if (strcmp(command, ">") == 0) {
         str = strtok(NULL, " ");
@@ -111,7 +112,7 @@ int ft_cat(DirectoryTree *dirTree, char *command) {
                 printf("cat: '%s': Is a directory\n", str);
                 return FAIL;
             } else {
-                concatenate(dirTree, str, 0);
+                createFile(dirTree, str, NULL);
             }
         } else {
             strncpy(tmp2, getDir(str), MAX_DIR);
@@ -136,7 +137,7 @@ int ft_cat(DirectoryTree *dirTree, char *command) {
                 dirTree->current = currentNode;
                 return FAIL;
             } else {
-                concatenate(dirTree, tmp3, 0);
+                createFile(dirTree, tmp3, NULL);
             }
             dirTree->current = currentNode;
         }
@@ -199,6 +200,9 @@ int ft_cat(DirectoryTree *dirTree, char *command) {
 
     for (int i = 0; i < threadCount; i++) {
         pthread_create(&threadPool[i], NULL, catUsedThread, (void *)&threadTree[i]);
+    }
+
+    for (int i = 0; i < threadCount; i++) {
         pthread_join(threadPool[i], NULL);
     }
     return SUCCESS;

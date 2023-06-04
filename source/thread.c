@@ -250,7 +250,7 @@ void *removeDirUsedThread(void *arg) {
                 printf("rm: Can not remove '%s': No such file or directory.\n", tmp2);
                 return NULL;
             }
-            char *str = strtok(tmp, "/");
+            char *str = strtok(command, "/");
             while (str) {
                 strncpy(tmp3, str, MAX_NAME);
                 str = strtok(NULL, "/");
@@ -278,7 +278,8 @@ void *removeDirUsedThread(void *arg) {
         }
     } else if (Option == 1) {
         if (!strstr(tmp, "/")) {
-            tmpNode = dirExistence(dirTree, tmp, 'd');
+            tmpNode = dirExistence(dirTree, tmp, 'f');
+            tmpNode = dirExistence(dirTree, tmp, 'd') == NULL ? tmpNode : dirExistence(dirTree, tmp, 'd');
             if (!tmpNode) {
                 printf("rm: Can not remove '%s': No such file or directory.\n", tmp);
                 return NULL;
@@ -296,7 +297,7 @@ void *removeDirUsedThread(void *arg) {
                 printf("rm: '%s': No such file or directory.\n", tmp2);
                 return NULL;
             }
-            char *str = strtok(tmp, "/");
+            char *str = strtok(command, "/");
             while (str) {
                 strncpy(tmp3, str, MAX_NAME);
                 str = strtok(NULL, "/");
@@ -320,6 +321,7 @@ void *removeDirUsedThread(void *arg) {
     } else if (Option == 2) {
         if (!strstr(tmp, "/")) {
             tmpNode = dirExistence(dirTree, tmp, 'f');
+            tmpNode = dirExistence(dirTree, tmp, 'd') == NULL ? tmpNode : dirExistence(dirTree, tmp, 'd');
             if (!tmpNode) {
                 return NULL;
             } else {
@@ -332,7 +334,7 @@ void *removeDirUsedThread(void *arg) {
             strncpy(tmp2, getDir(tmp), MAX_DIR);
             int value = changePath(dirTree, tmp2);
             if (value) return NULL;
-            char *str = strtok(tmp, "/");
+            char *str = strtok(command, "/");
             while (str) {
                 strncpy(tmp3, str, MAX_NAME);
                 str = strtok(NULL, "/");
@@ -366,7 +368,7 @@ void *removeDirUsedThread(void *arg) {
             strncpy(tmp2, getDir(tmp), MAX_DIR);
             int value = changePath(dirTree, tmp2);
             if (value) return NULL;
-            char *str = strtok(tmp, "/");
+            char *str = strtok(command, "/");
             while (str) {
                 strncpy(tmp3, str, MAX_NAME);
                 str = strtok(NULL, "/");
@@ -417,10 +419,18 @@ void *chownUsedThread(void *arg) {
     char *tmp = threadTree->usrName;
     char *str;
 
-    if (!strstr(tmp, ":")) 
-        changeOwner(dirTree, tmp, command, 0);
-    else 
-        handleColonCase(dirTree, tmp, command);
+    if (!strstr(tmp, ":")) changeOwner(dirTree, tmp, command, 0);
+    else {
+        char tmp2[MAX_NAME];
+        strncpy(tmp2, tmp, MAX_NAME);
+        char *str2 = strtok(tmp, ":");
+        if (str2 && strcmp(tmp, tmp2)) {
+            changeOwner(dirTree, str2, command, 0);
+            str2 = strtok(NULL, " ");
+            if (str2) changeOwner(dirTree, str2, command, 1);
+        }
+        else if (str2 && !strcmp(tmp, tmp2)) changeOwner(dirTree, str2, command, 1);
+    }
     pthread_exit(NULL);
 }
 
@@ -454,13 +464,13 @@ void *grepUsedThread(void *arg) {
             return NULL;
         } else printContent(dirTree, content, command, option);
     } else {
-        strncpy(tmp2, getDir(tmp), MAX_DIR);
+        strncpy(tmp2, getDir(command), MAX_DIR);
         value = changePath(dirTree, tmp2);
         if (value) {
             printf("grep: '%s': No such file or directory.\n", command);
             return NULL;
         }
-        str = strtok(command, "/");
+        str = strtok(tmp, "/");
         while (str) {
             strncpy(tmp3, str, MAX_NAME);
             str = strtok(NULL, "/");

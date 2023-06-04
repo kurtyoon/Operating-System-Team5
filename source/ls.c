@@ -138,11 +138,17 @@ int ft_ls(DirectoryTree *dirTree, char *command) {
             if (value) return FAIL;
         }
         if (!strcmp(command, "-al") || !strcmp(command, "-la")) {
-            return listDirDetailed(dirTree, 1);
+            listDirDetailed(dirTree, 1);
+            dirTree->current = tmpNode;
+            return SUCCESS;
         } else if (!strcmp(command, "-l")) {
-            return listDirDetailed(dirTree, 0);
+            listDirDetailed(dirTree, 0);
+            dirTree->current = tmpNode;
+            return SUCCESS;
         } else if (!strcmp(command, "-a")) {
-            return listDirSimple(dirTree, 1);
+            listDirSimple(dirTree, 1);
+            dirTree->current = tmpNode;
+            return SUCCESS;
         } else if (!strcmp(command, "--help")) {
             return printHelp();
         } else {

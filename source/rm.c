@@ -94,6 +94,8 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
         } else if(!strcmp(command, "-f")) {
             str = strtok(NULL, " ");
             if (!str) {
+                printf("rm: Invalid option\n");
+                printf("Try 'rm --help' for more information.\n");
                 return FAIL;
             }
             while (str) {
