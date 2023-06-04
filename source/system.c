@@ -28,7 +28,7 @@ void printStart() {
     getMonth(tmpDate.month);
     printf("%d %02d:%02d:%02d UTC %d\n\n", tmpDate.day, tmpDate.hour, tmpDate.minute, tmpDate.second, tmpDate.year);
     printf("You can use the command displayed below.\n");
-    printf("\t- ls\n\t- cat\n\t- cd\n\t- mkdir\n\t-touch\n\t- rm\n\t- chmod\n\t- chown\n\t- cp\n\t- grep\n\t- find\n\t- pwd\n\n");
+    printf("\t- ls\n\t- cat\n\t- cd\n\t- mkdir\n\t- touch\n\t- rm\n\t- chmod\n\t- chown\n\t- cp\n\t- grep\n\t- find\n\t- pwd\n\n");
     printf("The 'exit' command allows you to exit the program.\n\n");
     printf("Last login: ");
     getWeekday(usrList->current->date.weekday);

@@ -56,6 +56,7 @@ int ft_grep(DirectoryTree *dirTree, char *command) {
     if (command[0] == '-') {
         if (!strcmp(command, "-n")) {
             str = strtok(NULL, " ");
+            if (!str) return FAIL;
             strncpy(content, str, MAX_BUFFER);
             str = strtok(NULL, " ");
             if (!str) {
@@ -71,6 +72,7 @@ int ft_grep(DirectoryTree *dirTree, char *command) {
             }
         } else if (!strcmp(command, "-v")) {
             str = strtok(NULL, " ");
+            if (!str) return FAIL;
             strncpy(content, str, MAX_BUFFER);
             str = strtok(NULL, " ");
             if (!str) {
@@ -86,6 +88,7 @@ int ft_grep(DirectoryTree *dirTree, char *command) {
             }
         } else if (!strcmp(command, "-i")) {
             str = strtok(NULL, " ");
+            if (!str) return FAIL;
             strncpy(content, str, MAX_BUFFER);
             str = strtok(NULL, " ");
             if (!str) {
@@ -101,6 +104,7 @@ int ft_grep(DirectoryTree *dirTree, char *command) {
             }
         } else if (!strcmp(command, "-nv") || !strcmp(command, "-vn")) {
             str = strtok(NULL, " ");
+            if (!str) return FAIL;
             strncpy(content, str, MAX_BUFFER);
             str = strtok(NULL, " ");
             if (!str) {
@@ -116,6 +120,7 @@ int ft_grep(DirectoryTree *dirTree, char *command) {
             }
         } else if (!strcmp(command, "-ni") || !strcmp(command, "-in")) {
             str = strtok(NULL, " ");
+            if (!str) return FAIL;
             strncpy(content, str, MAX_BUFFER);
             str = strtok(NULL, " ");
             if (!str) {
@@ -131,6 +136,7 @@ int ft_grep(DirectoryTree *dirTree, char *command) {
             }
         } else if(!strcmp(command, "-vi") || !strcmp(command, "-iv")) {
             str = strtok(NULL, " ");
+            if (!str) return FAIL;
             strncpy(content, str, MAX_BUFFER);
             str = strtok(NULL, " ");
             if (!str) {
@@ -146,6 +152,7 @@ int ft_grep(DirectoryTree *dirTree, char *command) {
             }
         } else if (!strcmp(command, "-inv") || !strcmp(command, "-ivn") || !strcmp(command, "-niv") || !strcmp(command, "-nvi") || !strcmp(command, "-vin") || !strcmp(command, "-vni")) {
             str = strtok(NULL, " ");
+            if (!str) return FAIL;
             strncpy(content, str, MAX_BUFFER);
             str = strtok(NULL, " ");
             if (!str) {
