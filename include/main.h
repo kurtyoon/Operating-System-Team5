@@ -123,7 +123,7 @@ void saveUserList(UserList *userList);
 
 // directory.c
 char *getDir(char *dirPath);
-void getPath(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack);
+void getPath(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack, char *tmp);
 void writeDirNode(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack);
 int readDirNode(DirectoryTree *dirTree, char *tmp);
 DirectoryNode *dirExistence(DirectoryTree *dirTree, char *dirName, char type);

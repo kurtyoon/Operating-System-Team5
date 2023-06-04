@@ -1,40 +1,33 @@
 #include "../include/main.h"
 
 DirectoryNode *dirExistence(DirectoryTree *dirTree, char *dirName, char type) {
-    DirectoryNode *returnNode = NULL;
-
-    returnNode = dirTree->current->firstChild;
-    while (returnNode) {
-        if (!strcmp(returnNode->name, dirName) && returnNode->type == type) break;
-        returnNode = returnNode->nextSibling;
+    for (DirectoryNode *current = dirTree->current->firstChild; current; current = current->nextSibling) {
+        if (!strcmp(current->name, dirName) && current->type == type) {
+            return current;
+        }
     }
-    return returnNode;
+    return NULL;
 }
 
 char *getDir(char *dirPath) {
-    char *tmpPath = (char *)malloc(MAX_DIR);
-    char *str = NULL;
-    char tmp[MAX_DIR];
-    char tmp2[MAX_DIR];
-
+    char *str, *tmpPath = (char *)malloc(MAX_DIR), tmp[MAX_DIR], tmp2[MAX_DIR];
     strncpy(tmp, dirPath, MAX_DIR);
-    str = strtok(dirPath, "/");
-    while (str) {
+
+    for (str = strtok(dirPath, "/"); str; str = strtok(NULL, "/")) {
         strncpy(tmp2, str, MAX_DIR);
-        str = strtok(NULL, "/");
     }
+
     strncpy(tmpPath, tmp, strlen(tmp) - strlen(tmp2) - 1);
     tmpPath[strlen(tmp) - strlen(tmp2) - 1] = '\0';
     return tmpPath;
 }
 
-void getPath(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack) {
-    DirectoryNode *tmpNode = NULL;
-    char tmp[MAX_DIR] = "";
+void getPath(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack, char *tmp) {
+    DirectoryNode *tmpNode = dirNode->parent;
 
-    tmpNode = dirNode->parent;
-    if (tmpNode == dirTree->root) strcpy(tmp, "/");
-    else {
+    if (tmpNode == dirTree->root) {
+        strcpy(tmp, "/");
+    } else {
         while (tmpNode->parent) {
             pushStack(dirStack, tmpNode->name);
             tmpNode = tmpNode->parent;
@@ -48,18 +41,47 @@ void getPath(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack) {
 }
 
 void writeDirNode(DirectoryTree *dirTree, DirectoryNode *dirNode, Stack *dirStack) {
+    char tmp[MAX_DIR] = "";
+
     fprintf(Dir, "%s %c %d ", dirNode->name, dirNode->type, dirNode->permission.mode);
     fprintf(Dir, "%d %d %d %d %d %d %d", dirNode->SIZE, dirNode->id.UID, dirNode->id.GID, dirNode->date.month, dirNode->date.day, dirNode->date.hour, dirNode->date.minute);
 
-    if (dirNode == dirTree->root) fprintf(Dir, "\n");
-    else getPath(dirTree, dirNode, dirStack);
-    if (dirNode->nextSibling) writeDirNode(dirTree, dirNode->nextSibling, dirStack);
-    if (dirNode->firstChild) writeDirNode(dirTree, dirNode->firstChild, dirStack);
+    if (dirNode != dirTree->root) {
+        getPath(dirTree, dirNode, dirStack, tmp);
+    } else {
+        fprintf(Dir, "\n");
+    }
+
+    if (dirNode->nextSibling) {
+        writeDirNode(dirTree, dirNode->nextSibling, dirStack);
+    }
+    if (dirNode->firstChild) {
+        writeDirNode(dirTree, dirNode->firstChild, dirStack);
+    }
+}
+
+void createAndAttachNode(DirectoryTree *dirTree, char *str, DirectoryNode *newNode, DirectoryNode *tmpNode) {
+    if (str) {
+        str[strlen(str) - 1] = '\0';
+        changePath(dirTree, str);
+        newNode->parent = dirTree->current;
+        if (!dirTree->current->firstChild) {
+            dirTree->current->firstChild = newNode;
+        } else {
+            tmpNode = dirTree->current->firstChild;
+            while (tmpNode->nextSibling) {
+                tmpNode = tmpNode->nextSibling;
+            }
+            tmpNode->nextSibling = newNode;
+        }
+    } else {
+        dirTree->root = newNode;
+        dirTree->current = dirTree->root;
+    }
 }
 
 int readDirNode(DirectoryTree *dirTree, char *tmp) {
-    DirectoryNode *newNode = (DirectoryNode *)malloc(sizeof(DirectoryNode));
-    DirectoryNode *tmpNode = NULL;
+    DirectoryNode *newNode = (DirectoryNode *)malloc(sizeof(DirectoryNode)), *tmpNode = NULL;
     char *str;
 
     newNode->firstChild = NULL;
@@ -87,21 +109,8 @@ int readDirNode(DirectoryTree *dirTree, char *tmp) {
     newNode->date.hour = atoi(str);
     str = strtok(NULL, " ");
     newNode->date.minute = atoi(str);
-
     str = strtok(NULL, " ");
-    if (str) {
-        str[strlen(str) - 1] = '\0';
-        changePath(dirTree, str);
-        newNode->parent = dirTree->current;
-        if (!dirTree->current->firstChild) dirTree->current->firstChild = newNode;
-        else {
-            tmpNode = dirTree->current->firstChild;
-            while (tmpNode->nextSibling) tmpNode = tmpNode->nextSibling;
-            tmpNode->nextSibling = newNode;
-        }
-    } else {
-        dirTree->root = newNode;
-        dirTree->current = dirTree->root;
-    }
+
+    createAndAttachNode(dirTree, str, newNode, tmpNode);
     return 0;
 }
