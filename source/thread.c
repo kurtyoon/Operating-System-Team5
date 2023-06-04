@@ -460,7 +460,7 @@ void *grepUsedThread(void *arg) {
             printf("grep: '%s': No such file or directory.\n", command);
             return NULL;
         }
-        str = strtok(tmp, "/");
+        str = strtok(command, "/");
         while (str) {
             strncpy(tmp3, str, MAX_NAME);
             str = strtok(NULL, "/");
@@ -476,7 +476,7 @@ void *grepUsedThread(void *arg) {
         } else if (tmpNode2 && checkPermission(tmpNode2, 'r')) {
             printf("grep: Can not open file '%s': Permission denied.\n", command);
             return NULL;
-        } else printContent(dirTree, content, command, option);
+        } else printContent(dirTree, content, tmp3, option);
         dirTree->current = currentNode;
     }
     pthread_exit(NULL);

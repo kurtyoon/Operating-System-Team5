@@ -168,10 +168,12 @@ int ft_grep(DirectoryTree *dirTree, char *command) {
             }
         } else if (!strcmp(command, "--help")) {
             printf("Usage: grep [<option>]... [<file>]...\n");
-            printf("  FILE(들)을 합쳐서 표준 출력으로 보낸다.\n\n");
+            printf("  Search for PATTERNS in each FILE.\n\n");
             printf("  Options:\n");
             printf("    -n, —number         \t number all output line\n");
-            printf("        —help\t 이 도움말을 표시하고 끝냅니다\n");
+            printf("    -i, --ignore-case         \t ignore case distinctions in patterns and data\n");
+            printf("    -v, --invert-match         \t select non-matching lines\n");
+            printf("      --help                display this help text and exit\n");
             return FAIL;
         } else {
             printf("Try 'grep --help' for more information.\n");

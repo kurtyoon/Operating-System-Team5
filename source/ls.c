@@ -1,184 +1,150 @@
 #include "../include/main.h"
 
-int listDir(DirectoryTree *dirTree, int optionA, int optionL) {
-    DirectoryNode *tmpNode = NULL;
-    DirectoryNode *tmpNode2 = NULL;
-    char type;
-    int cnt;
+void printDirDetails(DirectoryNode *dirNode, int cnt) {
+    printf("%c", dirNode->type);
+    printPermission(dirNode);
+    printf("%3d", cnt);
+    printf("   ");
+    printf("%-5s%-5s", getUID(dirNode), getGID(dirNode));
+    printf("%5d ", dirNode->SIZE);
+    getMonth(dirNode->date.month);
+    printf("%2d %02d:%02d ", dirNode->date.day, dirNode->date.hour, dirNode->date.minute);
+}
 
-    tmpNode = dirTree->current->firstChild;
-    if (checkPermission(dirTree->current, 'r')) {
-        printf("ls: cannot open directory '%s'': Permission denied\n", dirTree->current->name);
+void printDirNameWithColor(DirectoryNode *dirNode) {
+    if (dirNode->type == 'd') {
+        BOLD; BLUE;
+        printf("%s\t", dirNode->name);
+        DEFAULT;
+    } else {
+        printf("%s\t", dirNode->name);
+    }
+}
+
+void printChildDirs(DirectoryNode *dirNode, int optionA) {
+    DirectoryNode *tmpNode = dirNode->firstChild;
+    while (tmpNode) {
+        if (!optionA) {
+            if (!strncmp(tmpNode->name, ".", 1)) {
+                tmpNode = tmpNode->nextSibling;
+                continue;
+            }
+        }
+        printDirNameWithColor(tmpNode);
+        tmpNode = tmpNode->nextSibling;
+    }
+    printf("\n");
+}
+
+int printHelp() {
+    printf("Usage: ls [OPTION]... [FILE]...\n");
+    printf("List information about the FILEs (the current directory by default).\n\n");
+    printf("  Options:\n");
+    printf("  -a, --all                  do not ignore entries starting with .\n");
+    printf("  -l                         use a long listing format\n");
+    printf("      --help     display this help and exit\n");
+    return FAIL;
+}
+
+int getChildCount(DirectoryNode *dirNode) {
+    int cnt = 0;
+    DirectoryNode *tmpNode = dirNode->firstChild;
+    if (!tmpNode) {
+        if(dirNode->type == 'd') cnt = 2;
+        else cnt = 1;
+    } else {
+        if(tmpNode->type == 'd') cnt = 3;
+        else cnt = 2;
+        while (tmpNode->nextSibling) {
+            tmpNode = tmpNode->nextSibling;
+            if (tmpNode->type == 'd') cnt += 1;
+        }
+    }
+    return cnt;
+}
+
+int listDirSimple(DirectoryTree *dirTree, int optionA) {
+    DirectoryNode *tmpNode = dirTree->current->firstChild;
+    if (!optionA && !tmpNode) return FAIL;
+    if (optionA) {
+        BOLD; BLUE;
+        printf(".\t");
+        DEFAULT;
+        if (dirTree->current != dirTree->root) {
+            BOLD; BLUE;
+            printf("..\t");
+            DEFAULT;
+        }
+    }
+    printChildDirs(dirTree->current, optionA);
+    return SUCCESS;
+}
+
+int listDirDetailed(DirectoryTree *dirTree, int optionA) {
+    DirectoryNode *tmpNode = dirTree->current->firstChild;
+    if (!optionA && !tmpNode) {
         return FAIL;
     }
-    if (!optionL) {
-        if (!optionA) {
-            if (!tmpNode) return FAIL;
+    if (optionA) {
+        int cnt = getChildCount(dirTree->current);
+        printDirDetails(dirTree->current, cnt);
+        BOLD; BLUE;
+        printf(".\n");
+        DEFAULT;
+        if (dirTree->current != dirTree->root) {
+            cnt = getChildCount(dirTree->current->parent);
+            printDirDetails(dirTree->current->parent, cnt);
+            BOLD; BLUE;
+            printf("..\n");
+            DEFAULT;
         }
-        if (optionA) {
-	        BOLD;BLUE;
-            printf(".\t");
-	        DEFAULT;
-            if(dirTree->current != dirTree->root){
-	     	    BOLD;BLUE;
-                printf("..\t");
-		        DEFAULT;
-            }
-        }
-        while (tmpNode) {
-            if (!optionA) {
-                if (!strncmp(tmpNode->name, ".", 1)) {
-                    tmpNode = tmpNode->nextSibling;
-                    continue;
-                }
-            }
-            if(tmpNode->type == 'd'){
-                BOLD;BLUE;
-                printf("%s\t", tmpNode->name);
-                DEFAULT;
-            } else {
-                printf("%s\t", tmpNode->name);
-            }
-            tmpNode = tmpNode->nextSibling;
-        }
-        printf("\n");
     }
-    else {
+    while (tmpNode) {
         if (!optionA) {
-            if (!tmpNode) {
-                printf("total: 0\n");
-                return FAIL;
+            if (!strncmp(tmpNode->name, ".", 1)) {
+                tmpNode = tmpNode->nextSibling;
+                continue;
             }
         }
-        if (optionA) {
-            tmpNode2 = dirTree->current->firstChild;
-            if (!tmpNode2) cnt = 2;
-            else {
-                if (tmpNode2->type == 'd') cnt = 3;
-                else cnt = 2;
-                while (tmpNode2->nextSibling) {
-                    tmpNode2 = tmpNode2->nextSibling;
-                    if(tmpNode2->type == 'd') cnt += 1;
-                }
-            }
-            printf("%c", dirTree->current->type);
-            printPermission(dirTree->current);
-            printf("%3d", cnt);
-            printf("   ");
-            printf("%-5s%-5s", getUID(dirTree->current), getGID(dirTree->current));
-            printf("%5d ", dirTree->current->SIZE);
-            getMonth(dirTree->current->date.month);
-            printf("%2d %02d:%02d ", dirTree->current->date.day, dirTree->current->date.hour, dirTree->current->date.minute);
-            BOLD;BLUE;
-            printf(".\n");
-	        DEFAULT;
-
-            if (dirTree->current != dirTree->root) {
-                tmpNode2 = dirTree->current->parent->firstChild;
-                if (!tmpNode2) cnt = 2;
-                else {
-                    if (tmpNode2->type == 'd') cnt = 3;
-                    else cnt = 2;
-                    while (tmpNode2->nextSibling) {
-                        tmpNode2 = tmpNode2->nextSibling;
-                        if (tmpNode2->type == 'd') cnt += 1;
-                    }
-                }
-                printf("%c", dirTree->current->parent->type);
-                printPermission(dirTree->current->parent);
-                printf("%3d", cnt);
-                printf("   ");
-                printf("%-5s%-5s", getUID(dirTree->current->parent), getGID(dirTree->current->parent));
-                printf("%5d ", dirTree->current->SIZE);
-                getMonth(dirTree->current->parent->date.month);
-                printf("%2d %02d:%02d ", dirTree->current->parent->date.day, dirTree->current->parent->date.hour, dirTree->current->parent->date.minute);
-                BOLD;BLUE;
-                printf("..\n");
-		        DEFAULT;
-            }
-        }
-        while (tmpNode) {
-            if (!optionA) {
-                if (!strncmp(tmpNode->name, ".", 1)) {
-                    tmpNode = tmpNode->nextSibling;
-                    continue;
-                }
-            }
-            tmpNode2 = tmpNode->firstChild;
-            if (!tmpNode2) {
-                if(tmpNode->type == 'd') cnt = 2;
-                else cnt = 1;
-            } else {
-                if(tmpNode2->type == 'd') cnt = 3;
-                else cnt = 2;
-                while (tmpNode2->nextSibling) {
-                    tmpNode2 = tmpNode2->nextSibling;
-                    if (tmpNode2->type == 'd') cnt += 1;
-                }
-            }
-            if (tmpNode->type == 'd') type = 'd';
-            else if(tmpNode->type == 'f') type = '-';
-            printf("%c", type);
-            printPermission(tmpNode);
-            printf("%3d", cnt);
-            printf("   ");
-            printf("%-5s%-5s", getUID(tmpNode), getGID(tmpNode));
-            printf("%5d ", tmpNode->SIZE);
-            getMonth(tmpNode->date.month);
-            printf("%2d %02d:%02d ", tmpNode->date.day, tmpNode->date.hour, tmpNode->date.minute);
-            if(tmpNode->type == 'd'){
-                BOLD;BLUE;
-                printf("%-15s\n", tmpNode->name);
-                DEFAULT;
-	        } else printf("%-15s\n", tmpNode->name);
-            tmpNode = tmpNode->nextSibling;
-        }
+        int cnt = getChildCount(tmpNode);
+        char type = (tmpNode->type == 'd') ? 'd' : '-';
+        printf("%c", type);
+        printPermission(tmpNode);
+        printf("%3d", cnt);
+        printf("   ");
+        printf("%-5s%-5s", getUID(tmpNode), getGID(tmpNode));
+        printf("%5d ", tmpNode->SIZE);
+        getMonth(tmpNode->date.month);
+        printf("%2d %02d:%02d ", tmpNode->date.day, tmpNode->date.hour, tmpNode->date.minute);
+        printDirNameWithColor(tmpNode);
+        printf("\n");
+        tmpNode = tmpNode->nextSibling;
     }
     return SUCCESS;
 }
 
 int ft_ls(DirectoryTree *dirTree, char *command) {
+    if (!command) {
+        return listDirSimple(dirTree, 0);
+    }
     DirectoryNode *tmpNode = NULL;
     char *str;
     int value;
-
-    if (!command) {
-        listDir(dirTree, 0, 0);
-        return 0;
-    }
     if (command[0] == '-') {
+        str = strtok(NULL, " ");
+        if (str) {
+            tmpNode = dirTree->current;
+            value = changePath(dirTree, str);
+            if (value) return FAIL;
+        }
         if (!strcmp(command, "-al") || !strcmp(command, "-la")) {
-            str = strtok(NULL, " ");
-            if (str) {
-                tmpNode = dirTree->current;
-                value = changePath(dirTree, str);
-                if (value) return FAIL;
-            }
-            listDir(dirTree, 1, 1);
+            return listDirDetailed(dirTree, 1);
         } else if (!strcmp(command, "-l")) {
-            str = strtok(NULL, " ");
-            if (str) {
-                tmpNode = dirTree->current;
-                value = changePath(dirTree, str);
-                if (value) return FAIL;
-            }
-            listDir(dirTree, 0, 1);
+            return listDirDetailed(dirTree, 0);
         } else if (!strcmp(command, "-a")) {
-            str = strtok(NULL, " ");
-            if (str) {
-                tmpNode = dirTree->current;
-                value = changePath(dirTree, str);
-                if (value) return FAIL;
-            }
-            listDir(dirTree, 1, 0);
-        } else if(!strcmp(command, "--help")) {
-            printf("Usage: ls [OPTION]... [FILE]...\n");
-            printf("List information about the FILEs (the current directory by default).\n\n");
-            printf("  Options:\n");
-            printf("  -a, --all                  do not ignore entries starting with .\n");
-            printf("  -l                         use a long listing format\n");
-            printf("      --help     display this help and exit\n");
-            return FAIL;
+            return listDirSimple(dirTree, 1);
+        } else if (!strcmp(command, "--help")) {
+            return printHelp();
         } else {
             str = strtok(command, "-");
             if (!str) {
@@ -194,9 +160,8 @@ int ft_ls(DirectoryTree *dirTree, char *command) {
         tmpNode = dirTree->current;
         value = changePath(dirTree, command);
         if (value) return FAIL;
-        listDir(dirTree, 0, 0);
+        int result = listDirSimple(dirTree, 0);
         dirTree->current = tmpNode;
+        return result;
     }
-    if (str) dirTree->current = tmpNode;
-    return SUCCESS;
 }
