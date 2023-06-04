@@ -7,19 +7,11 @@ int readDir(DirectoryTree *dirTree, char *tmp, char *dirName, int option) {
     str = strtok(tmp, " ");
     strcpy(str2, str);
     for (int i = 0; i < 10; i++) str = strtok(NULL, " ");
+    
     if (str) {
-        if (option == 0) {
-            if (strstr(str2, dirName)) {
-                str[strlen(str) - 1] = '\0';
-                if (!strcmp(str, "/")) printf("/%s\n", str2);
-                else printf("%s/%s\n", str, str2);
-            }
-        } else {
-            if (strstr(str, dirName)) {
-                str[strlen(str) - 1] = '\0';
-                if (!strcmp(str, "/")) printf("/%s\n", str2);
-                else printf("%s/%s\n", str, str2);
-            }
+        if ((option == 0 && strstr(str2, dirName)) || (option != 0 && strstr(str, dirName))) {
+            str[strlen(str) - 1] = '\0';
+            printf("%s/%s\n", strcmp(str, "/") ? str : "", str2);
         }
     }
     return SUCCESS;
@@ -29,17 +21,27 @@ void findDir(DirectoryTree *dirTree, char *dirName, int option) {
     char tmp[MAX_LENGTH];
 
     Dir = fopen("file/Directory.txt", "r");
-    while (fgets(tmp, MAX_LENGTH, Dir)) readDir(dirTree, tmp, dirName, option);
+    if (Dir == NULL) {
+        printf("Cannot open Directory.txt file for reading\n");
+        return;
+    }
+
+    while (fgets(tmp, MAX_LENGTH, Dir)) {
+        readDir(dirTree, tmp, dirName, option);
+    }
     fclose(Dir);
 }
 
 int ft_find(DirectoryTree *dirTree, char *command) {
     char *str;
+    
     if (!command) {
-        // 현재 디렉토리의 모든 파일 및 디렉토리 출력
+        // print all files and directories in the current directory
         findDir(dirTree, dirTree->current->name, 1);
         return SUCCESS;
-    } else if(command[0] == '-'){
+    }
+
+    if(command[0] == '-'){
         if (!strcmp(command, "-name")) {
             str = strtok(NULL, " ");
             if (!str) {
@@ -67,6 +69,6 @@ int ft_find(DirectoryTree *dirTree, char *command) {
     } else {
         findDir(dirTree, command, 0);
         findDir(dirTree, command, 1);
-        }
+    }
     return 0;
 }
