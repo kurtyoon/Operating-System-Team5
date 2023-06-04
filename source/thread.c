@@ -390,12 +390,23 @@ void *removeDirUsedThread(void *arg) {
 }
 
 void *chmodUsedThread(void *arg) {
-    ThreadTree *threadTree = (ThreadTree *) arg;
+    ThreadTree *threadTree = (ThreadTree *)arg;
     DirectoryTree *dirTree = threadTree->threadTree;
     int mode = threadTree->mode;
     char *command = threadTree->command;
+    DirectoryNode *node = dirExistence(dirTree, command, 'f');
     
-    changeMode(dirTree, mode, command);
+    if (node) {
+        changeFileMode(node, mode);
+    } else {
+        node = dirExistence(dirTree, command, 'd');
+        if (node) {
+            changeDirectoryMode(node, mode);
+        } else {
+            printf("chmod: Can not access '%s': No such file or directory\n", command);
+        }
+    }
+    
     pthread_exit(NULL);
 }
 

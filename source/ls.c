@@ -151,7 +151,7 @@ int ft_ls(DirectoryTree *dirTree, char *command) {
             str = strtok(NULL, " ");
             if (str) {
                 tmpNode = dirTree->current;
-                value = movePath(dirTree, str);
+                value = changePath(dirTree, str);
                 if (value) return FAIL;
             }
             listDir(dirTree, 1, 1);
@@ -159,7 +159,7 @@ int ft_ls(DirectoryTree *dirTree, char *command) {
             str = strtok(NULL, " ");
             if (str) {
                 tmpNode = dirTree->current;
-                value = movePath(dirTree, str);
+                value = changePath(dirTree, str);
                 if (value) return FAIL;
             }
             listDir(dirTree, 0, 1);
@@ -167,7 +167,7 @@ int ft_ls(DirectoryTree *dirTree, char *command) {
             str = strtok(NULL, " ");
             if (str) {
                 tmpNode = dirTree->current;
-                value = movePath(dirTree, str);
+                value = changePath(dirTree, str);
                 if (value) return FAIL;
             }
             listDir(dirTree, 1, 0);
@@ -192,7 +192,7 @@ int ft_ls(DirectoryTree *dirTree, char *command) {
         }
     } else {
         tmpNode = dirTree->current;
-        value = movePath(dirTree, command);
+        value = changePath(dirTree, command);
         if (value) return FAIL;
         listDir(dirTree, 0, 0);
         dirTree->current = tmpNode;

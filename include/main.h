@@ -142,7 +142,8 @@ int changeCurrentDirectory(DirectoryTree* dirTree, char* dirPath);
 int ft_cd(DirectoryTree* dirTree, char* cmd);
 
 // chmod.c
-int changeMode(DirectoryTree *dirTree, int mode, char *dirName);
+int changeDirectoryMode(DirectoryNode *node, int mode);
+int changeFileMode(DirectoryNode *node, int mode);
 int ft_chmod(DirectoryTree* dirTree, char* cmd);
 
 // chown.c
