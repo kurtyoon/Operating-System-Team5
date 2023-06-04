@@ -1,22 +1,30 @@
 #include "../include/main.h"
 
-int printPath(DirectoryTree *dirTree, Stack *dirStack) {
-    DirectoryNode *tmpNode = NULL;
+void printFullPath(Stack *dirStack) {
+    while (isEmpty(dirStack) == FALSE) {
+        printf("/");
+        printf("%s", popStack(dirStack));
+    }
+    printf("\n");
+}
 
-    tmpNode = dirTree->current;
+int printPath(DirectoryTree *dirTree, Stack *dirStack) {
+    DirectoryNode *tmpNode = dirTree->current;
+
     if (tmpNode == dirTree->root) printf("/");
     else {
         while (tmpNode->parent) {
             pushStack(dirStack, tmpNode->name);
             tmpNode = tmpNode->parent;
         }
-        while (isEmpty(dirStack) == FALSE) {
-            printf("/");
-            printf("%s", popStack(dirStack));
-        }
+        printFullPath(dirStack);
     }
-    printf("\n");
     return SUCCESS;
+}
+
+void printErrorOption(char *command, char *str) {
+    printf("%s: Unrecognized option -- '%s'\n", command, str);
+    printf("Try '%s --help' for more information.\n", command);
 }
 
 int ft_pwd(DirectoryTree *dirTree, Stack *dirStack, char *command) {
@@ -37,9 +45,8 @@ int ft_pwd(DirectoryTree *dirTree, Stack *dirStack, char *command) {
                 printf("Try 'cd --help' for more information.\n");
                 return -1;
             } else {
-            printf("pwd: Unrecognized option -- '%s'\n", str);
-            printf("Try 'pwd --help' for more information.\n");
-            return FAIL;
+                printErrorOption("pwd", str);
+                return FAIL;
             }
         }
     }

@@ -417,18 +417,10 @@ void *chownUsedThread(void *arg) {
     char *tmp = threadTree->usrName;
     char *str;
 
-    if (!strstr(tmp, ":")) changeOwner(dirTree, tmp, command, 0);
-    else {
-        char tmp2[MAX_NAME];
-        strncpy(tmp2, tmp, MAX_NAME);
-        char *str2 = strtok(tmp, ":");
-        if (str2 && strcmp(tmp, tmp2)) {
-            changeOwner(dirTree, str2, command, 0);
-            str2 = strtok(NULL, " ");
-            if (str2) changeOwner(dirTree, str2, command, 1);
-        }
-        else if (str2 && !strcmp(tmp, tmp2)) changeOwner(dirTree, str2, command, 1);
-    }
+    if (!strstr(tmp, ":")) 
+        changeOwner(dirTree, tmp, command, 0);
+    else 
+        handleColonCase(dirTree, tmp, command);
     pthread_exit(NULL);
 }
 

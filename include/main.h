@@ -147,8 +147,24 @@ int changeFileMode(DirectoryNode *node, int mode);
 int ft_chmod(DirectoryTree* dirTree, char* cmd);
 
 // chown.c
+void handleColonCase(DirectoryTree *dirTree, char *tmp, char *command);
 int changeOwner(DirectoryTree *dirTree, char *userName, char *dirName, int flag);
 int ft_chown(DirectoryTree* dirTree, char* cmd);
+int handleDirectoryNode(DirectoryNode *dirNode, char *userName, char *dirName, int flag);
+int handleFileNode(DirectoryNode *fileNode, char *userName, char *dirName, int flag);
+int handleNonExistentNode(char *dirName);
+int failPermissionDenied(char *dirName);
+int failInvalidUser(char *userName);
+int changeOwnerID(DirectoryNode *node, UserNode *tmpUser, int flag);
+int failInvalidOption();
+int handleDashOption(char* command);
+int displayHelp();
+int handleNonHelpOption(char* command);
+int failUnrecognizedOption(char *str);
+int handleNormalOption(DirectoryTree* dirTree, char* command, char *tmp, ThreadTree *threadTree, int threadCount, pthread_t *threadPool);
+int handleMultipleCommands(DirectoryTree* dirTree, char *tmp, char *str, ThreadTree *threadTree, int threadCount, pthread_t *threadPool);
+void assignThreadData(ThreadTree *threadTree, DirectoryTree* dirTree, char *tmp, char *str, int threadCount);
+int executeThreads(int threadCount, pthread_t *threadPool, ThreadTree *threadTree);
 
 // cp.c
 int ft_cp(DirectoryTree* dirTree, char* SourceName, char* ObjectName);
