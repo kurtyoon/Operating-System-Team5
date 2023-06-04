@@ -125,5 +125,5 @@ void login(UserList *userList, DirectoryTree *dirTree) {
         printf("'%s' User not found\n", userName);
     }
     strcpy(tmp, userList->current->dir);
-    movePath(dirTree, tmp);
+    changePath(dirTree, tmp);
 }

@@ -37,7 +37,7 @@ void *catUsedThread(void *arg) {
             } else concatenate(dirTree, command, 2);
         } else {
             strncpy(tmp2, getDir(tmp), MAX_DIR);
-            value = movePath(dirTree, tmp2);
+            value = changePath(dirTree, tmp2);
             if (value) {
                 printf("cat: '%s': No such file or directory.\n", tmp2);
                 return NULL;
@@ -84,7 +84,7 @@ void *catUsedThread(void *arg) {
             } else concatenate(dirTree, command, 1);
         } else {
             strncpy(tmp2, getDir(tmp), MAX_DIR);
-            value = movePath(dirTree, tmp2);
+            value = changePath(dirTree, tmp2);
             if (value) {
                 printf("cat: '%s': No such file or directory.\n", tmp2);
                 return NULL;
@@ -128,7 +128,7 @@ void *touchUsedThread(void *arg) {
         makeDir(dirTree, command, 'f');
     } else {
         char *getdirectory = getDir(command);
-        value = movePath(dirTree, getdirectory);
+        value = changePath(dirTree, getdirectory);
         if (value) {
             printf("touch: '%s': No such file or directory.\n", getdirectory);
         } else {
@@ -179,10 +179,10 @@ void *makeDirUsedThread(void *arg) {
             if (tmp[i] == '/') {
                 directoryName[--directoryNameLength] = 0;
                 strncpy(tmpStr, pStr, i - 1);
-                isDirectoryExist = moveCurrent(dirTree, directoryName);
+                isDirectoryExist = changeCurrentDirectory(dirTree, directoryName);
                 if (isDirectoryExist == -1) {
                     makeDir(dirTree, directoryName, 'd');
-                    isDirectoryExist = moveCurrent(dirTree, directoryName);
+                    isDirectoryExist = changeCurrentDirectory(dirTree, directoryName);
                 }
                 directoryNameLength = 0;
             }
@@ -192,7 +192,7 @@ void *makeDirUsedThread(void *arg) {
         dirTree->current = tmpNode;
     } else {
         char *p_get_directory = getDir(command);
-        isDirectoryExist = movePath(dirTree, p_get_directory);
+        isDirectoryExist = changePath(dirTree, p_get_directory);
         if (isDirectoryExist != 0) {
             printf("mkdir: '%s': No such file or directory.\n", p_get_directory);
         } else {
@@ -245,7 +245,7 @@ void *removeDirUsedThread(void *arg) {
             }
         } else {
             strncpy(tmp2, getDir(tmp), MAX_DIR);
-            int value = movePath(dirTree, tmp2);
+            int value = changePath(dirTree, tmp2);
             if (value) {
                 printf("rm: Can not remove '%s': No such file or directory.\n", tmp2);
                 return NULL;
@@ -291,7 +291,7 @@ void *removeDirUsedThread(void *arg) {
             }
         } else {
             strncpy(tmp2, getDir(tmp), MAX_DIR);
-            int value = movePath(dirTree, tmp2);
+            int value = changePath(dirTree, tmp2);
             if (value) {
                 printf("rm: '%s': No such file or directory.\n", tmp2);
                 return NULL;
@@ -330,7 +330,7 @@ void *removeDirUsedThread(void *arg) {
             }
         } else {
             strncpy(tmp2, getDir(tmp), MAX_DIR);
-            int value = movePath(dirTree, tmp2);
+            int value = changePath(dirTree, tmp2);
             if (value) return NULL;
             char *str = strtok(tmp, "/");
             while (str) {
@@ -364,7 +364,7 @@ void *removeDirUsedThread(void *arg) {
             }
         } else {
             strncpy(tmp2, getDir(tmp), MAX_DIR);
-            int value = movePath(dirTree, tmp2);
+            int value = changePath(dirTree, tmp2);
             if (value) return NULL;
             char *str = strtok(tmp, "/");
             while (str) {
@@ -452,7 +452,7 @@ void *grepUsedThread(void *arg) {
         } else printContent(dirTree, content, command, option);
     } else {
         strncpy(tmp2, getDir(tmp), MAX_DIR);
-        value = movePath(dirTree, tmp2);
+        value = changePath(dirTree, tmp2);
         if (value) {
             printf("grep: '%s': No such file or directory.\n", command);
             return NULL;

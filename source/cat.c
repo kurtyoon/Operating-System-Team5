@@ -1,79 +1,80 @@
 #include "../include/main.h"
 
-int concatenate(DirectoryTree* dirTree, char* fileName, int type) {
-    UserNode* tmpUser = NULL;
-    DirectoryNode* tmpNode = NULL;
-    FILE* fp;
-    char buf[MAX_BUFFER];
+int concatenate(DirectoryTree *dirTree, char *fileName, int type) {
+    UserNode *user = NULL;
+    DirectoryNode *dirNode = NULL;
+    FILE *file;
+    char buffer[MAX_BUFFER];
     char tmpName[MAX_NAME];
-    char* str;
-    int tmpSIZE = 0;
+    char *str;
+    int tmpSize = 0;
     int cnt = 1;
 
     if (type) {
-        if(type == 4) {
-            tmpUser = usrList->head;
-            while (tmpUser) {
-                printf("%s:x:%d:%d:%s:%s\n", tmpUser->name, tmpUser->id.UID, tmpUser->id.GID, tmpUser->name, tmpUser->dir);
-                tmpUser = tmpUser->nextNode;
+        if (type == 4) {
+            user = usrList->head;
+            while (user) {
+                printf("%s:x:%d:%d:%s:%s\n", user->name, user->id.UID, user->id.GID, user->name, user->dir);
+                user = user->nextNode;
             }
             return SUCCESS;
         }
-        tmpNode = dirExistence(dirTree, fileName, 'f');
-        if(!tmpNode) return FAIL;
-        fp = fopen(fileName, "r");
-        while (!feof(fp)) {
-            fgets(buf, sizeof(buf), fp);
-            if(feof(fp)) break;
-            if(type == 2) {
-                if (buf[strlen(buf) - 1] == '\n'){
-                    printf("     %d ",cnt);
+        dirNode = dirExistence(dirTree, fileName, 'f');
+        if (!dirNode) return FAIL;
+        file = fopen(fileName, "r");
+        while (!feof(file)) {
+            fgets(buffer, sizeof(buffer), file);
+            if (feof(file)) break;
+            if (type == 2) {
+                if (buffer[strlen(buffer) - 1] == '\n') {
+                    printf("     %d ", cnt);
                     cnt++;
                 }
-            } else if(type == 3) {
-                if(buf[strlen(buf) - 1] == '\n' && buf[0] != '\n'){
-                    printf("     %d ",cnt);
+            } else if (type == 3) {
+                if (buffer[strlen(buffer) - 1] == '\n' && buffer[0] != '\n') {
+                    printf("     %d ", cnt);
                     cnt++;
                 }
             }
-            fputs(buf, stdout);
+            fputs(buffer, stdout);
         }
-        fclose(fp);
+        fclose(file);
     } else {
-        fp = fopen(fileName, "w");
+        file = fopen(fileName, "w");
 
-	    while (fgets(buf, sizeof(buf), stdin)) {
-            fputs(buf, fp);
-            tmpSIZE += strlen(buf) - 1;
+        while (fgets(buffer, sizeof(buffer), stdin)) {
+            fputs(buffer, file);
+            tmpSize += strlen(buffer) - 1;
         }
         rewind(stdin);
-        fclose(fp);
+        fclose(file);
 
-        tmpNode = dirExistence(dirTree, fileName, 'f');
-        if (tmpNode) {
+        dirNode = dirExistence(dirTree, fileName, 'f');
+        if (dirNode) {
             time(&ltime);
             today = localtime(&ltime);
 
-            tmpNode->date.month = today->tm_mon + 1;
-            tmpNode->date.day = today->tm_mday;
-            tmpNode->date.hour = today->tm_hour;
-            tmpNode->date.minute = today->tm_min;
-        } else makeDir(dirTree, fileName, 'f');
-        tmpNode = dirExistence(dirTree, fileName, 'f');
-        tmpNode->SIZE = tmpSIZE;
+            dirNode->date.month = today->tm_mon + 1;
+            dirNode->date.day = today->tm_mday;
+            dirNode->date.hour = today->tm_hour;
+            dirNode->date.minute = today->tm_min;
+        } else {
+            makeDir(dirTree, fileName, 'f');
+        }
+        dirNode = dirExistence(dirTree, fileName, 'f');
+        dirNode->SIZE = tmpSize;
     }
     return SUCCESS;
 }
 
-int ft_cat(DirectoryTree* dirTree, char* command)
-{
-    DirectoryNode* currentNode = NULL;
-    DirectoryNode* tmpNode = NULL;
-    DirectoryNode* tmpNode2 = NULL;
+int ft_cat(DirectoryTree *dirTree, char *command) {
+    DirectoryNode *currentNode = NULL;
+    DirectoryNode *dirNode = NULL;
+    DirectoryNode *dirNode2 = NULL;
     ThreadTree threadTree[MAX_THREAD];
     pthread_t threadPool[MAX_THREAD];
     int threadCount = 0;
-    char* str;
+    char *str;
     char tmp[MAX_DIR];
     char tmp2[MAX_DIR];
     char tmp3[MAX_DIR];
@@ -81,13 +82,12 @@ int ft_cat(DirectoryTree* dirTree, char* command)
 
     if (!command) {
         long size;
-	    unsigned char c;
+        unsigned char c;
         size = read(0, &c, 1);
-	    while (size)
-	    {
-		    write(1, &c, size);
-		    size = read(0, &c, 1);
-	    }
+        while (size) {
+            write(1, &c, size);
+            size = read(0, &c, 1);
+        }
         rewind(stdin);
         return SUCCESS;
     }
@@ -95,26 +95,27 @@ int ft_cat(DirectoryTree* dirTree, char* command)
 
     if (strcmp(command, ">") == 0) {
         str = strtok(NULL, " ");
-        if(str == NULL){
+        if (str == NULL) {
             printf("cat: Invalid option\n");
             printf("Try 'cat --help' for more information.\n");
             return FAIL;
         }
         strncpy(tmp, str, MAX_DIR);
-        if(!strstr(str, "/")) {
+        if (!strstr(str, "/")) {
             if (checkPermission(dirTree->current, 'w')) {
                 printf("cat: Can not create file '%s': No permission.\n", dirTree->current->name);
                 return FAIL;
             }
-            tmpNode = dirExistence(dirTree, str, 'd');
-            if (tmpNode) {
+            dirNode = dirExistence(dirTree, str, 'd');
+            if (dirNode) {
                 printf("cat: '%s': Is a directory\n", str);
                 return FAIL;
+            } else {
+                concatenate(dirTree, str, 0);
             }
-            else concatenate(dirTree, str, 0);
         } else {
             strncpy(tmp2, getDir(str), MAX_DIR);
-            value = movePath(dirTree, tmp2);
+            value = changePath(dirTree, tmp2);
             if (value) {
                 printf("cat: '%s': No such file or directory\n", tmp2);
                 return FAIL;
@@ -129,16 +130,18 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                 dirTree->current = currentNode;
                 return FAIL;
             }
-            tmpNode = dirExistence(dirTree, tmp3, 'd');
-            if (tmpNode) {
+            dirNode = dirExistence(dirTree, tmp3, 'd');
+            if (dirNode) {
                 printf("cat: '%s': Is a directory\n", tmp3);
                 dirTree->current = currentNode;
                 return FAIL;
-            } else concatenate(dirTree, tmp3, 0);
+            } else {
+                concatenate(dirTree, tmp3, 0);
+            }
             dirTree->current = currentNode;
         }
         return 0;
-    } else if(command[0] == '-'){
+    } else if (command[0] == '-') {
         if (!strcmp(command, "-n")) {
             str = strtok(NULL, " ");
             if (!str) {
@@ -152,7 +155,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
                 threadTree[threadCount++].command = str;
                 str = strtok(NULL, " ");
             }
-        } else if(strcmp(command, "--help") == 0) {
+        } else if (strcmp(command, "--help") == 0) {
             printf("Usage: cat [OPTION]... [FILE]...\n");
             printf("Concatenate FILE(s) to standard output.\n\n");
             printf("With no FILE, or when FILE is -, read standard input.\n\n");
@@ -162,7 +165,7 @@ int ft_cat(DirectoryTree* dirTree, char* command)
             return FAIL;
         } else {
             str = strtok(command, "-");
-            if(!str) {
+            if (!str) {
                 printf("cat: Invalid option\n");
                 printf("Try 'cat --help' for more information.\n");
                 return FAIL;
@@ -195,8 +198,8 @@ int ft_cat(DirectoryTree* dirTree, char* command)
     }
 
     for (int i = 0; i < threadCount; i++) {
-        pthread_create(&threadPool[i], NULL, catUsedThread, (void*)&threadTree[i]);
+        pthread_create(&threadPool[i], NULL, catUsedThread, (void *)&threadTree[i]);
         pthread_join(threadPool[i], NULL);
     }
-    return 1;
+    return SUCCESS;
 }

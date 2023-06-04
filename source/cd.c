@@ -1,20 +1,26 @@
 #include "../include/main.h"
 
-int moveCurrent(DirectoryTree *dirTree, char *dirPath) {
+int changeCurrentDirectory(DirectoryTree *dirTree, char *dirPath) {
     DirectoryNode *tmpNode = NULL;
 
-    if (!strcmp(dirPath,".")) {
+    if (!strcmp(dirPath, ".")) {
+        // Do nothing, stay in the current directory
     } else if (!strcmp(dirPath, "..")) {
-        if (dirTree->current != dirTree->root) dirTree->current = dirTree->current->parent;
+        if (dirTree->current != dirTree->root) {
+            dirTree->current = dirTree->current->parent;
+        }
     } else {
         tmpNode = dirExistence(dirTree, dirPath, 'd');
-        if (tmpNode) dirTree->current = tmpNode;
-        else return FAIL;
+        if (tmpNode) {
+            dirTree->current = tmpNode;
+        } else {
+            return FAIL;
+        }
     }
     return SUCCESS;
 }
 
-int movePath(DirectoryTree *dirTree, char *dirPath) {
+int changePath(DirectoryTree *dirTree, char *dirPath) {
     DirectoryNode *tmpNode = NULL;
     char tmpPath[MAX_DIR];
     char *str = NULL;
@@ -22,15 +28,18 @@ int movePath(DirectoryTree *dirTree, char *dirPath) {
 
     strncpy(tmpPath, dirPath, MAX_DIR);
     tmpNode = dirTree->current;
-    if (!strcmp(dirPath, "/")) dirTree->current = dirTree->root;
-    else {
+    if (!strcmp(dirPath, "/")) {
+        dirTree->current = dirTree->root;
+    } else {
         if (!strncmp(dirPath, "/", 1)) {
-            if (!strtok(dirPath, "/")) return FAIL;
+            if (!strtok(dirPath, "/")) {
+                return FAIL;
+            }
             dirTree->current = dirTree->root;
         }
         str = strtok(tmpPath, "/");
         while (str) {
-            value = moveCurrent(dirTree, str);
+            value = changeCurrentDirectory(dirTree, str);
             if (value) {
                 dirTree->current = tmpNode;
                 return FAIL;
@@ -49,19 +58,19 @@ int ft_cd(DirectoryTree *dirTree, char *command) {
 
     if (!command) {
         strcpy(tmp, usrList->current->dir);
-        movePath(dirTree, tmp);
-    } else if(command[0] == '-') {
+        changePath(dirTree, tmp);
+    } else if (command[0] == '-') {
         if (!strcmp(command, "--help")) {
             printf("cd: cd [dir]\n");
             printf("    Change the shell working directory.\n\n");
-            printf("    Change the current directory to DIR.  The default DIR is the value of the\n");
+            printf("    Change the current directory to DIR. The default DIR is the value of the\n");
             printf("    HOME shell variable.\n\n");
             printf("    The variable CDPATH defines the search path for the directory containing\n");
-            printf("    DIR.  Alternative directory names in CDPATH are separated by a colon (:).\n");
-            printf("    A null directory name is the same as the current directory.  If DIR begins\n");
+            printf("    DIR. Alternative directory names in CDPATH are separated by a colon (:).\n");
+            printf("    A null directory name is the same as the current directory. If DIR begins\n");
             printf("    with a slash (/), then CDPATH is not used.\n\n");
             printf("    If the directory is not found, and the shell option `cdable_vars' is set,\n");
-            printf("    the word is assumed to be  a variable name.  If that variable has a value,\n");
+            printf("    the word is assumed to be a variable name. If that variable has a value,\n");
             printf("    its value is used for DIR.\n\n");
             printf("    Options:\n");
             printf("      --help     display this help and exit\n");
@@ -91,8 +100,10 @@ int ft_cd(DirectoryTree *dirTree, char *command) {
             printf("-bash: cd: '%s': Not a directory\n", command);
             return FAIL;
         }
-        value = movePath(dirTree, command);
-        if (value) printf("-bash: cd: No such file or directory '%s'\n", command);
+        value = changePath(dirTree, command);
+        if (value) {
+            printf("-bash: cd: No such file or directory '%s'\n", command);
+        }
     }
     return SUCCESS;
 }

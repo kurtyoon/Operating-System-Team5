@@ -91,7 +91,7 @@ int readDirNode(DirectoryTree *dirTree, char *tmp) {
     str = strtok(NULL, " ");
     if (str) {
         str[strlen(str) - 1] = '\0';
-        movePath(dirTree, str);
+        changePath(dirTree, str);
         newNode->parent = dirTree->current;
         if (!dirTree->current->firstChild) dirTree->current->firstChild = newNode;
         else {

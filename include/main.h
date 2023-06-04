@@ -137,8 +137,8 @@ int concatenate(DirectoryTree* dirTree, char* fName, int type);
 int ft_cat(DirectoryTree* dirTree, char* cmd);
 
 // cd.c
-int movePath(DirectoryTree* dirTree, char* dirPath);
-int moveCurrent(DirectoryTree* dirTree, char* dirPath);
+int changePath(DirectoryTree* dirTree, char* dirPath);
+int changeCurrentDirectory(DirectoryTree* dirTree, char* dirPath);
 int ft_cd(DirectoryTree* dirTree, char* cmd);
 
 // chmod.c
