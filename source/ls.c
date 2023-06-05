@@ -124,30 +124,30 @@ int listDirDetailed(DirectoryTree *dirTree, int optionA) {
 }
 
 int ft_ls(DirectoryTree *dirTree, char *command) {
+    DirectoryNode *currentNode = dirTree->current;
+    char *str;
+    int value;
+
     if (!command) {
         return listDirSimple(dirTree, 0);
     }
-    DirectoryNode *tmpNode = NULL;
-    char *str;
-    int value;
     if (command[0] == '-') {
         str = strtok(NULL, " ");
         if (str) {
-            tmpNode = dirTree->current;
             value = changePath(dirTree, str);
             if (value) return FAIL;
         }
         if (!strcmp(command, "-al") || !strcmp(command, "-la")) {
             listDirDetailed(dirTree, 1);
-            dirTree->current = tmpNode;
+            dirTree->current = currentNode;
             return SUCCESS;
         } else if (!strcmp(command, "-l")) {
             listDirDetailed(dirTree, 0);
-            dirTree->current = tmpNode;
+            dirTree->current = currentNode;
             return SUCCESS;
         } else if (!strcmp(command, "-a")) {
             listDirSimple(dirTree, 1);
-            dirTree->current = tmpNode;
+            dirTree->current = currentNode;
             return SUCCESS;
         } else if (!strcmp(command, "--help")) {
             return printHelp();
@@ -155,19 +155,18 @@ int ft_ls(DirectoryTree *dirTree, char *command) {
             str = strtok(command, "-");
             if (!str) {
                 printf("ls: ls: cannot access '-': No such file or directory\n");
-                return FAIL;
             } else {
                 printf("ls: invalid option -- '%s'\n", str);
                 printf("Try 'ls --help' for more information.\n");
-                return FAIL;
             }
+            dirTree->current = currentNode;
+            return FAIL;
         }
     } else {
-        tmpNode = dirTree->current;
         value = changePath(dirTree, command);
         if (value) return FAIL;
         int result = listDirSimple(dirTree, 0);
-        dirTree->current = tmpNode;
+        dirTree->current = currentNode;
         return result;
     }
 }

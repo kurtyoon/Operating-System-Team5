@@ -1,5 +1,5 @@
 CC = gcc
-CFLAG = -fcommon
+CFLAG = -fcommon #-fsanitize=address -g3
 RM = rm -rf
 NAME = MINILINUX
 
