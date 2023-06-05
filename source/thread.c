@@ -418,18 +418,21 @@ void *chownUsedThread(void *arg) {
     char *command = threadTree->command;
     char *tmp = threadTree->usrName;
     char *str;
+    char tmp3[MAX_NAME];
+    
+    strcpy(tmp3, tmp);
 
     if (!strstr(tmp, ":")) changeOwner(dirTree, tmp, command, 0);
     else {
         char tmp2[MAX_NAME];
-        strncpy(tmp2, tmp, MAX_NAME);
-        char *str2 = strtok(tmp, ":");
-        if (str2 && strcmp(tmp, tmp2)) {
+        strncpy(tmp2, tmp3, MAX_NAME);
+        char *str2 = strtok(tmp3, ":");
+        if (str2 && strcmp(tmp3, tmp2)) {
             changeOwner(dirTree, str2, command, 0);
             str2 = strtok(NULL, " ");
             if (str2) changeOwner(dirTree, str2, command, 1);
         }
-        else if (str2 && !strcmp(tmp, tmp2)) changeOwner(dirTree, str2, command, 1);
+        else if (str2 && !strcmp(tmp3, tmp2)) changeOwner(dirTree, str2, command, 1);
     }
     pthread_exit(NULL);
 }
