@@ -98,10 +98,8 @@ int ft_chown(DirectoryTree* dirTree, char* command) {
     }
     for (int i = 0; i < threadCount; i++) {
         pthread_create(&threadPool[i], NULL, chownUsedThread, (void*)&threadTree[i]);
-    }
-
-    for (int i = 0; i < threadCount; i++) {
         pthread_join(threadPool[i], NULL);
     }
+
     return SUCCESS;
 }

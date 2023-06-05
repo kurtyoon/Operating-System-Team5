@@ -200,9 +200,6 @@ int ft_cat(DirectoryTree *dirTree, char *command) {
 
     for (int i = 0; i < threadCount; i++) {
         pthread_create(&threadPool[i], NULL, catUsedThread, (void *)&threadTree[i]);
-    }
-
-    for (int i = 0; i < threadCount; i++) {
         pthread_join(threadPool[i], NULL);
     }
     return SUCCESS;
