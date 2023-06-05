@@ -1,6 +1,6 @@
 #include "../include/main.h"
 
-void instruction(DirectoryTree *dirTree, char *command) {
+void executeCommand(DirectoryTree *dirTree, char *command) {
     char *str;
     char *str1;
     char *str2;
@@ -53,6 +53,8 @@ void instruction(DirectoryTree *dirTree, char *command) {
     } else if (!strcmp(str, "grep")) {
         str = strtok(NULL, " ");
         ft_grep(dirTree, str);
+    } else if (!strcmp(command, "help")) {
+        printHelpMsg();
     } else if(!strcmp(command, "exit")) {
         printf("logout\n");
         exit(0);

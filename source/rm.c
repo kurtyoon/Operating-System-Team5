@@ -48,7 +48,7 @@ int removeDir(DirectoryTree *dirTree, char *dirName) {
     return SUCCESS;
 }
 
-void executeCommand(DirectoryTree *dirTree, ThreadTree *threadTree, int option, char *command) {
+void executeThread(DirectoryTree *dirTree, ThreadTree *threadTree, int option, char *command) {
     threadTree->threadTree = dirTree;
     threadTree->command = command;
     threadTree->option = option;
@@ -85,7 +85,7 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
                 return FAIL;
             }
             while (str) {
-                executeCommand(dirTree, &threadTree[threadCount++], 1, str);
+                executeThread(dirTree, &threadTree[threadCount++], 1, str);
                 str = strtok(NULL, " ");
             }
         } else if(!strcmp(command, "-f")) {
@@ -96,7 +96,7 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
                 return FAIL;
             }
             while (str) {
-                executeCommand(dirTree, &threadTree[threadCount++], 2, str);
+                executeThread(dirTree, &threadTree[threadCount++], 2, str);
                 str = strtok(NULL, " ");
             }
         } else if (!strcmp(command, "-rf") || !strcmp(command, "-fr")) {
@@ -105,7 +105,7 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
                 return FAIL;
             }
             while (str) {
-                executeCommand(dirTree, &threadTree[threadCount++], 3, str);
+                executeThread(dirTree, &threadTree[threadCount++], 3, str);
                 str = strtok(NULL, " ");
             }
         } else if (!strcmp(command, "--help")) {
@@ -130,14 +130,14 @@ int ft_rm(DirectoryTree *dirTree, char *command) {
         }
     } else {
         str = strtok(NULL, " ");
-        executeCommand(dirTree, &threadTree[threadCount++], 0, command);
+        executeThread(dirTree, &threadTree[threadCount++], 0, command);
         if (!command) {
             printf("rm: Invalid option\n");
             printf("Try 'rm --help' for more information.\n");
             return FAIL;
         }
         while (str) {
-            executeCommand(dirTree, &threadTree[threadCount++], 0, str);
+            executeThread(dirTree, &threadTree[threadCount++], 0, str);
             str = strtok(NULL, " ");
         }
     }

@@ -1,5 +1,12 @@
 #include "../include/main.h"
 
+void printHelpMsg() {
+    printf("You can use the command displayed below.\n");
+    printf("\t- ls\n\t- cat\n\t- cd\n\t- mkdir\n\t- touch\n\t- rm\n\t- chmod\n\t- chown\n\t- cp\n\t- grep\n\t- find\n\t- pwd\n\n");
+    printf("The 'exit' command allows you to exit the program.\n\n");
+
+}
+
 // 현재 시간을 가져오는 함수
 void getToday(Date *date) {
     time(&ltime);

@@ -15,7 +15,7 @@ int main() {
         printPrompt(Linux, dStack); // Prompt 출력
         fgets(command, sizeof(command), stdin); // 명령어 입력
         command[strlen(command) - 1] = '\0'; // 개행문자 자리에 NULL 문자 입력 -> 문자열로 변경
-        instruction(Linux, command); // 명령어 실행
+        executeCommand(Linux, command); // 명령어 실행
     }
     return 0;
 }

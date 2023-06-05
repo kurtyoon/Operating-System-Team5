@@ -184,9 +184,10 @@ int removeDir(DirectoryTree *dirTree, char *dirName);
 int ft_rm(DirectoryTree *dirTree, char *cmd);
 
 // instruction.c
-void instruction(DirectoryTree* dirTree, char* cmd);
+void executeCommand(DirectoryTree* dirTree, char* cmd);
 
 // system.c
+void printHelpMsg();
 void getToday(Date *date);
 void printStart();
 void printPrompt(DirectoryTree *dirTree, Stack *dirStack);
